@@ -13,7 +13,16 @@ const openclawHome = require('./openclaw-home');
 const opencodeHome = require('./opencode-home');
 const qwenHome = require('./qwen-home');
 const zedProject = require('./zed-project');
+const path = require('path');
+
 const { resolveInvocationEnvironment } = require('../invocation-environment');
+
+const SELF_INSTALL_TARGET_CODE = 'target-root-inside-repo-root';
+
+function isPathWithin(parentPath, childPath) {
+  const relative = path.relative(parentPath, childPath);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
 
 const ADAPTERS = Object.freeze([
   claudeHome,
@@ -58,14 +67,28 @@ function planInstallTargetScaffold(options = {}) {
     env: resolveInvocationEnvironment(options),
   };
   const validationIssues = adapter.validate(planningInput);
+  const targetRoot = adapter.resolveRoot(planningInput);
+  const installStatePath = adapter.getInstallStatePath(planningInput);
+
+  // Guard against self-installs: when the installer runs from inside the ECC
+  // source repo without a separate project root, managed writes land in the
+  // source tree and corrupt the distribution (e.g. the stale .kimi mirror
+  // produced by a v2.1.0 self-run). Reject unless explicitly exempted.
+  const resolvedRepoRoot = planningInput.repoRoot ? path.resolve(planningInput.repoRoot) : null;
+  if (resolvedRepoRoot && isPathWithin(resolvedRepoRoot, path.resolve(targetRoot))) {
+    validationIssues.push({
+      severity: 'error',
+      code: SELF_INSTALL_TARGET_CODE,
+      message: `Refusing to plan ${adapter.id} install: target root ${targetRoot} is inside the ECC source repo ${resolvedRepoRoot}. Run the installer from a project directory outside the source repo, or exempt '${SELF_INSTALL_TARGET_CODE}' if this is intentional.`,
+    });
+  }
+
   const blockingIssues = validationIssues.filter(issue => (
     issue.severity === 'error' && !exemptValidationCodes.has(issue.code)
   ));
   if (blockingIssues.length > 0) {
     throw new Error(blockingIssues.map(issue => issue.message).join('; '));
   }
-  const targetRoot = adapter.resolveRoot(planningInput);
-  const installStatePath = adapter.getInstallStatePath(planningInput);
   const operations = adapter.planOperations({
     ...planningInput,
     modules,

@@ -160,6 +160,54 @@ function runTests() {
     );
   })) passed++; else failed++;
 
+  if (test('rejects install plans whose target root is inside the ECC source repo', () => {
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-self-install-'));
+
+    assert.throws(
+      () => planInstallTargetScaffold({
+        target: 'kimi',
+        repoRoot,
+        modules: [{ id: 'rules-core', paths: ['rules/common'] }],
+      }),
+      /inside the ECC source repo/,
+      'Should refuse a self-install when projectRoot defaults to repoRoot'
+    );
+  })) passed++; else failed++;
+
+  if (test('rejects install plans when the project root nests inside the ECC source repo', () => {
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-nested-install-'));
+    const projectRoot = path.join(repoRoot, 'nested', 'app');
+
+    assert.throws(
+      () => planInstallTargetScaffold({
+        target: 'cursor',
+        repoRoot,
+        projectRoot,
+        modules: [{ id: 'platform-configs', paths: ['.cursor'] }],
+      }),
+      /inside the ECC source repo/,
+      'Should refuse managed writes that land inside the source repo'
+    );
+  })) passed++; else failed++;
+
+  if (test('allows target roots inside the source repo only with an explicit exemption', () => {
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-exempt-install-'));
+
+    const plan = planInstallTargetScaffold({
+      target: 'cursor',
+      repoRoot,
+      modules: [{ id: 'platform-configs', paths: ['.cursor'] }],
+      exemptValidationCodes: ['target-root-inside-repo-root'],
+    });
+
+    assert.ok(
+      plan.validationIssues.some(issue => (
+        issue.code === 'target-root-inside-repo-root' && issue.severity === 'error'
+      )),
+      'Should record the self-install issue even when exempted'
+    );
+  })) passed++; else failed++;
+
   if (test('plans namespaced Claude rules and flat discoverable skills', () => {
     const repoRoot = path.join(__dirname, '..', '..');
     const homeDir = '/Users/example';
