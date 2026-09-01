@@ -30,19 +30,16 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const CURRENT_PLUGIN_SLUG = 'sicp';
-const LEGACY_PLUGIN_SLUGS = ['SI-Claude-Plugin', 'ecc'];
+// The slug is the Claude Code PLUGIN name — as in .claude-plugin/plugin.json and the
+// directory Claude Code creates at ~/.claude/plugins/marketplaces/<slug>. It is not
+// the npm package name.
+const PLUGIN_SLUG = 'SI-Claude-Plugin';
 const KNOWN_PLUGIN_PATHS = [
-  [CURRENT_PLUGIN_SLUG],
-  [`${CURRENT_PLUGIN_SLUG}@${CURRENT_PLUGIN_SLUG}`],
-  ['marketplace', CURRENT_PLUGIN_SLUG],
-  ...LEGACY_PLUGIN_SLUGS.flatMap(s => [
-    [s],
-    [`${s}@${s}`],
-    ['marketplace', s],
-  ]),
+  [PLUGIN_SLUG],
+  [`${PLUGIN_SLUG}@${PLUGIN_SLUG}`],
+  ['marketplaces', PLUGIN_SLUG],
 ];
-const CACHE_PLUGIN_SLUGS = [CURRENT_PLUGIN_SLUG, ...LEGACY_PLUGIN_SLUGS];
+const CACHE_PLUGIN_SLUGS = [PLUGIN_SLUG];
 
 // Read the raw JSON event from stdin
 const raw = fs.readFileSync(0, 'utf8');

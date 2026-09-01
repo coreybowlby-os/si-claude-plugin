@@ -40,7 +40,7 @@ function test(name, fn) {
 function makeTempClaude() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-test-'));
   const pluginsDir = path.join(tmpDir, 'plugins');
-  const vcpDir = path.join(tmpDir, 'sicp');
+  const vcpDir = path.join(tmpDir, 'SI-Claude-Plugin');
   fs.mkdirSync(pluginsDir, { recursive: true });
   fs.mkdirSync(vcpDir, { recursive: true });
 
@@ -55,7 +55,7 @@ function makeTempClaude() {
   }
 
   function writeTracker(version) {
-    fs.writeFileSync(path.join(vcpDir, 'installed-sicp-version.txt'), version);
+    fs.writeFileSync(path.join(vcpDir, 'installed-version.txt'), version);
   }
 
   function writeMarketplaceCheck(ageMs) {
@@ -213,6 +213,54 @@ test('attempts pull when cooldown has elapsed (7 hours)', () => {
 // ---------------------------------------------------------------------------
 
 process.stdout.write('\n');
+
+// ---------------------------------------------------------------------------
+// Regression: Claude Code stores marketplace clones under plugins/marketplaces/
+// (PLURAL). resolvePluginRoot() previously searched only the singular
+// 'marketplace', so a marketplace-installed plugin was never found and the hook
+// aborted with "could not locate install-apply.js" while silently doing nothing.
+//
+// NOTE: these build the fixture at <home>/.claude/... because that is what the
+// hook reads. makeTempClaude() above builds it at <home>/... (one level high),
+// which is why the tests using it never exercise real path resolution.
+// ---------------------------------------------------------------------------
+
+process.stdout.write('Marketplace resolution:' + String.fromCharCode(10));
+
+function makeMarketplaceFixture(marketplaceDirName) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sicp-mkt-'));
+  const base = path.join(tmp, '.claude');
+  fs.mkdirSync(path.join(base, 'plugins'), { recursive: true });
+  fs.mkdirSync(path.join(base, 'SI-Claude-Plugin'), { recursive: true });
+  fs.writeFileSync(path.join(base, 'plugins', 'installed_plugins.json'),
+    JSON.stringify({ version: 2, plugins: { 'SI-Claude-Plugin@SI-Claude-Plugin': [{ scope: 'user', version: '1.0.0' }] } }));
+  fs.writeFileSync(path.join(base, 'SI-Claude-Plugin', 'last-marketplace-check.txt'), String(Date.now()));
+  const mk = path.join(base, 'plugins', marketplaceDirName, 'SI-Claude-Plugin');
+  fs.mkdirSync(path.join(mk, 'scripts'), { recursive: true });
+  fs.mkdirSync(path.join(mk, 'node_modules'), { recursive: true });
+  fs.writeFileSync(path.join(mk, 'scripts', 'install-apply.js'), 'process.exit(0);');
+  fs.writeFileSync(path.join(mk, 'package.json'), JSON.stringify({ version: '9.9.9' }));
+  return {
+    tmp,
+    run: () => spawnSync(process.execPath, [SCRIPT], {
+      encoding: 'utf8', input: '{"t":1}',
+      env: { ...process.env, HOME: tmp, USERPROFILE: tmp, CLAUDE_PLUGIN_ROOT: '' },
+    }),
+    cleanup: () => { try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* noop */ } },
+  };
+}
+
+test('resolves a plugin under plugins/marketplaces/<slug>', () => {
+  const { run, cleanup } = makeMarketplaceFixture('marketplaces');
+  try {
+    const result = run();
+    assert.ok(!result.stderr.includes('could not locate install-apply.js'),
+      'plural marketplaces layout must resolve; stderr: ' + result.stderr);
+    assert.ok(result.stderr.includes('core setup'),
+      'should proceed to core setup; stderr: ' + result.stderr);
+  } finally { cleanup(); }
+});
+
 if (failed === 0) {
   process.stdout.write(`All ${passed} tests passed.\n\n`);
   process.exit(0);

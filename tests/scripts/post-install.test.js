@@ -125,7 +125,7 @@ function runTests() {
       const result = run(pkgRoot, { initCwd: consumer, homeDir });
       assert.strictEqual(result.code, 0);
       assert.ok(installRan(pkgRoot), 'should run install-apply for a real consumer install');
-      const tracker = path.join(homeDir, '.claude', 'sicp', 'installed-sicp-version.txt');
+      const tracker = path.join(homeDir, '.claude', 'SI-Claude-Plugin', 'installed-version.txt');
       assert.ok(fs.existsSync(tracker), 'should record the installed version');
       assert.strictEqual(fs.readFileSync(tracker, 'utf8').trim(), '9.9.9');
     } finally {
@@ -173,9 +173,9 @@ function runTests() {
     const homeDir = createTempDir('sicp-home-');
     const consumer = createTempDir('sicp-consumer-');
     try {
-      const trackerDir = path.join(homeDir, '.claude', 'sicp');
+      const trackerDir = path.join(homeDir, '.claude', 'SI-Claude-Plugin');
       fs.mkdirSync(trackerDir, { recursive: true });
-      fs.writeFileSync(path.join(trackerDir, 'installed-sicp-version.txt'), '9.9.9');
+      fs.writeFileSync(path.join(trackerDir, 'installed-version.txt'), '9.9.9');
       const result = run(pkgRoot, { initCwd: consumer, homeDir });
       assert.strictEqual(result.code, 0);
       assert.ok(/already installed/.test(result.stdout));

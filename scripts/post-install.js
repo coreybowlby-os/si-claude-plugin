@@ -59,7 +59,9 @@ try {
   currentVersion = pkg.version || null;
 } catch (_) { /* intentional noop */ }
 
-const trackerPath = path.join(os.homedir(), '.claude', 'sicp', 'installed-sicp-version.txt');
+// Must match STATE_DIR / versionTrackerPath in scripts/hooks/session-start-plugin-sync.js.
+// The directory is named for the Claude Code plugin, not the npm package.
+const trackerPath = path.join(os.homedir(), '.claude', 'SI-Claude-Plugin', 'installed-version.txt');
 let lastDeployed = null;
 try { lastDeployed = fs.readFileSync(trackerPath, 'utf8').trim() || null; } catch (_) { /* intentional noop */ }
 

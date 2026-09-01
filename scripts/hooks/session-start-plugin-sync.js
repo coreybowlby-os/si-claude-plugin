@@ -18,8 +18,8 @@
  * Version comparison uses semver ordering (>, not !=) so a stale installed_plugins.json
  * never causes a downgrade after a marketplace-sourced upgrade.
  *
- * Version tracker: ~/.claude/sicp/installed-sicp-version.txt
- * Cooldown tracker: ~/.claude/sicp/last-marketplace-check.txt
+ * Version tracker: ~/.claude/SI-Claude-Plugin/installed-version.txt
+ * Cooldown tracker: ~/.claude/SI-Claude-Plugin/last-marketplace-check.txt
  */
 
 'use strict';
@@ -32,11 +32,15 @@ const { spawnSync } = require('child_process');
 const homeDir = os.homedir();
 const claudeDir = path.join(homeDir, '.claude');
 const installedPluginsPath = path.join(claudeDir, 'plugins', 'installed_plugins.json');
-const versionTrackerPath = path.join(claudeDir, 'sicp', 'installed-sicp-version.txt');
-const marketplaceCheckPath = path.join(claudeDir, 'sicp', 'last-marketplace-check.txt');
-const rulesCorePath = path.join(claudeDir, 'rules', 'common');
+// The slug is the Claude Code PLUGIN name — as in .claude-plugin/plugin.json and the
+// directory Claude Code creates at ~/.claude/plugins/marketplaces/<slug>. It is not the
+// npm package name. It also names this plugin's private state directory under ~/.claude/.
+const PLUGIN_SLUG = 'SI-Claude-Plugin';
+const STATE_DIR = PLUGIN_SLUG;
 
-const PLUGIN_SLUGS = ['sicp', 'SI-Claude-Plugin', 'ecc'];
+const versionTrackerPath = path.join(claudeDir, STATE_DIR, 'installed-version.txt');
+const marketplaceCheckPath = path.join(claudeDir, STATE_DIR, 'last-marketplace-check.txt');
+const rulesCorePath = path.join(claudeDir, 'rules', 'common');
 const MARKETPLACE_CHECK_COOLDOWN_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 // ---------------------------------------------------------------------------
@@ -67,13 +71,8 @@ function semverGreater(a, b) {
 // ---------------------------------------------------------------------------
 
 function resolveMarketplacePath() {
-  for (const slug of PLUGIN_SLUGS) {
-    const candidate = path.join(claudeDir, 'plugins', 'marketplaces', slug);
-    if (fs.existsSync(path.join(candidate, 'scripts', 'install-apply.js'))) {
-      return candidate;
-    }
-  }
-  return null;
+  const candidate = path.join(claudeDir, 'plugins', 'marketplaces', PLUGIN_SLUG);
+  return fs.existsSync(path.join(candidate, 'scripts', 'install-apply.js')) ? candidate : null;
 }
 
 function shouldCheckMarketplace() {
@@ -127,18 +126,21 @@ function resolvePluginRoot() {
     return envRoot;
   }
 
-  for (const slug of PLUGIN_SLUGS) {
-    for (const rel of [slug, `${slug}@${slug}`, path.join('marketplace', slug)]) {
-      const candidate = path.join(claudeDir, 'plugins', rel);
-      if (fs.existsSync(path.join(candidate, 'scripts', 'install-apply.js'))) {
-        return candidate;
-      }
+  const rels = [
+    PLUGIN_SLUG,
+    `${PLUGIN_SLUG}@${PLUGIN_SLUG}`,
+    path.join('marketplaces', PLUGIN_SLUG),
+  ];
+  for (const rel of rels) {
+    const candidate = path.join(claudeDir, 'plugins', rel);
+    if (fs.existsSync(path.join(candidate, 'scripts', 'install-apply.js'))) {
+      return candidate;
     }
   }
 
   try {
-    for (const slug of PLUGIN_SLUGS) {
-      const cacheBase = path.join(claudeDir, 'plugins', 'cache', slug);
+    {
+      const cacheBase = path.join(claudeDir, 'plugins', 'cache', PLUGIN_SLUG);
       for (const org of fs.readdirSync(cacheBase, { withFileTypes: true })) {
         if (!org.isDirectory()) continue;
         for (const ver of fs.readdirSync(path.join(cacheBase, org.name), { withFileTypes: true })) {
@@ -171,7 +173,7 @@ function getInstalledVersion() {
     const data = JSON.parse(fs.readFileSync(installedPluginsPath, 'utf8'));
     const plugins = data.plugins || {};
     for (const key of Object.keys(plugins)) {
-      if (PLUGIN_SLUGS.some(s => key.startsWith(s))) {
+      if (key.startsWith(PLUGIN_SLUG)) {
         const entries = plugins[key];
         const ver = entries && entries[0] && entries[0].version;
         if (ver) return ver;
