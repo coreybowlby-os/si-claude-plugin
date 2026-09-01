@@ -43,7 +43,7 @@ Bu politika aşağıdakileri kapsar:
 - Makinenizde çalışan hook script'leri
 - Install/uninstall/repair yaşam döngüsü script'leri
 - ECC ile birlikte gelen MCP konfigürasyonları
-- AgentShield güvenlik tarayıcısı ([AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin))
+- AgentShield güvenlik tarayıcısı ([AgentShield](https://www.npmjs.com/package/ecc-agentshield))
 
 ## Güvenlik Kaynakları
 

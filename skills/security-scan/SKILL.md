@@ -6,7 +6,7 @@ origin: ECC
 
 # Security Scan Skill
 
-Audit your Claude Code configuration for security issues using [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin).
+Audit your Claude Code configuration for security issues using [AgentShield](https://www.npmjs.com/package/ecc-agentshield).
 
 ## When to Activate
 
@@ -161,5 +161,5 @@ Add to your CI pipeline:
 
 ## Links
 
-- **GitHub**: [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+- **GitHub**: [AgentShield](https://www.npmjs.com/package/ecc-agentshield)
 - **npm**: [npmjs.com/package/ecc-agentshield](https://www.npmjs.com/package/ecc-agentshield)

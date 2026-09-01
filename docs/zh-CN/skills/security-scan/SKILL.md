@@ -6,7 +6,7 @@ origin: ECC
 
 # 安全扫描技能
 
-使用 [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin) 审计您的 Claude Code 配置中的安全问题。
+使用 [AgentShield](https://www.npmjs.com/package/ecc-agentshield) 审计您的 Claude Code 配置中的安全问题。
 
 ## 何时激活
 
@@ -168,5 +168,5 @@ npx ecc-agentshield init
 
 ## 链接
 
-* **GitHub**: [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+* **GitHub**: [AgentShield](https://www.npmjs.com/package/ecc-agentshield)
 * **npm**: [npmjs.com/package/ecc-agentshield](https://www.npmjs.com/package/ecc-agentshield)

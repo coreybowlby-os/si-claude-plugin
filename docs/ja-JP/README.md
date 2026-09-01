@@ -371,7 +371,7 @@ CLAUDE.md、settings.json、MCP サーバー、フック、エージェント定
 
 Claude Codeで`/security-scan`を実行、または[GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin)でCIに追加できます。
 
-[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### 継続的学習 v2
 

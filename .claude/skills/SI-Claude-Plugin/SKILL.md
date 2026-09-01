@@ -103,7 +103,6 @@ This project uses **hybrid** module organization.
 
 - `.github/workflows/ci.yml`
 - `.github/workflows/maintenance.yml`
-- `.github/workflows/monthly-metrics.yml`
 - `.github/workflows/release.yml`
 - `.github/workflows/reusable-release.yml`
 - `.github/workflows/reusable-test.yml`

@@ -1,6 +1,5 @@
 # The Shorthand Guide to SI Claude Plugin
 
-![Header: Tips & Tricks for Claude Code](./assets/images/shortform/00-header.png)
 
 ---
 

@@ -43,7 +43,7 @@ This policy covers:
 - Hook scripts that execute on your machine
 - Install/uninstall/repair lifecycle scripts
 - MCP configurations shipped with sicp
-- The AgentShield security scanner ([AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin))
+- The AgentShield security scanner ([AgentShield](https://www.npmjs.com/package/ecc-agentshield))
 
 ## Security Resources
 

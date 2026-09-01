@@ -1,6 +1,5 @@
 # 关于 Claude Code 的完整长篇指南
 
-![Header: The Longform Guide to SI Claude Plugin](../../assets/images/longform/01-header.png)
 
 ***
 
@@ -318,7 +317,6 @@ alias q='cd ~/Desktop/projects'
 
 ## 里程碑
 
-![25k+ GitHub Stars](../../assets/images/longform/09-25k-stars.png)
 *一周内获得 25,000+ GitHub stars*
 
 ***

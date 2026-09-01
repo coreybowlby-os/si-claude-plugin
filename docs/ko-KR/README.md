@@ -309,7 +309,7 @@ npx ecc-agentshield init
 
 Claude Code에서 `/security-scan`을 사용하거나, [GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin)으로 CI에 추가하세요.
 
-[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### 지속적 학습 v2
 

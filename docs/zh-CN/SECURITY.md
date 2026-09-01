@@ -43,7 +43,7 @@
 * 在您机器上执行的钩子脚本
 * 安装/卸载/修复生命周期脚本
 * 随 ECC 分发的 MCP 配置
-* AgentShield 安全扫描器 ([AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin))
+* AgentShield 安全扫描器 ([AgentShield](https://www.npmjs.com/package/ecc-agentshield))
 
 ## 安全资源
 

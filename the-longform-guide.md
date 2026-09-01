@@ -1,6 +1,5 @@
 # The Longform Guide to SI Claude Plugin
 
-![Header: The Longform Guide to SI Claude Plugin](./assets/images/longform/01-header.png)
 
 ---
 
@@ -314,7 +313,6 @@ alias q='cd ~/Desktop/projects'
 
 ## Milestone
 
-![25k+ GitHub Stars](./assets/images/longform/09-25k-stars.png)
 *25,000+ GitHub stars in under a week*
 
 ---

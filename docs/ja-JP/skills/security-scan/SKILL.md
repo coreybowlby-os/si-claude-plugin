@@ -5,7 +5,7 @@ description: AgentShield を使用して、Claude Code の設定（.claude/ デ�
 
 # Security Scan Skill
 
-[AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin) を使用して、Claude Code の設定のセキュリティ問題を監査します。
+[AgentShield](https://www.npmjs.com/package/ecc-agentshield) を使用して、Claude Code の設定のセキュリティ問題を監査します。
 
 ## 起動タイミング
 
@@ -160,5 +160,5 @@ CI パイプラインに追加します：
 
 ## リンク
 
-- **GitHub**: [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+- **GitHub**: [AgentShield](https://www.npmjs.com/package/ecc-agentshield)
 - **npm**: [npmjs.com/package/ecc-agentshield](https://www.npmjs.com/package/ecc-agentshield)

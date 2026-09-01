@@ -1,6 +1,5 @@
 # Claude Code'un Her Şeyine Dair Kısa Kılavuz
 
-![Header: Tips & Tricks for Claude Code](../assets/images/shortform/00-header.png)
 
 ---
 

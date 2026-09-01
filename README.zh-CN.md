@@ -54,7 +54,6 @@
 </td>
 <td width="33%">
 <a href="https://x.com/affaanmustafa/status/2033263813387223421">
-<img src="./assets/images/security/security-guide-header.png" alt="The Shorthand Guide to Everything Agentic Security" />
 </a>
 </td>
 </tr>
@@ -478,7 +477,7 @@ npx ecc-agentshield init
 
 在 Claude Code 中使用 `/security-scan` 运行，或通过 [GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin) 集成到 CI。
 
-[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### 持续学习 v2
 

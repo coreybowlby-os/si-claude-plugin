@@ -24,7 +24,6 @@ Saldırı vektörleri esasen herhangi bir etkileşim giriş noktasıdır. Agent'
 
 İnsanların güldüğü bu Good Rudi jailbreak klipleri bile (komik ngl) aynı sorun sınıfına işaret ediyor: tekrarlanan denemeler, sonunda hassas bir ifşa, yüzeyde eğlenceli ancak altta yatan arıza ciddi - yani sonuçta çocuklar için tasarlanmış, bundan biraz çıkarım yapın ve bunun neden felaket olabileceği sonucuna hızla varırsınız. Aynı desen, model gerçek araçlara ve gerçek izinlere bağlandığında çok daha ileri gider.
 
-[Video: Bad Rudi Exploit](../assets/images/security/badrudi-exploit.mp4) — good rudi (çocuklar için grok animasyonlu AI karakteri) hassas bilgileri ifşa etmek için tekrarlanan denemelerden sonra bir prompt jailbreak ile exploit edilir. eğlenceli bir örnek ama yine de olasılıklar çok daha ileri gider.
 
 WhatsApp sadece bir örnek. E-posta ekleri büyük bir vektör. Bir saldırgan gömülü bir prompt'lu PDF gönderiyor; agent'ınız eki işin bir parçası olarak okuyor ve şimdi yardımcı veri olarak kalması gereken metin kötü niyetli talimata dönüştü. Üzerlerinde OCR yapıyorsanız ekran görüntüleri ve taramalar da aynı derecede kötü. Anthropic'in kendi prompt injection çalışması, gizli metin ve manipüle edilmiş görüntüleri açıkça gerçek saldırı malzemesi olarak adlandırıyor.
 
@@ -414,7 +413,7 @@ Bir kural istiyorsanız: asla kolaylık katmanının izolasyon katmanını geçm
 
 Bu bir kural sizi şaşırtıcı derecede ileri götürür.
 
-Kurulumunuzu tarayın: [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+Kurulumunuzu tarayın: [AgentShield](https://www.npmjs.com/package/ecc-agentshield)
 
 ---
 
@@ -452,4 +451,4 @@ Kurulumunuzu tarayın: [AgentShield](https://github.com/coreybowlby-os/SI-Claude
 
 gidip yapın ve ayrıca bu repo'ları kaydedin:
 - [github.com/coreybowlby-os/SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
-- [AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+- [AgentShield](https://www.npmjs.com/package/ecc-agentshield)

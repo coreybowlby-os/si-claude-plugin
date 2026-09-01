@@ -1,6 +1,5 @@
 # Claude Code'un Her Şeyine Dair Uzun Kılavuz
 
-![Header: The Longform Guide to SI Claude Plugin](../assets/images/longform/01-header.png)
 
 ---
 
@@ -314,7 +313,6 @@ alias q='cd ~/Desktop/projects'
 
 ## Kilometre Taşı
 
-![25k+ GitHub Stars](../assets/images/longform/09-25k-stars.png)
 *Bir haftadan kısa sürede 25.000+ GitHub yıldızı*
 
 ---

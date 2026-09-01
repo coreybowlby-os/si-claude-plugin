@@ -55,7 +55,6 @@
 </td>
 <td width="33%">
 <a href="https://x.com/affaanmustafa/status/2033263813387223421">
-<img src="../../assets/images/security/security-guide-header.png" alt="Agentic安全简明指南" />
 </a>
 </td>
 </tr>
@@ -522,7 +521,7 @@ npx ecc-agentshield init
 
 在 Claude Code 中使用 `/security-scan` 来运行它，或者通过 [GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin) 添加到 CI。
 
-[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### Plankton — 编写时代码质量强制执行
 
