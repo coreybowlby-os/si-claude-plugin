@@ -614,7 +614,7 @@ sicp は [Cursor IDE](https://cursor.com) の事前翻訳設定を含みます�
 
 ```bash
 # パッケージをインストール
-npm install sicp
+npm install si-claude-plugin
 
 # 言語をインストール
 ./install.sh --target cursor typescript
@@ -717,13 +717,13 @@ opencode
 
 **オプション2：npmパッケージとしてインストール**
 ```bash
-npm install sicp
+npm install si-claude-plugin
 ```
 
 その後`opencode.json`に追加：
 ```json
 {
-  "plugin": ["sicp"]
+  "plugin": ["si-claude-plugin"]
 }
 ```
 

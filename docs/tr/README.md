@@ -3,7 +3,7 @@
 [![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
 [![Forks](https://img.shields.io/github/forks/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/network/members)
 [![Contributors](https://img.shields.io/github/contributors/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/graphs/contributors)
-[![npm sicp](https://img.shields.io/npm/dw/sicp?label=sicp%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/sicp)
+[![npm si-claude-plugin](https://img.shields.io/npm/dw/si-claude-plugin?label=si-claude-plugin%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/si-claude-plugin)
 [![npm ecc-agentshield](https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/ecc-agentshield)
 [![GitHub App Install](https://img.shields.io/badge/GitHub%20App-150%20kurulum-2ea44f?logo=github)](https://github.com/marketplace/ecc-tools)
 [![License](https://img.shields.io/badge/lisans-MIT-blue.svg)](../../LICENSE)
@@ -144,7 +144,7 @@ npm install        # veya: pnpm install | yarn install | bun install
 # .\install.ps1 --target antigravity typescript
 
 # npm-installed uyumluluk entry point'i de çapraz platform çalışır
-npx sicp-install typescript
+npx -p si-claude-plugin sicp-install typescript
 ```
 
 Manuel kurulum talimatları için `rules/` klasöründeki README'ye bakın.

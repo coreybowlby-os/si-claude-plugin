@@ -10,13 +10,13 @@
  *
  * Option 1: Install via npm
  * ```bash
- * npm install sicp
+ * npm install si-claude-plugin
  * ```
  *
  * Then add to your opencode.json:
  * ```json
  * {
- *   "plugin": ["sicp"]
+ *   "plugin": ["si-claude-plugin"]
  * }
  * ```
  *

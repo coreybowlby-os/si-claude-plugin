@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Runs automatically after `npm install sicp` or `npm install -g sicp`.
+// Runs automatically after `npm install si-claude-plugin` or `npm install -g si-claude-plugin`.
 // Applies the core profile so hooks, rules, and agents land in ~/.claude/.
 // Skips if this exact version was already applied (idempotent).
 //
@@ -47,7 +47,7 @@ if (!isTruthy(process.env.SICP_FORCE_POSTINSTALL)) {
     process.stdout.write(
       '\n  [SICP] Source checkout detected — skipping automatic core setup.\n' +
       "        Your global ~/.claude was not modified.\n" +
-      "        To install into ~/.claude from here, run: npx sicp\n\n"
+      "        To install into ~/.claude from here, run: npx si-claude-plugin\n\n"
     );
     process.exit(0);
   }
@@ -80,11 +80,11 @@ const result = spawnSync(
 
 if (result.error || result.status !== 0) {
   const reason = result.error ? result.error.message : `exit ${result.status}`;
-  process.stdout.write(`\n  [SICP] Auto-setup failed (${reason}).\n  Run manually: npx sicp\n\n`);
+  process.stdout.write(`\n  [SICP] Auto-setup failed (${reason}).\n  Run manually: npx si-claude-plugin\n\n`);
 } else {
   try {
     fs.mkdirSync(path.dirname(trackerPath), { recursive: true });
     fs.writeFileSync(trackerPath, currentVersion || 'unknown');
   } catch (_) { /* intentional noop */ }
-  process.stdout.write(`\n  [SICP] Core setup complete! Run 'npx sicp' for language-specific rules.\n\n`);
+  process.stdout.write(`\n  [SICP] Core setup complete! Run 'npx si-claude-plugin' for language-specific rules.\n\n`);
 }

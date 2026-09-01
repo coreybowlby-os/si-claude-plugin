@@ -1,5 +1,5 @@
 {
-  "name": "sicp",
+  "name": "si-claude-plugin",
   "version": "1.17.3",
   "description": "Complete collection of battle-tested Claude Code configs — agents, skills, hooks, rules, and legacy command shims evolved over 10+ months of intensive daily use",
   "keywords": [
@@ -100,6 +100,7 @@
     "llms.txt"
   ],
   "bin": {
+    "si-claude-plugin": "scripts/sicp.js",
     "sicp": "scripts/sicp.js",
     "sicp-install": "scripts/install-apply.js"
   },

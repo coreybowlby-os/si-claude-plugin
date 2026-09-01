@@ -1,5 +1,5 @@
 {
-  "name": "sicp",
+  "name": "si-claude-plugin",
   "version": "1.17.3",
   "description": "SI Claude Plugin (ECC) plugin for OpenCode - agents, commands, hooks, and skills",
   "main": "dist/index.js",

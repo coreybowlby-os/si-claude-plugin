@@ -1,11 +1,11 @@
 {
-  "name": "sicp",
+  "name": "si-claude-plugin",
   "interface": {
     "displayName": "SI Claude Plugin"
   },
   "plugins": [
     {
-      "name": "sicp",
+      "name": "si-claude-plugin",
       "source": {
         "source": "local",
         "path": "../.."

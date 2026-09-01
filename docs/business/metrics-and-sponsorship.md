@@ -17,11 +17,11 @@ Use four categories in every update:
 
 ```bash
 # Weekly downloads
-curl -s https://api.npmjs.org/downloads/point/last-week/sicp
+curl -s https://api.npmjs.org/downloads/point/last-week/si-claude-plugin
 curl -s https://api.npmjs.org/downloads/point/last-week/ecc-agentshield
 
 # Last 30 days
-curl -s https://api.npmjs.org/downloads/point/last-month/sicp
+curl -s https://api.npmjs.org/downloads/point/last-month/si-claude-plugin
 curl -s https://api.npmjs.org/downloads/point/last-month/ecc-agentshield
 ```
 

@@ -98,7 +98,7 @@ npm install        # or: pnpm install | yarn install | bun install
 # .\install.ps1 --target gemini --profile full
 
 # npm-installed compatibility entrypoint also works cross-platform
-npx sicp-install typescript
+npx -p si-claude-plugin sicp-install typescript
 ```
 
 For manual install instructions see the README in the `rules/` folder. When copying rules manually, copy the whole language directory (for example `rules/common` or `rules/golang`), not the files inside it, so relative references keep working and filenames do not collide.
@@ -1305,13 +1305,13 @@ opencode
 
 **Option 2: Install as npm package**
 ```bash
-npm install sicp
+npm install si-claude-plugin
 ```
 
 Then add to your `opencode.json`:
 ```json
 {
-  "plugin": ["sicp"]
+  "plugin": ["si-claude-plugin"]
 }
 ```
 

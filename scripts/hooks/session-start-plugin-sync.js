@@ -242,7 +242,7 @@ const installScript = pluginRoot ? path.join(pluginRoot, 'scripts', 'install-app
 if (!installScript || !fs.existsSync(installScript)) {
   process.stderr.write(
     '[plugin-sync] WARNING: could not locate install-apply.js -- ' +
-    'set CLAUDE_PLUGIN_ROOT or run: npx sicp\n'
+    'set CLAUDE_PLUGIN_ROOT or run: npx si-claude-plugin\n'
   );
   passThrough();
   process.exit(0);
@@ -270,7 +270,7 @@ if (!fs.existsSync(nodeModulesPath)) {
   });
   if (npmInstall.error || npmInstall.status !== 0) {
     const reason = npmInstall.error ? npmInstall.error.message : `exit ${npmInstall.status}`;
-    process.stderr.write(`[plugin-sync] ERROR: npm install failed (${reason}) -- run: npx sicp\n`);
+    process.stderr.write(`[plugin-sync] ERROR: npm install failed (${reason}) -- run: npx si-claude-plugin\n`);
     if (npmInstall.stderr) process.stderr.write(npmInstall.stderr);
     passThrough();
     process.exit(0);
@@ -286,7 +286,7 @@ const result = spawnSync(
 
 if (result.error || result.status !== 0) {
   const reason = result.error ? result.error.message : `exit ${result.status}`;
-  process.stderr.write(`[plugin-sync] ERROR: setup failed (${reason}) -- run: npx sicp\n`);
+  process.stderr.write(`[plugin-sync] ERROR: setup failed (${reason}) -- run: npx si-claude-plugin\n`);
   if (result.stderr) process.stderr.write(result.stderr);
 } else {
   writeTrackerVersion(newVersion);

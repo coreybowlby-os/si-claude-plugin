@@ -41,7 +41,7 @@ function makePackage({ withGit }) {
   );
   fs.writeFileSync(
     path.join(pkgRoot, 'package.json'),
-    JSON.stringify({ name: 'sicp', version: '9.9.9' }, null, 2)
+    JSON.stringify({ name: 'si-claude-plugin', version: '9.9.9' }, null, 2)
   );
   if (withGit) fs.mkdirSync(path.join(pkgRoot, '.git'), { recursive: true });
   return pkgRoot;

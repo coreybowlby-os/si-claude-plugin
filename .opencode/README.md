@@ -22,14 +22,14 @@ Choose the method that matches your workflow below.
 ### Option 1: npm Package
 
 ```bash
-npm install sicp
+npm install si-claude-plugin
 ```
 
 Add to your `opencode.json`:
 
 ```json
 {
-  "plugin": ["sicp"]
+  "plugin": ["si-claude-plugin"]
 }
 ```
 
@@ -44,7 +44,7 @@ It does **not** auto-register the full ECC command/agent/instruction catalog in 
 After installation, the `sicp-install` CLI is also available:
 
 ```bash
-npx sicp-install typescript
+npx -p si-claude-plugin sicp-install typescript
 ```
 
 ### Option 2: Direct Use
