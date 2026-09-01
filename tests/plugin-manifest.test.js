@@ -292,6 +292,42 @@ test('marketplace local plugin path resolves to the repo-root Codex bundle', () 
   }
 });
 
+
+// The manifest previously listed 38 of 47 agents: every listed file existed, so
+// the existing check passed while nine agents silently never loaded. Guard the
+// reverse direction too, and keep the advertised counts honest.
+
+test('claude plugin.json registers every agent on disk', () => {
+  const onDisk = fs.readdirSync(path.join(repoRoot, 'agents'))
+    .filter(f => f.endsWith('.md'))
+    .sort();
+  const listed = claudePlugin.agents
+    .map(p => p.split('/').pop())
+    .sort();
+  const unregistered = onDisk.filter(f => !listed.includes(f));
+  assert.strictEqual(
+    unregistered.length, 0,
+    'agents/ files missing from plugin.json agents[]: ' + unregistered.join(', '),
+  );
+});
+
+test('claude plugin.json advertised counts match the repository', () => {
+  const counts = {
+    agents: fs.readdirSync(path.join(repoRoot, 'agents')).filter(f => f.endsWith('.md')).length,
+    skills: fs.readdirSync(path.join(repoRoot, 'skills'), { withFileTypes: true })
+      .filter(d => d.isDirectory() && fs.existsSync(path.join(repoRoot, 'skills', d.name, 'SKILL.md'))).length,
+    commands: fs.readdirSync(path.join(repoRoot, 'commands')).filter(f => f.endsWith('.md')).length,
+  };
+  for (const [noun, actual] of Object.entries(counts)) {
+    const m = claudePlugin.description.match(new RegExp('(\d+) ' + noun));
+    if (!m) continue;
+    assert.strictEqual(
+      Number(m[1]), actual,
+      'plugin.json description claims ' + m[1] + ' ' + noun + ', repository has ' + actual,
+    );
+  }
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 console.log(`\nPassed: ${passed}`);
 console.log(`Failed: ${failed}`);

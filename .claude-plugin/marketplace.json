@@ -12,7 +12,7 @@
     {
       "name": "SI-Claude-Plugin",
       "source": "./",
-      "description": "A Claude Code plugin — 47 agents, 195 skills, 72 legacy command shims, selective install profiles, and production-ready hooks for TDD, security scanning, code review, and continuous learning",
+      "description": "A Claude Code plugin — 47 agents, 195 skills, 79 commands, selective install profiles, and production-ready hooks for TDD, security scanning, code review, and continuous learning",
       "version": "1.17.3",
       "author": {
         "name": "Corey Bowlby"

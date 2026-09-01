@@ -1,7 +1,7 @@
 {
   "name": "SI-Claude-Plugin",
   "version": "1.17.3",
-  "description": "Battle-tested Claude Code plugin for engineering teams — 47 agents, 195 skills, 72 legacy command shims, production-ready hooks, and selective install workflows evolved through continuous real-world use",
+  "description": "Battle-tested Claude Code plugin for engineering teams — 47 agents, 195 skills, 79 commands, production-ready hooks, and selective install workflows evolved through continuous real-world use",
   "author": {
     "name": "Corey Bowlby",
     "url": "https://github.com/coreybowlby-os/SI-Claude-Plugin"
@@ -26,7 +26,12 @@
     "./agents/architect.md",
     "./agents/build-error-resolver.md",
     "./agents/chief-of-staff.md",
+    "./agents/code-architect.md",
+    "./agents/code-explorer.md",
     "./agents/code-reviewer.md",
+    "./agents/code-simplifier.md",
+    "./agents/comment-analyzer.md",
+    "./agents/conversation-analyzer.md",
     "./agents/cpp-build-resolver.md",
     "./agents/cpp-reviewer.md",
     "./agents/csharp-reviewer.md",
@@ -53,13 +58,17 @@
     "./agents/opensource-sanitizer.md",
     "./agents/performance-optimizer.md",
     "./agents/planner.md",
+    "./agents/pr-test-analyzer.md",
     "./agents/python-reviewer.md",
     "./agents/pytorch-build-resolver.md",
     "./agents/refactor-cleaner.md",
     "./agents/rust-build-resolver.md",
     "./agents/rust-reviewer.md",
     "./agents/security-reviewer.md",
+    "./agents/seo-specialist.md",
+    "./agents/silent-failure-hunter.md",
     "./agents/tdd-guide.md",
+    "./agents/type-design-analyzer.md",
     "./agents/typescript-reviewer.md"
   ],
   "skills": [
