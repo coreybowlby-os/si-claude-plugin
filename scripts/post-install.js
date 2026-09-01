@@ -10,8 +10,8 @@
 // (as a dependency, or -g) are unaffected and still auto-apply.
 //
 // Env overrides:
-//   SICP_SKIP_POSTINSTALL=1   never auto-apply
-//   SICP_FORCE_POSTINSTALL=1  auto-apply even from a source checkout
+//   SICP_SKIP_POSTINSTALL=1   never auto-apply (always wins)
+//   SICP_FORCE_POSTINSTALL=1  auto-apply even when this is not an npm install
 
 const fs = require('fs');
 const os = require('os');
@@ -23,34 +23,28 @@ const INSTALL_SCRIPT = path.join(PACKAGE_ROOT, 'scripts', 'install-apply.js');
 
 const isTruthy = (value) => /^(1|true|yes)$/i.test(String(value || '').trim());
 
-// A published npm tarball never contains .git, so its presence means we are
-// sitting in a working tree rather than an installed package.
+// Gate on a POSITIVE signal rather than trying to enumerate every way this can be
+// a source tree. npm — local or global — always unpacks a package into a
+// node_modules directory. A git checkout, an extracted ZIP, or a copied tree is
+// not a consumer install and must never rewrite the user's ~/.claude.
+const isInstalledPackage = PACKAGE_ROOT.split(path.sep).includes('node_modules');
+
+// Belt and braces: a published tarball never contains .git.
 const isSourceCheckout = fs.existsSync(path.join(PACKAGE_ROOT, '.git'));
 
-// npm sets INIT_CWD to the directory npm was launched from. When that is the
-// package itself, this is `npm install` run inside the repo.
-let isSelfInstall = false;
-if (process.env.INIT_CWD) {
-  try {
-    isSelfInstall = fs.realpathSync(path.resolve(process.env.INIT_CWD)) === fs.realpathSync(PACKAGE_ROOT);
-  } catch (_) {
-    isSelfInstall = path.resolve(process.env.INIT_CWD) === PACKAGE_ROOT;
-  }
+// SKIP is a safety opt-out and must not be defeatable by FORCE.
+if (isTruthy(process.env.SICP_SKIP_POSTINSTALL)) {
+  process.stdout.write('\n  [SICP] SICP_SKIP_POSTINSTALL set — skipping core setup.\n\n');
+  process.exit(0);
 }
 
-if (!isTruthy(process.env.SICP_FORCE_POSTINSTALL)) {
-  if (isTruthy(process.env.SICP_SKIP_POSTINSTALL)) {
-    process.stdout.write('\n  [SICP] SICP_SKIP_POSTINSTALL set — skipping core setup.\n\n');
-    process.exit(0);
-  }
-  if (isSourceCheckout || isSelfInstall) {
-    process.stdout.write(
-      '\n  [SICP] Source checkout detected — skipping automatic core setup.\n' +
-      "        Your global ~/.claude was not modified.\n" +
-      "        To install into ~/.claude from here, run: npx si-claude-plugin\n\n"
-    );
-    process.exit(0);
-  }
+if (!isTruthy(process.env.SICP_FORCE_POSTINSTALL) && (!isInstalledPackage || isSourceCheckout)) {
+  process.stdout.write(
+    '\n  [SICP] Not an npm package install — skipping automatic core setup.\n' +
+    '        Your global ~/.claude was not modified.\n' +
+    '        To install into ~/.claude from here, run: npx si-claude-plugin\n\n'
+  );
+  process.exit(0);
 }
 
 let currentVersion = null;
