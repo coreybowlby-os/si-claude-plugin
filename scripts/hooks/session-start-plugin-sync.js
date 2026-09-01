@@ -37,6 +37,9 @@ const installedPluginsPath = path.join(claudeDir, 'plugins', 'installed_plugins.
 // npm package name. It also names this plugin's private state directory under ~/.claude/.
 const PLUGIN_SLUG = 'SI-Claude-Plugin';
 const STATE_DIR = PLUGIN_SLUG;
+// Host/path (no scheme, no .git) this plugin is published from. The marketplace
+// clone must point here before we will pull from it and run what we pulled.
+const TRUSTED_REMOTE = 'github.com/coreybowlby-os/si-claude-plugin';
 
 const versionTrackerPath = path.join(claudeDir, STATE_DIR, 'installed-version.txt');
 const marketplaceCheckPath = path.join(claudeDir, STATE_DIR, 'last-marketplace-check.txt');
@@ -91,7 +94,37 @@ function writeMarketplaceCheckTimestamp() {
   } catch (_) { /* intentional noop */ }
 }
 
+/**
+ * This hook pulls code and then runs it, unattended, at session start. Only pull
+ * from the repository this plugin is actually published from — otherwise a
+ * repointed or hijacked marketplace clone becomes arbitrary code execution.
+ */
+function remoteIsTrusted(marketplacePath) {
+  const result = spawnSync('git', ['remote', 'get-url', 'origin'], {
+    encoding: 'utf8',
+    cwd: marketplacePath,
+    timeout: 10000,
+    shell: false,
+  });
+  if (result.error || result.status !== 0) return false;
+  // Normalise: strip credentials, scheme, .git suffix, trailing slash, case.
+  const url = String(result.stdout || '').trim()
+    .replace(/^[a-z+]+:\/\/[^@/]*@/i, '')
+    .replace(/^[a-z+]+:\/\//i, '')
+    .replace(/^git@([^:]+):/i, '$1/')
+    .replace(/\.git$/i, '')
+    .replace(/\/+$/, '')
+    .toLowerCase();
+  return url === TRUSTED_REMOTE;
+}
+
 function pullMarketplace(marketplacePath) {
+  if (!remoteIsTrusted(marketplacePath)) {
+    process.stderr.write(
+      `[plugin-sync] WARNING: marketplace clone does not point at ${TRUSTED_REMOTE} -- refusing to pull\n`
+    );
+    return false;
+  }
   const result = spawnSync('git', ['pull', '--ff-only', '--quiet'], {
     encoding: 'utf8',
     cwd: marketplacePath,
@@ -261,12 +294,16 @@ process.stderr.write(`[plugin-sync] SI-Claude-Plugin ${label} [source: ${source}
 const nodeModulesPath = path.join(pluginRoot, 'node_modules');
 if (!fs.existsSync(nodeModulesPath)) {
   process.stderr.write('[plugin-sync] node_modules missing -- running npm install...\n');
-  const npmInstall = spawnSync('npm', ['install', '--prefer-offline', '--no-audit', '--no-fund'], {
+  // --ignore-scripts: this runs unattended against a tree we may have just pulled,
+  // so never execute package lifecycle scripts here. shell:false avoids handing the
+  // command line to a shell; Windows needs the .cmd shim named explicitly.
+  const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const npmInstall = spawnSync(npmBin, ['install', '--ignore-scripts', '--prefer-offline', '--no-audit', '--no-fund'], {
     encoding: 'utf8',
     env: process.env,
     cwd: pluginRoot,
     timeout: 120000,
-    shell: true,
+    shell: false,
   });
   if (npmInstall.error || npmInstall.status !== 0) {
     const reason = npmInstall.error ? npmInstall.error.message : `exit ${npmInstall.status}`;

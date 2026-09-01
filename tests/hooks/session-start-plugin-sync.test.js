@@ -261,6 +261,65 @@ test('resolves a plugin under plugins/marketplaces/<slug>', () => {
   } finally { cleanup(); }
 });
 
+
+// ---------------------------------------------------------------------------
+// This hook pulls code and then executes it, unattended, at session start.
+// It must refuse to pull from any remote other than the plugin's own repo.
+// ---------------------------------------------------------------------------
+
+process.stdout.write('Remote trust gate:' + String.fromCharCode(10));
+
+function makeClonedFixture(remoteUrl) {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sicp-trust-'));
+  const base = path.join(tmp, '.claude');
+  fs.mkdirSync(path.join(base, 'plugins'), { recursive: true });
+  fs.mkdirSync(path.join(base, 'SI-Claude-Plugin'), { recursive: true });
+  fs.writeFileSync(path.join(base, 'plugins', 'installed_plugins.json'),
+    JSON.stringify({ version: 2, plugins: { 'SI-Claude-Plugin@SI-Claude-Plugin': [{ scope: 'user', version: '1.0.0' }] } }));
+  const mk = path.join(base, 'plugins', 'marketplaces', 'SI-Claude-Plugin');
+  fs.mkdirSync(path.join(mk, 'scripts'), { recursive: true });
+  fs.mkdirSync(path.join(mk, 'node_modules'), { recursive: true });
+  fs.writeFileSync(path.join(mk, 'scripts', 'install-apply.js'), 'process.exit(0);');
+  fs.writeFileSync(path.join(mk, 'package.json'), JSON.stringify({ version: '9.9.9' }));
+  spawnSync('git', ['init', '-q', '-b', 'main'], { cwd: mk });
+  spawnSync('git', ['remote', 'add', 'origin', remoteUrl], { cwd: mk });
+  // No cooldown file -> a marketplace check (and therefore a pull) is attempted.
+  return {
+    run: () => spawnSync(process.execPath, [SCRIPT], {
+      encoding: 'utf8', input: '{"t":1}',
+      env: { ...process.env, HOME: tmp, USERPROFILE: tmp, CLAUDE_PLUGIN_ROOT: '' },
+    }),
+    cleanup: () => { try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (_) { /* noop */ } },
+  };
+}
+
+test('refuses to pull when the marketplace remote is not the plugin repo', () => {
+  const { run, cleanup } = makeClonedFixture('https://github.com/attacker/evil-plugin.git');
+  try {
+    const result = run();
+    assert.ok(result.stderr.includes('refusing to pull'),
+      'must refuse an untrusted remote; stderr: ' + result.stderr);
+  } finally { cleanup(); }
+});
+
+test('does not refuse when the remote is the plugin repo', () => {
+  const { run, cleanup } = makeClonedFixture('https://github.com/coreybowlby-os/si-claude-plugin.git');
+  try {
+    const result = run();
+    assert.ok(!result.stderr.includes('refusing to pull'),
+      'trusted remote must not be refused; stderr: ' + result.stderr);
+  } finally { cleanup(); }
+});
+
+test('accepts the ssh form of the trusted remote', () => {
+  const { run, cleanup } = makeClonedFixture('git@github.com:coreybowlby-os/si-claude-plugin.git');
+  try {
+    const result = run();
+    assert.ok(!result.stderr.includes('refusing to pull'),
+      'ssh form of the trusted remote must be accepted; stderr: ' + result.stderr);
+  } finally { cleanup(); }
+});
+
 if (failed === 0) {
   process.stdout.write(`All ${passed} tests passed.\n\n`);
   process.exit(0);
