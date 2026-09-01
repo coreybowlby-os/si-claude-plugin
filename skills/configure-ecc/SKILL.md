@@ -1,16 +1,16 @@
 ---
 name: configure-ecc
-description: Interactive installer for Everything Claude Code — guides users through selecting and installing skills and rules to user-level or project-level directories, verifies paths, and optionally optimizes installed files.
+description: Interactive installer for SI Claude Plugin — guides users through selecting and installing skills and rules to user-level or project-level directories, verifies paths, and optionally optimizes installed files.
 origin: ECC
 ---
 
-# Configure Everything Claude Code (ECC)
+# Configure SI Claude Plugin (ECC)
 
-An interactive, step-by-step installation wizard for the Everything Claude Code project. Uses `AskUserQuestion` to guide users through selective installation of skills and rules, then verifies correctness and offers optimization.
+An interactive, step-by-step installation wizard for the SI Claude Plugin project. Uses `AskUserQuestion` to guide users through selective installation of skills and rules, then verifies correctness and offers optimization.
 
 ## When to Activate
 
-- User says "configure ecc", "install ecc", "setup everything claude code", or similar
+- User says "configure ecc", "install ecc", "setup SI Claude Plugin", or similar
 - User wants to selectively install skills or rules from this project
 - User wants to verify or fix an existing ECC installation
 - User wants to optimize installed skills or rules for their project
@@ -28,11 +28,11 @@ This skill must be accessible to Claude Code before activation. Two ways to boot
 Before any installation, clone the latest ECC source to `/tmp`:
 
 ```bash
-rm -rf /tmp/everything-claude-code
-git clone https://github.com/affaan-m/everything-claude-code.git /tmp/everything-claude-code
+rm -rf /tmp/SI-Claude-Plugin
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git /tmp/SI-Claude-Plugin
 ```
 
-Set `ECC_ROOT=/tmp/everything-claude-code` as the source for all subsequent copy operations.
+Set `ECC_ROOT=/tmp/SI-Claude-Plugin` as the source for all subsequent copy operations.
 
 If the clone fails (network issues, etc.), use `AskUserQuestion` to ask the user to provide a local path to an existing ECC clone.
 
@@ -321,7 +321,7 @@ Options:
 Clean up the cloned repository from `/tmp`:
 
 ```bash
-rm -rf /tmp/everything-claude-code
+rm -rf /tmp/SI-Claude-Plugin
 ```
 
 Then print a summary report:

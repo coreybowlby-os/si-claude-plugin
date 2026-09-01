@@ -29,6 +29,37 @@ const SUMMARY_START_MARKER = '<!-- ECC:SUMMARY:START -->';
 const SUMMARY_END_MARKER = '<!-- ECC:SUMMARY:END -->';
 const SESSION_SEPARATOR = '\n---\n';
 
+// ── Transcript entry extractors ──────────────────────────────────
+
+function extractUserMessageText(entry) {
+  const isUser = entry.type === 'user' || entry.role === 'user' || entry.message?.role === 'user';
+  if (!isUser) return '';
+  // Support both direct content and nested message.content (Claude Code JSONL format)
+  const rawContent = entry.message?.content ?? entry.content;
+  if (typeof rawContent === 'string') return rawContent;
+  if (Array.isArray(rawContent)) return rawContent.map(c => (c && c.text) || '').join(' ');
+  return '';
+}
+
+function collectToolUse(entry, toolsUsed, filesModified) {
+  if (entry.type !== 'tool_use' && !entry.tool_name) return;
+  const toolName = entry.tool_name || entry.name || '';
+  if (toolName) toolsUsed.add(toolName);
+  const filePath = entry.tool_input?.file_path || entry.input?.file_path || '';
+  if (filePath && (toolName === 'Edit' || toolName === 'Write')) filesModified.add(filePath);
+}
+
+function collectAssistantToolUses(entry, toolsUsed, filesModified) {
+  if (entry.type !== 'assistant' || !Array.isArray(entry.message?.content)) return;
+  for (const block of entry.message.content) {
+    if (block.type !== 'tool_use') continue;
+    const toolName = block.name || '';
+    if (toolName) toolsUsed.add(toolName);
+    const filePath = block.input?.file_path || '';
+    if (filePath && (toolName === 'Edit' || toolName === 'Write')) filesModified.add(filePath);
+  }
+}
+
 /**
  * Extract a meaningful summary from the session transcript.
  * Reads the JSONL transcript and pulls out key information:
@@ -49,56 +80,17 @@ function extractSessionSummary(transcriptPath) {
   for (const line of lines) {
     try {
       const entry = JSON.parse(line);
-
-      // Collect user messages (first 200 chars each)
-      if (entry.type === 'user' || entry.role === 'user' || entry.message?.role === 'user') {
-        // Support both direct content and nested message.content (Claude Code JSONL format)
-        const rawContent = entry.message?.content ?? entry.content;
-        const text = typeof rawContent === 'string'
-          ? rawContent
-          : Array.isArray(rawContent)
-            ? rawContent.map(c => (c && c.text) || '').join(' ')
-            : '';
-        const cleaned = stripAnsi(text).trim();
-        if (cleaned) {
-          userMessages.push(cleaned.slice(0, 200));
-        }
-      }
-
-      // Collect tool names and modified files (direct tool_use entries)
-      if (entry.type === 'tool_use' || entry.tool_name) {
-        const toolName = entry.tool_name || entry.name || '';
-        if (toolName) toolsUsed.add(toolName);
-
-        const filePath = entry.tool_input?.file_path || entry.input?.file_path || '';
-        if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
-          filesModified.add(filePath);
-        }
-      }
-
-      // Extract tool uses from assistant message content blocks (Claude Code JSONL format)
-      if (entry.type === 'assistant' && Array.isArray(entry.message?.content)) {
-        for (const block of entry.message.content) {
-          if (block.type === 'tool_use') {
-            const toolName = block.name || '';
-            if (toolName) toolsUsed.add(toolName);
-
-            const filePath = block.input?.file_path || '';
-            if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
-              filesModified.add(filePath);
-            }
-          }
-        }
-      }
+      const text = extractUserMessageText(entry);
+      const cleaned = stripAnsi(text).trim();
+      if (cleaned) userMessages.push(cleaned.slice(0, 200));
+      collectToolUse(entry, toolsUsed, filesModified);
+      collectAssistantToolUses(entry, toolsUsed, filesModified);
     } catch {
       parseErrors++;
     }
   }
 
-  if (parseErrors > 0) {
-    log(`[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`);
-  }
-
+  if (parseErrors > 0) log(`[SessionEnd] Skipped ${parseErrors}/${lines.length} unparseable transcript lines`);
   if (userMessages.length === 0) return null;
 
   return {
@@ -179,7 +171,7 @@ function mergeSessionHeader(content, today, currentTime, metadata) {
 
 async function main() {
   // Parse stdin JSON to get transcript_path
-  let transcriptPath = null;
+  let transcriptPath;
   try {
     const input = JSON.parse(stdinData);
     transcriptPath = input.transcript_path;

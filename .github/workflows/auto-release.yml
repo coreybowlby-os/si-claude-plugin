@@ -1,0 +1,140 @@
+name: Auto Release
+
+# Fires only after the CI workflow completes successfully on main.
+# Reads conventional commits since the last tag, determines the semver bump
+# type, and calls release.sh --ci to bump manifests, commit, tag, and push.
+# The tag push then triggers release.yml which creates the GitHub Release.
+#
+# Bump rules (conventional commits):
+#   feat!: / BREAKING CHANGE  → major
+#   feat:                      → minor
+#   fix: / chore: / etc.       → patch
+#
+# To skip auto-release for a merge, include [skip release] in the commit message.
+# To override the bump type, include [release major], [release minor], or
+# [release patch] in the merge commit message.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+# Only one release at a time — never cancel a running release mid-flight.
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  auto-release:
+    name: Auto Release
+    runs-on: ubuntu-latest
+
+    # Gate 1: CI must have passed
+    # Gate 2: Skip version-bump commits (prevents infinite loop when release.sh
+    #         pushes its own "chore: bump plugin version to X.Y.Z" commit)
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      !startsWith(github.event.workflow_run.head_commit.message, 'chore: bump plugin version')
+
+    steps:
+      - name: Checkout at CI-verified SHA
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '20.x'
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version bump
+        id: version
+        env:
+          HEAD_MSG: ${{ github.event.workflow_run.head_commit.message }}
+        run: |
+          # Honour explicit skip
+          if echo "$HEAD_MSG" | grep -qiF '[skip release]'; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "Skipping release — [skip release] found in commit message."
+            exit 0
+          fi
+          echo "skip=false" >> $GITHUB_OUTPUT
+
+          # Fetch last tag to bound commit log
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          # Collect commit subjects since last tag (or all commits if no tag yet)
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log --format="%s" "${LAST_TAG}..HEAD")
+          else
+            COMMITS=$(git log --format="%s" HEAD)
+          fi
+
+          echo "Commits since ${LAST_TAG:-'(beginning)'}:"
+          echo "$COMMITS"
+
+          # Determine bump type — explicit override in HEAD commit takes priority
+          if echo "$HEAD_MSG" | grep -qiF '[release major]'; then
+            BUMP="major"
+          elif echo "$HEAD_MSG" | grep -qiF '[release minor]'; then
+            BUMP="minor"
+          elif echo "$HEAD_MSG" | grep -qiF '[release patch]'; then
+            BUMP="patch"
+          elif echo "$COMMITS" | grep -qE '^(feat|fix|refactor|perf)(\(.+\))?!:' || echo "$COMMITS" | grep -qF 'BREAKING CHANGE'; then
+            BUMP="major"
+          elif echo "$COMMITS" | grep -qE '^feat(\(.+\))?:'; then
+            BUMP="minor"
+          else
+            BUMP="patch"
+          fi
+          echo "Bump type: $BUMP"
+
+          # Compute next version from current package.json
+          CURRENT=$(node -p "require('./package.json').version")
+          NEXT=$(node -e "
+            const [maj, min, pat] = process.argv[1].split('.').map(Number);
+            const bump = process.argv[2];
+            if (bump === 'major') console.log((maj+1) + '.0.0');
+            else if (bump === 'minor') console.log(maj + '.' + (min+1) + '.0');
+            else console.log(maj + '.' + min + '.' + (pat+1));
+          " "$CURRENT" "$BUMP")
+
+          echo "bump=$BUMP"       >> $GITHUB_OUTPUT
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT"       >> $GITHUB_OUTPUT
+          echo "Next version: $CURRENT → $NEXT ($BUMP)"
+
+      - name: Install dependencies
+        if: steps.version.outputs.skip != 'true'
+        run: npm ci
+
+      - name: Run release script
+        if: steps.version.outputs.skip != 'true'
+        run: bash scripts/release.sh ${{ steps.version.outputs.next }} --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # GITHUB_TOKEN pushes cannot trigger other workflows (GitHub security rule).
+      # So the tag push from release.sh won't fire release.yml automatically.
+      # Instead, we call release.yml directly via workflow_dispatch — GITHUB_TOKEN
+      # CAN trigger workflow_dispatch, just not push/PR events.
+      - name: Trigger release workflow
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          curl -f -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/release.yml/dispatches" \
+            -d "{\"ref\":\"main\",\"inputs\":{\"version\":\"${{ steps.version.outputs.next }}\"}}"

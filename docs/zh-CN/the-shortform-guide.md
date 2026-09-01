@@ -1,10 +1,9 @@
 # Claude Code 简明指南
 
-![标题：Anthropic 黑客马拉松获胜者 - Claude Code 技巧与窍门](../../assets/images/shortform/00-header.png)
+![标题：Claude Code 技巧与窍门](../../assets/images/shortform/00-header.png)
 
 ***
 
-**自 2 月实验性推出以来，我一直是 Claude Code 的忠实用户，并凭借 [zenith.chat](https://zenith.chat) 与 [@DRodriguezFX](https://x.com/DRodriguezFX) 一起赢得了 Anthropic x Forum Ventures 的黑客马拉松——完全使用 Claude Code。**
 
 经过 10 个月的日常使用，以下是我的完整设置：技能、钩子、子代理、MCP、插件以及实际有效的方法。
 
@@ -429,4 +428,3 @@ affoon:~ ctx:65% Opus 4.5 19:52
 
 ***
 
-*在纽约与 [@DRodriguezFX](https://x.com/DRodriguezFX) 一起构建 [zenith.chat](https://zenith.chat) 赢得了 Anthropic x Forum Ventures 黑客马拉松*

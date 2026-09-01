@@ -1,0 +1,103 @@
+ame: Docs Coverage Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  docs-check:
+    name: Verify README updated for material changes
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect material and README changes
+        id: detect
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+
+          README_UPDATED=false
+          echo "$CHANGED" | grep -q '^README\.md$' && README_UPDATED=true
+
+          MATERIAL_PATTERNS=(
+            '^scripts/hooks/'
+            '^scripts/lib/'
+            '^agents/'
+            '^skills/'
+            '^commands/'
+            '^hooks/hooks\.json'
+            '^rules/'
+          )
+
+          MATERIAL_FILES=""
+          for pat in "${MATERIAL_PATTERNS[@]}"; do
+            matched=$(echo "$CHANGED" | grep -E "$pat" || true)
+            [ -n "$matched" ] && MATERIAL_FILES="$MATERIAL_FILES\n$matched"
+          done
+
+          echo "readme_updated=$README_UPDATED" >> "$GITHUB_OUTPUT"
+          if [ -n "$MATERIAL_FILES" ]; then
+            echo "has_material_changes=true" >> "$GITHUB_OUTPUT"
+            printf '%b' "$MATERIAL_FILES" | sort -u > /tmp/material_files.txt
+            echo "--- Material files changed ---"
+            cat /tmp/material_files.txt
+          else
+            echo "has_material_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No material changes detected."
+          fi
+
+      - name: Fail if material changes lack docs update
+        if: steps.detect.outputs.has_material_changes == 'true' && steps.detect.outputs.readme_updated == 'false'
+        run: |
+          echo "::error title=Docs Coverage::Material changes detected without README.md update."
+          echo ""
+          echo "Files requiring documentation:"
+          cat /tmp/material_files.txt | sed 's/^/  • /'
+          echo ""
+          echo "Add a description of the new capability to README.md and re-push."
+          exit 1
+
+      - name: Post PR comment on failure
+        if: failure() && steps.detect.outputs.has_material_changes == 'true' && steps.detect.outputs.readme_updated == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let files = [];
+            try {
+              files = fs.readFileSync('/tmp/material_files.txt', 'utf8').trim().split('\n').filter(Boolean);
+            } catch (_) {}
+            const fileList = files.map(f => `- \`${f}\``).join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                '## Docs Coverage Check Failed',
+                '',
+                'Material changes were detected without a corresponding `README.md` update.',
+                '',
+                '**Files requiring documentation:**',
+                fileList,
+                '',
+                '**Fix:** Update the "What\'s Inside" file tree and any relevant sections in `README.md` to describe the new capabilities, then re-push.',
+                '',
+                '*This check runs on any PR touching `scripts/hooks/`, `scripts/lib/`, `agents/`, `skills/`, `commands/`, `hooks/hooks.json`, or `rules/`.*'
+              ].join('\n')
+            });
+
+      - name: Confirm pass
+        if: steps.detect.outputs.has_material_changes == 'false' || steps.detect.outputs.readme_updated == 'true'
+        run: |
+          if [ "${{ steps.detect.outputs.readme_updated }}" = "true" ]; then
+            echo "✓ README.md was updated alongside material changes."
+          else
+            echo "✓ No material changes detected — README check passed."
+          fi

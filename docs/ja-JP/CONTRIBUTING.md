@@ -1,4 +1,4 @@
-# Everything Claude Codeに貢献する
+# SI Claude Pluginに貢献する
 
 貢献いただきありがとうございます！このリポジトリはClaude Codeユーザーのためのコミュニティリソースです。
 
@@ -53,8 +53,8 @@
 
 ```bash
 # 1. Fork とクローン
-gh repo fork affaan-m/everything-claude-code --clone
-cd everything-claude-code
+gh repo fork coreybowlby-os/SI-Claude-Plugin --clone
+cd SI-Claude-Plugin
 
 # 2. ブランチを作成
 git checkout -b feat/my-contribution
@@ -422,8 +422,8 @@ docs: improve contributing guide
 
 ## 質問がありますか？
 
-- **Issues:** [github.com/affaan-m/everything-claude-code/issues](https://github.com/affaan-m/everything-claude-code/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues:** [github.com/coreybowlby-os/SI-Claude-Plugin/issues](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues)
+- **GitHub:** [coreybowlby-os](https://github.com/coreybowlby-os/SI-Claude-Plugin)
 
 ---
 

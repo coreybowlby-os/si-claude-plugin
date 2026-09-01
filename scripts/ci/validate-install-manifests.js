@@ -17,9 +17,9 @@ const MODULES_SCHEMA_PATH = path.join(REPO_ROOT, 'schemas/install-modules.schema
 const PROFILES_SCHEMA_PATH = path.join(REPO_ROOT, 'schemas/install-profiles.schema.json');
 const COMPONENTS_SCHEMA_PATH = path.join(REPO_ROOT, 'schemas/install-components.schema.json');
 const COMPONENT_FAMILY_PREFIXES = {
-  baseline: 'baseline:',
-  language: 'lang:',
-  framework: 'framework:',
+  baseline:   'baseline:',
+  language:   'lang:',
+  framework:  'framework:',
   capability: 'capability:',
 };
 
@@ -27,7 +27,7 @@ function readJson(filePath, label) {
   try {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
-    throw new Error(`Invalid JSON in ${label}: ${error.message}`);
+    throw new Error(`Invalid JSON in ${label}: ${error.message}`, { cause: error });
   }
 }
 
@@ -38,33 +38,22 @@ function normalizeRelativePath(relativePath) {
 function validateSchema(ajv, schemaPath, data, label) {
   const schema = readJson(schemaPath, `${label} schema`);
   const validate = ajv.compile(schema);
-  const valid = validate(data);
-
-  if (!valid) {
+  if (!validate(data)) {
     for (const error of validate.errors) {
-      console.error(
-        `ERROR: ${label} schema: ${error.instancePath || '/'} ${error.message}`
-      );
+      console.error(`ERROR: ${label} schema: ${error.instancePath || '/'} ${error.message}`);
     }
     return true;
   }
-
   return false;
 }
 
-function validateInstallManifests() {
-  if (!fs.existsSync(MODULES_MANIFEST_PATH) || !fs.existsSync(PROFILES_MANIFEST_PATH)) {
-    console.log('Install manifests not found, skipping validation');
-    process.exit(0);
-  }
+// ── Section validators ────────────────────────────────────────────
 
-  let hasErrors = false;
-  let modulesData;
-  let profilesData;
+function loadManifests(ajv) {
+  let modulesData, profilesData;
   let componentsData = { version: null, components: [] };
-
   try {
-    modulesData = readJson(MODULES_MANIFEST_PATH, 'install-modules.json');
+    modulesData  = readJson(MODULES_MANIFEST_PATH,  'install-modules.json');
     profilesData = readJson(PROFILES_MANIFEST_PATH, 'install-profiles.json');
     if (fs.existsSync(COMPONENTS_MANIFEST_PATH)) {
       componentsData = readJson(COMPONENTS_MANIFEST_PATH, 'install-components.json');
@@ -74,19 +63,19 @@ function validateInstallManifests() {
     process.exit(1);
   }
 
-  const ajv = new Ajv({ allErrors: true });
-  hasErrors = validateSchema(ajv, MODULES_SCHEMA_PATH, modulesData, 'install-modules.json') || hasErrors;
-  hasErrors = validateSchema(ajv, PROFILES_SCHEMA_PATH, profilesData, 'install-profiles.json') || hasErrors;
+  let schemaErrors = validateSchema(ajv, MODULES_SCHEMA_PATH,    modulesData,    'install-modules.json');
+  schemaErrors     = validateSchema(ajv, PROFILES_SCHEMA_PATH,   profilesData,   'install-profiles.json') || schemaErrors;
   if (fs.existsSync(COMPONENTS_MANIFEST_PATH)) {
-    hasErrors = validateSchema(ajv, COMPONENTS_SCHEMA_PATH, componentsData, 'install-components.json') || hasErrors;
+    schemaErrors   = validateSchema(ajv, COMPONENTS_SCHEMA_PATH, componentsData, 'install-components.json') || schemaErrors;
   }
+  if (schemaErrors) process.exit(1);
 
-  if (hasErrors) {
-    process.exit(1);
-  }
+  return { modulesData, profilesData, componentsData };
+}
 
-  const modules = Array.isArray(modulesData.modules) ? modulesData.modules : [];
-  const moduleIds = new Set();
+function validateModules(modules) {
+  let hasErrors = false;
+  const moduleIds    = new Set();
   const claimedPaths = new Map();
 
   for (const module of modules) {
@@ -96,12 +85,12 @@ function validateInstallManifests() {
     }
     moduleIds.add(module.id);
 
-    for (const dependency of module.dependencies) {
-      if (!moduleIds.has(dependency) && !modules.some(candidate => candidate.id === dependency)) {
-        console.error(`ERROR: Module ${module.id} depends on unknown module ${dependency}`);
+    for (const dep of module.dependencies) {
+      if (!moduleIds.has(dep) && !modules.some(m => m.id === dep)) {
+        console.error(`ERROR: Module ${module.id} depends on unknown module ${dep}`);
         hasErrors = true;
       }
-      if (dependency === module.id) {
+      if (dep === module.id) {
         console.error(`ERROR: Module ${module.id} cannot depend on itself`);
         hasErrors = true;
       }
@@ -109,20 +98,12 @@ function validateInstallManifests() {
 
     for (const relativePath of module.paths) {
       const normalizedPath = normalizeRelativePath(relativePath);
-      const absolutePath = path.join(REPO_ROOT, normalizedPath);
-
-      // All module paths must exist; no optional/generated paths in manifests
-      if (!fs.existsSync(absolutePath)) {
-        console.error(
-          `ERROR: Module ${module.id} references missing path: ${normalizedPath}`
-        );
+      if (!fs.existsSync(path.join(REPO_ROOT, normalizedPath))) {
+        console.error(`ERROR: Module ${module.id} references missing path: ${normalizedPath}`);
         hasErrors = true;
       }
-
       if (claimedPaths.has(normalizedPath)) {
-        console.error(
-          `ERROR: Install path ${normalizedPath} is claimed by both ${claimedPaths.get(normalizedPath)} and ${module.id}`
-        );
+        console.error(`ERROR: Install path ${normalizedPath} is claimed by both ${claimedPaths.get(normalizedPath)} and ${module.id}`);
         hasErrors = true;
       } else {
         claimedPaths.set(normalizedPath, module.id);
@@ -130,11 +111,14 @@ function validateInstallManifests() {
     }
   }
 
-  const profiles = profilesData.profiles || {};
-  const components = Array.isArray(componentsData.components) ? componentsData.components : [];
-  const expectedProfileIds = ['core', 'developer', 'security', 'research', 'full'];
+  return { hasErrors, moduleIds };
+}
 
-  for (const profileId of expectedProfileIds) {
+function validateProfiles(profiles, moduleIds) {
+  let hasErrors = false;
+  const REQUIRED = ['core', 'developer', 'security', 'research', 'full'];
+
+  for (const profileId of REQUIRED) {
     if (!profiles[profileId]) {
       console.error(`ERROR: Missing required install profile: ${profileId}`);
       hasErrors = true;
@@ -142,22 +126,17 @@ function validateInstallManifests() {
   }
 
   for (const [profileId, profile] of Object.entries(profiles)) {
-    const seenModules = new Set();
+    const seen = new Set();
     for (const moduleId of profile.modules) {
       if (!moduleIds.has(moduleId)) {
-        console.error(
-          `ERROR: Profile ${profileId} references unknown module ${moduleId}`
-        );
+        console.error(`ERROR: Profile ${profileId} references unknown module ${moduleId}`);
         hasErrors = true;
       }
-
-      if (seenModules.has(moduleId)) {
-        console.error(
-          `ERROR: Profile ${profileId} contains duplicate module ${moduleId}`
-        );
+      if (seen.has(moduleId)) {
+        console.error(`ERROR: Profile ${profileId} contains duplicate module ${moduleId}`);
         hasErrors = true;
       }
-      seenModules.add(moduleId);
+      seen.add(moduleId);
     }
   }
 
@@ -171,7 +150,13 @@ function validateInstallManifests() {
     }
   }
 
+  return hasErrors;
+}
+
+function validateComponents(components, moduleIds) {
+  let hasErrors = false;
   const componentIds = new Set();
+
   for (const component of components) {
     if (componentIds.has(component.id)) {
       console.error(`ERROR: Duplicate install component id: ${component.id}`);
@@ -181,30 +166,47 @@ function validateInstallManifests() {
 
     const expectedPrefix = COMPONENT_FAMILY_PREFIXES[component.family];
     if (expectedPrefix && !component.id.startsWith(expectedPrefix)) {
-      console.error(
-        `ERROR: Component ${component.id} does not match expected ${component.family} prefix ${expectedPrefix}`
-      );
+      console.error(`ERROR: Component ${component.id} does not match expected ${component.family} prefix ${expectedPrefix}`);
       hasErrors = true;
     }
 
-    const seenModules = new Set();
+    const seen = new Set();
     for (const moduleId of component.modules) {
       if (!moduleIds.has(moduleId)) {
         console.error(`ERROR: Component ${component.id} references unknown module ${moduleId}`);
         hasErrors = true;
       }
-
-      if (seenModules.has(moduleId)) {
+      if (seen.has(moduleId)) {
         console.error(`ERROR: Component ${component.id} contains duplicate module ${moduleId}`);
         hasErrors = true;
       }
-      seenModules.add(moduleId);
+      seen.add(moduleId);
     }
   }
 
-  if (hasErrors) {
-    process.exit(1);
+  return hasErrors;
+}
+
+// ── Entry point ───────────────────────────────────────────────────
+
+function validateInstallManifests() {
+  if (!fs.existsSync(MODULES_MANIFEST_PATH) || !fs.existsSync(PROFILES_MANIFEST_PATH)) {
+    console.log('Install manifests not found, skipping validation');
+    process.exit(0);
   }
+
+  const ajv = new Ajv({ allErrors: true });
+  const { modulesData, profilesData, componentsData } = loadManifests(ajv);
+
+  const modules    = Array.isArray(modulesData.modules)         ? modulesData.modules         : [];
+  const profiles   = profilesData.profiles                      || {};
+  const components = Array.isArray(componentsData.components)   ? componentsData.components   : [];
+
+  const { hasErrors: moduleErrors,   moduleIds } = validateModules(modules);
+  const profileErrors                            = validateProfiles(profiles, moduleIds);
+  const componentErrors                          = validateComponents(components, moduleIds);
+
+  if (moduleErrors || profileErrors || componentErrors) process.exit(1);
 
   console.log(
     `Validated ${modules.length} install modules, ${components.length} install components, and ${Object.keys(profiles).length} profiles`

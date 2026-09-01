@@ -1,5 +1,5 @@
 /**
- * Everything Claude Code (ECC) Plugin for OpenCode
+ * SI Claude Plugin (ECC) Plugin for OpenCode
  *
  * This package provides the published ECC OpenCode plugin module:
  * - Plugin hooks (auto-format, TypeScript check, console.log warning, env injection, etc.)
@@ -10,13 +10,13 @@
  *
  * Option 1: Install via npm
  * ```bash
- * npm install ecc-universal
+ * npm install sicp
  * ```
  *
  * Then add to your opencode.json:
  * ```json
  * {
- *   "plugin": ["ecc-universal"]
+ *   "plugin": ["sicp"]
  * }
  * ```
  *
@@ -26,8 +26,8 @@
  *
  * Option 2: Clone and use directly
  * ```bash
- * git clone https://github.com/affaan-m/everything-claude-code
- * cd everything-claude-code
+ * git clone https://github.com/coreybowlby-os/SI-Claude-Plugin
+ * cd SI-Claude-Plugin
  * opencode
  * ```
  *
@@ -45,10 +45,10 @@ export const VERSION = "1.6.0"
 
 // Plugin metadata
 export const metadata = {
-  name: "ecc-universal",
+  name: "sicp",
   version: VERSION,
-  description: "Everything Claude Code plugin for OpenCode",
-  author: "affaan-m",
+  description: "SI Claude Plugin plugin for OpenCode",
+  author: "coreybowlby-os",
   features: {
     agents: 13,
     commands: 31,

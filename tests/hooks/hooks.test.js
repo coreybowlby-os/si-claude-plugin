@@ -63,7 +63,7 @@ function normalizeComparablePath(filePath) {
     return nativePath;
   }
 
-  let comparablePath = nativePath;
+  let comparablePath;
   try {
     comparablePath = fs.realpathSync.native ? fs.realpathSync.native(nativePath) : fs.realpathSync(nativePath);
   } catch {
@@ -1859,8 +1859,12 @@ async function runTests() {
     passed++;
   else failed++;
 
-  // hooks.json validation
-  console.log('\nhooks.json Validation:');
+  // Hook configuration validation
+  // hooks.json is intentionally empty in the repo (no ${CLAUDE_PLUGIN_ROOT} placeholders)
+  // so Claude Code does not fail when loading the plugin directory directly.
+  // hooks-template.json holds the actual definitions; the installer substitutes
+  // ${CLAUDE_PLUGIN_ROOT} and writes the result to ~/.claude/hooks/hooks.json.
+  console.log('\nHook Configuration Validation:');
 
   if (
     test('hooks.json is valid JSON', () => {
@@ -1873,8 +1877,8 @@ async function runTests() {
   else failed++;
 
   if (
-    test('hooks.json has required event types', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+    test('hooks-template.json has required event types', () => {
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
 
       assert.ok(hooks.hooks.PreToolUse, 'Should have PreToolUse hooks');
@@ -1890,7 +1894,7 @@ async function runTests() {
 
   if (
     test('SessionEnd marker hook is async and cleanup-safe', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
       const sessionEndHooks = hooks.hooks.SessionEnd.flatMap(entry => entry.hooks);
       const markerHook = sessionEndHooks.find(hook => hook.command.includes('session-end-marker.js'));
@@ -1904,8 +1908,8 @@ async function runTests() {
   else failed++;
 
   if (
-    test('all hook commands use node or approved shell wrappers', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+    test('all hook commands in hooks-template.json use node or approved shell wrappers', () => {
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
 
       const checkHooks = hookArray => {
@@ -1935,7 +1939,7 @@ async function runTests() {
 
   if (
     test('SessionStart hook uses safe inline resolver without plugin-tree scanning', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
       const sessionStartHook = hooks.hooks.SessionStart?.[0]?.hooks?.[0];
 
@@ -1965,7 +1969,7 @@ async function runTests() {
   else failed++;
   if (
     test('Stop and SessionEnd hooks use the safe inline resolver when plugin root may be unset', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
       const stopHooks = (hooks.hooks.Stop || []).flatMap(entry => entry.hooks || []);
       const sessionEndHooks = (hooks.hooks.SessionEnd || []).flatMap(entry => entry.hooks || []);
@@ -1983,8 +1987,8 @@ async function runTests() {
     passed++;
   else failed++;
   if (
-    test('script references use CLAUDE_PLUGIN_ROOT variable or a safe inline resolver', () => {
-      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+    test('hooks-template.json script references use CLAUDE_PLUGIN_ROOT variable or a safe inline resolver', () => {
+      const hooksPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
       const hooks = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
 
       const checkHooks = hookArray => {
@@ -2007,6 +2011,41 @@ async function runTests() {
     passed++;
   else failed++;
 
+  if (
+    test('hooks.json and hooks-template.json define the same set of hook ids', () => {
+      // apply.js prefers hooks-template.json as the source when merging hook wiring into
+      // settings.json. If an entry is added to hooks.json but not hooks-template.json (or
+      // vice versa) the wiring is silently dropped on every install. This test enforces parity
+      // so the gap is caught at commit time rather than at runtime.
+      const canonicalPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+      const templatePath  = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
+
+      const idsFrom = filePath => {
+        const config = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        return new Set(
+          Object.values(config.hooks || {})
+            .flat()
+            .map(entry => entry && entry.id)
+            .filter(id => typeof id === 'string' && id.trim().length > 0)
+        );
+      };
+
+      const canonicalIds = idsFrom(canonicalPath);
+      const templateIds  = idsFrom(templatePath);
+
+      for (const id of canonicalIds) {
+        assert.ok(templateIds.has(id),
+          `hooks.json entry "${id}" is missing from hooks-template.json`);
+      }
+      for (const id of templateIds) {
+        assert.ok(canonicalIds.has(id),
+          `hooks-template.json entry "${id}" is missing from hooks.json`);
+      }
+    })
+  )
+    passed++;
+  else failed++;
+
 
   // plugin.json validation
   console.log('\nplugin.json Validation:');
@@ -2015,7 +2054,7 @@ async function runTests() {
     test('plugin.json does NOT have explicit hooks declaration', () => {
       // Claude Code automatically loads hooks/hooks.json by convention.
       // Explicitly declaring it in plugin.json causes a duplicate detection error.
-      // See: https://github.com/affaan-m/everything-claude-code/issues/103
+      // See: https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/103
       const pluginPath = path.join(__dirname, '..', '..', '.claude-plugin', 'plugin.json');
       const plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'));
 

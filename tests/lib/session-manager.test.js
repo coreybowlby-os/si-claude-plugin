@@ -95,7 +95,7 @@ function runTests() {
 **Date:** 2026-02-01
 **Started:** 10:30
 **Last Updated:** 14:45
-**Project:** everything-claude-code
+**Project:** SI-Claude-Plugin
 **Branch:** feature/session-metadata
 **Worktree:** /tmp/ecc-worktree
 
@@ -118,7 +118,7 @@ src/main.ts
     assert.strictEqual(meta.date, '2026-02-01');
     assert.strictEqual(meta.started, '10:30');
     assert.strictEqual(meta.lastUpdated, '14:45');
-    assert.strictEqual(meta.project, 'everything-claude-code');
+    assert.strictEqual(meta.project, 'SI-Claude-Plugin');
     assert.strictEqual(meta.branch, 'feature/session-metadata');
     assert.strictEqual(meta.worktree, '/tmp/ecc-worktree');
     assert.strictEqual(meta.completed.length, 2);
@@ -1384,7 +1384,13 @@ src/main.ts
 
     // Create a broken symlink that matches the session filename pattern
     const brokenSymlink = '2026-02-10-deadbeef-session.tmp';
-    fs.symlinkSync('/nonexistent/path/that/does/not/exist', path.join(sessionsDir, brokenSymlink));
+    try {
+      fs.symlinkSync('/nonexistent/path/that/does/not/exist', path.join(sessionsDir, brokenSymlink));
+    } catch {
+      console.log('    (skipped — symlinks not supported on this platform)');
+      fs.rmSync(isoHome, { recursive: true, force: true });
+      return;
+    }
 
     const origHome = process.env.HOME;
     const origUserProfile = process.env.USERPROFILE;
@@ -1421,7 +1427,13 @@ src/main.ts
 
     // Create a broken symlink that matches a session ID pattern
     const brokenFile = '2026-02-11-deadbeef-session.tmp';
-    fs.symlinkSync('/nonexistent/target/that/does/not/exist', path.join(sessionsDir, brokenFile));
+    try {
+      fs.symlinkSync('/nonexistent/target/that/does/not/exist', path.join(sessionsDir, brokenFile));
+    } catch {
+      console.log('    (skipped — symlinks not supported on this platform)');
+      fs.rmSync(isoHome, { recursive: true, force: true });
+      return;
+    }
 
     const origHome = process.env.HOME;
     const origUserProfile = process.env.USERPROFILE;

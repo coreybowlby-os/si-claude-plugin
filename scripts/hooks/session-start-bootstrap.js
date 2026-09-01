@@ -30,17 +30,19 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const CURRENT_PLUGIN_SLUG = 'ecc';
-const LEGACY_PLUGIN_SLUG = 'everything-claude-code';
+const CURRENT_PLUGIN_SLUG = 'sicp';
+const LEGACY_PLUGIN_SLUGS = ['SI-Claude-Plugin', 'ecc'];
 const KNOWN_PLUGIN_PATHS = [
   [CURRENT_PLUGIN_SLUG],
   [`${CURRENT_PLUGIN_SLUG}@${CURRENT_PLUGIN_SLUG}`],
   ['marketplace', CURRENT_PLUGIN_SLUG],
-  [LEGACY_PLUGIN_SLUG],
-  [`${LEGACY_PLUGIN_SLUG}@${LEGACY_PLUGIN_SLUG}`],
-  ['marketplace', LEGACY_PLUGIN_SLUG],
+  ...LEGACY_PLUGIN_SLUGS.flatMap(s => [
+    [s],
+    [`${s}@${s}`],
+    ['marketplace', s],
+  ]),
 ];
-const CACHE_PLUGIN_SLUGS = [CURRENT_PLUGIN_SLUG, LEGACY_PLUGIN_SLUG];
+const CACHE_PLUGIN_SLUGS = [CURRENT_PLUGIN_SLUG, ...LEGACY_PLUGIN_SLUGS];
 
 // Read the raw JSON event from stdin
 const raw = fs.readFileSync(0, 'utf8');
@@ -65,7 +67,7 @@ function hasRunnerRoot(candidate) {
  *   1. CLAUDE_PLUGIN_ROOT environment variable
  *   2. ~/.claude (direct install)
  *   3. Several well-known plugin sub-paths under ~/.claude/plugins/ (current + legacy)
- *   4. Versioned cache directories under ~/.claude/plugins/cache/{ecc,everything-claude-code}/
+ *   4. Versioned cache directories under ~/.claude/plugins/cache/{ecc,SI-Claude-Plugin}/
  *   5. Falls back to ~/.claude if nothing else matches
  *
  * @returns {string}
@@ -93,7 +95,7 @@ function resolvePluginRoot() {
     }
   }
 
-  // Walk versioned cache: ~/.claude/plugins/cache/{ecc,everything-claude-code}/<org>/<version>/
+  // Walk versioned cache: ~/.claude/plugins/cache/{ecc,SI-Claude-Plugin}/<org>/<version>/
   try {
     for (const slug of CACHE_PLUGIN_SLUGS) {
       const cacheBase = path.join(claudeDir, 'plugins', 'cache', slug);

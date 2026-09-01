@@ -17,26 +17,26 @@ Use four categories in every update:
 
 ```bash
 # Weekly downloads
-curl -s https://api.npmjs.org/downloads/point/last-week/ecc-universal
+curl -s https://api.npmjs.org/downloads/point/last-week/sicp
 curl -s https://api.npmjs.org/downloads/point/last-week/ecc-agentshield
 
 # Last 30 days
-curl -s https://api.npmjs.org/downloads/point/last-month/ecc-universal
+curl -s https://api.npmjs.org/downloads/point/last-month/sicp
 curl -s https://api.npmjs.org/downloads/point/last-month/ecc-agentshield
 ```
 
 ### GitHub repository adoption
 
 ```bash
-gh api repos/affaan-m/everything-claude-code \
+gh api repos/coreybowlby-os/SI-Claude-Plugin \
   --jq '{stars:.stargazers_count,forks:.forks_count,contributors_url:.contributors_url,open_issues:.open_issues_count}'
 ```
 
 ### GitHub traffic (maintainer access required)
 
 ```bash
-gh api repos/affaan-m/everything-claude-code/traffic/views
-gh api repos/affaan-m/everything-claude-code/traffic/clones
+gh api repos/coreybowlby-os/SI-Claude-Plugin/traffic/views
+gh api repos/coreybowlby-os/SI-Claude-Plugin/traffic/clones
 ```
 
 ### GitHub App installs

@@ -1,6 +1,6 @@
 # .codex-plugin — Codex Native Plugin for ECC
 
-This directory contains the **Codex plugin manifest** for Everything Claude Code.
+This directory contains the **Codex plugin manifest** for SI Claude Plugin.
 
 ## Structure
 
@@ -12,7 +12,7 @@ This directory contains the **Codex plugin manifest** for Everything Claude Code
 
 ## What This Provides
 
-- **156 skills** from `./skills/` — reusable Codex workflows for TDD, security,
+- **195 skills** from `./skills/` — reusable Codex workflows for TDD, security,
   code review, architecture, and more
 - **6 MCP servers** — GitHub, Context7, Exa, Memory, Playwright, Sequential Thinking
 
@@ -22,7 +22,7 @@ Codex plugin support is currently in preview. Once generally available:
 
 ```bash
 # Install from Codex CLI
-codex plugin install affaan-m/everything-claude-code
+codex plugin install coreybowlby-os/SI-Claude-Plugin
 
 # Or reference locally during development
 codex plugin install ./

@@ -3,16 +3,16 @@
 > WARNING: This README is specific to OpenCode usage.
 > If you installed ECC via npm (e.g. `npm install opencode-ecc`), refer to the root README instead.
 
-Everything Claude Code (ECC) plugin for OpenCode - agents, commands, hooks, and skills.
+SI Claude Plugin (ECC) plugin for OpenCode - agents, commands, hooks, and skills.
 
 ## Installation
 
 ## Installation Overview
 
-There are two ways to use Everything Claude Code (ECC):
+There are two ways to use SI Claude Plugin (ECC):
 
 1. **npm package (recommended for most users)**
-   Install via npm/bun/yarn and use the `ecc-install` CLI to set up rules and agents.
+   Install via npm/bun/yarn and use the `sicp-install` CLI to set up rules and agents.
 
 2. **Direct clone / plugin mode**
    Clone the repository and run OpenCode directly inside it.
@@ -22,14 +22,14 @@ Choose the method that matches your workflow below.
 ### Option 1: npm Package
 
 ```bash
-npm install ecc-universal
+npm install sicp
 ```
 
 Add to your `opencode.json`:
 
 ```json
 {
-  "plugin": ["ecc-universal"]
+  "plugin": ["sicp"]
 }
 ```
 
@@ -41,10 +41,10 @@ It does **not** auto-register the full ECC command/agent/instruction catalog in 
 - run OpenCode inside this repository, or
 - copy the relevant `.opencode/commands/`, `.opencode/prompts/`, `.opencode/instructions/`, and the `instructions`, `agent`, and `command` config entries into your own project
 
-After installation, the `ecc-install` CLI is also available:
+After installation, the `sicp-install` CLI is also available:
 
 ```bash
-npx ecc-install typescript
+npx sicp-install typescript
 ```
 
 ### Option 2: Direct Use
@@ -52,8 +52,8 @@ npx ecc-install typescript
 Clone and run OpenCode in the repository:
 
 ```bash
-git clone https://github.com/affaan-m/everything-claude-code
-cd everything-claude-code
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin
+cd SI-Claude-Plugin
 opencode
 ```
 

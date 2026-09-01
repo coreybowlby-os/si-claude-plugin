@@ -80,7 +80,7 @@ test('claude plugin.json has version field', () => {
 });
 
 test('claude plugin.json uses short plugin slug', () => {
-  assert.strictEqual(claudePlugin.name, 'ecc');
+  assert.strictEqual(claudePlugin.name, 'SI-Claude-Plugin');
 });
 
 test('claude plugin.json agents is an array', () => {
@@ -151,7 +151,7 @@ test('codex plugin.json has name field', () => {
 });
 
 test('codex plugin.json uses short plugin slug', () => {
-  assert.strictEqual(codexPlugin.name, 'ecc');
+  assert.strictEqual(codexPlugin.name, 'sicp');
 });
 
 test('codex plugin.json has version field', () => {
@@ -249,7 +249,7 @@ test('marketplace.json has name field', () => {
 });
 
 test('marketplace.json uses short marketplace slug', () => {
-  assert.strictEqual(marketplace.name, 'ecc');
+  assert.strictEqual(marketplace.name, 'sicp');
 });
 
 test('marketplace.json has plugins array with at least one entry', () => {
@@ -266,7 +266,7 @@ test('marketplace.json plugin entries have required fields', () => {
 });
 
 test('marketplace.json plugin entry uses short plugin slug', () => {
-  assert.strictEqual(marketplace.plugins[0].name, 'ecc');
+  assert.strictEqual(marketplace.plugins[0].name, 'sicp');
 });
 
 test('marketplace local plugin path resolves to the repo-root Codex bundle', () => {

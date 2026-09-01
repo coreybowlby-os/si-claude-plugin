@@ -1,11 +1,11 @@
 **언어:** [English](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](../ja-JP/README.md) | 한국어 | [Türkçe](../tr/README.md)
 
-# Everything Claude Code
+# SI Claude Plugin
 
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
-[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
-[![npm ecc-universal](https://img.shields.io/npm/dw/ecc-universal?label=ecc-universal%20weekly%20downloads&logo=npm)](https://www.npmjs.com/package/ecc-universal)
+[![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
+[![Forks](https://img.shields.io/github/forks/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/network/members)
+[![Contributors](https://img.shields.io/github/contributors/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/graphs/contributors)
+[![npm sicp](https://img.shields.io/npm/dw/sicp?label=sicp%20weekly%20downloads&logo=npm)](https://www.npmjs.com/package/sicp)
 [![npm ecc-agentshield](https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield%20weekly%20downloads&logo=npm)](https://www.npmjs.com/package/ecc-agentshield)
 [![GitHub App Install](https://img.shields.io/badge/GitHub%20App-150%20installs-2ea44f?logo=github)](https://github.com/marketplace/ecc-tools)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
@@ -16,7 +16,6 @@
 ![Java](https://img.shields.io/badge/-Java-ED8B00?logo=openjdk&logoColor=white)
 ![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
 
-> **140K+ stars** | **21K+ forks** | **170+ contributors** | **12+ language ecosystems** | **Anthropic 해커톤 우승**
 
 ---
 
@@ -30,7 +29,6 @@
 
 ---
 
-**AI 에이전트 하네스를 위한 성능 최적화 시스템. Anthropic 해커톤 우승자가 만들었습니다.**
 
 단순한 설정 파일 모음이 아닙니다. 스킬, 직관(Instinct), 메모리 최적화, 지속적 학습, 보안 스캐닝, 리서치 우선 개발을 아우르는 완전한 시스템입니다. 10개월 이상 실제 프로덕트를 만들며 매일 집중적으로 사용해 발전시킨 프로덕션 레벨의 에이전트, 훅, 커맨드, 룰, MCP 설정이 포함되어 있습니다.
 
@@ -46,12 +44,12 @@
 <tr>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="The Shorthand Guide to Everything Claude Code" />
+<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="The Shorthand Guide to SI Claude Plugin" />
 </a>
 </td>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="The Longform Guide to Everything Claude Code" />
+<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="The Longform Guide to SI Claude Plugin" />
 </a>
 </td>
 </tr>
@@ -100,7 +98,7 @@
 - **30명 이상의 커뮤니티 기여** — 6개 언어에 걸친 30명의 기여자
 - **978개 내부 테스트** — 에이전트, 스킬, 커맨드, 훅, 룰 전반에 걸친 검증
 
-전체 변경 내역은 [Releases](https://github.com/affaan-m/everything-claude-code/releases)에서 확인하세요.
+전체 변경 내역은 [Releases](https://github.com/coreybowlby-os/SI-Claude-Plugin/releases)에서 확인하세요.
 
 ---
 
@@ -112,7 +110,7 @@
 
 ```bash
 # 마켓플레이스 추가
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
 
 # 플러그인 설치
 /plugin install ecc@ecc
@@ -124,8 +122,8 @@
 
 ```bash
 # 먼저 저장소 클론
-git clone https://github.com/affaan-m/everything-claude-code.git
-cd everything-claude-code
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+cd SI-Claude-Plugin
 
 # 권장: 설치 스크립트 사용 (common + 언어별 룰을 안전하게 처리)
 ./install.sh typescript    # 또는 python, golang
@@ -206,7 +204,7 @@ export ECC_DISABLED_HOOKS="pre:bash:tmux-reminder,post:edit:typecheck"
 이 저장소는 **Claude Code 플러그인**입니다 - 직접 설치하거나 컴포넌트를 수동으로 복사할 수 있습니다.
 
 ```
-everything-claude-code/
+SI-Claude-Plugin/
 |-- .claude-plugin/   # 플러그인 및 마켓플레이스 매니페스트
 |   |-- plugin.json         # 플러그인 메타데이터와 컴포넌트 경로
 |   |-- marketplace.json    # /plugin marketplace add용 마켓플레이스 카탈로그
@@ -284,11 +282,10 @@ git 히스토리를 로컬에서 분석하여 SKILL.md 파일을 생성합니다
 
 고급 기능(10k+ 커밋, 자동 PR, 팀 공유)이 필요한 경우:
 
-[GitHub 앱 설치](https://github.com/apps/skill-creator) | [ecc.tools](https://ecc.tools)
+[GitHub 앱 설치](https://github.com/apps/skill-creator)
 
 ### AgentShield — 보안 감사 도구
 
-> Claude Code 해커톤(Cerebral Valley x Anthropic, 2026년 2월)에서 개발. 1282개 테스트, 98% 커버리지, 102개 정적 분석 규칙.
 
 Claude Code 설정에서 취약점, 잘못된 구성, 인젝션 위험을 스캔합니다.
 
@@ -310,9 +307,9 @@ npx ecc-agentshield init
 
 **`--opus` 플래그**는 레드팀/블루팀/감사관 파이프라인으로 3개의 Claude Opus 4.6 에이전트를 실행합니다. 공격자가 익스플로잇 체인을 찾고, 방어자가 보호 조치를 평가하며, 감사관이 양쪽의 결과를 종합하여 우선순위가 매겨진 위험 평가를 작성합니다.
 
-Claude Code에서 `/security-scan`을 사용하거나, [GitHub Action](https://github.com/affaan-m/agentshield)으로 CI에 추가하세요.
+Claude Code에서 `/security-scan`을 사용하거나, [GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin)으로 CI에 추가하세요.
 
-[GitHub](https://github.com/affaan-m/agentshield) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### 지속적 학습 v2
 
@@ -356,7 +353,7 @@ Claude Code v2.1+는 설치된 플러그인의 `hooks/hooks.json`을 **자동으
 
 ```bash
 # 마켓플레이스 추가
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
 
 # 플러그인 설치
 /plugin install ecc@ecc
@@ -370,7 +367,7 @@ Claude Code v2.1+는 설치된 플러그인의 `hooks/hooks.json`을 **자동으
     "ecc": {
       "source": {
         "source": "github",
-        "repo": "affaan-m/everything-claude-code"
+        "repo": "coreybowlby-os/SI-Claude-Plugin"
       }
     }
   },
@@ -383,16 +380,16 @@ Claude Code v2.1+는 설치된 플러그인의 `hooks/hooks.json`을 **자동으
 > **참고:** Claude Code 플러그인 시스템은 `rules`를 플러그인으로 배포하는 것을 지원하지 않습니다. 룰은 수동으로 설치해야 합니다:
 >
 > ```bash
-> git clone https://github.com/affaan-m/everything-claude-code.git
+> git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
 >
 > # 옵션 A: 사용자 레벨 룰 (모든 프로젝트에 적용)
 > mkdir -p ~/.claude/rules
-> cp -r everything-claude-code/rules/common/* ~/.claude/rules/
-> cp -r everything-claude-code/rules/typescript/* ~/.claude/rules/   # 사용하는 스택 선택
+> cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
+> cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # 사용하는 스택 선택
 >
 > # 옵션 B: 프로젝트 레벨 룰 (현재 프로젝트에만 적용)
 > mkdir -p .claude/rules
-> cp -r everything-claude-code/rules/common/* .claude/rules/
+> cp -r SI-Claude-Plugin/rules/common/* .claude/rules/
 > ```
 
 ---
@@ -403,21 +400,21 @@ Claude Code v2.1+는 설치된 플러그인의 `hooks/hooks.json`을 **자동으
 
 ```bash
 # 저장소 클론
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
 
 # 에이전트 복사
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
 
 # 룰 복사 (common + 언어별)
-cp -r everything-claude-code/rules/common/* ~/.claude/rules/
-cp -r everything-claude-code/rules/typescript/* ~/.claude/rules/   # 사용하는 스택 선택
+cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # 사용하는 스택 선택
 
 # 커맨드 복사
-cp everything-claude-code/commands/*.md ~/.claude/commands/
+cp SI-Claude-Plugin/commands/*.md ~/.claude/commands/
 
 # 스킬 복사
-cp -r everything-claude-code/skills/* ~/.claude/skills/
-cp -r everything-claude-code/skills/search-first ~/.claude/skills/
+cp -r SI-Claude-Plugin/skills/* ~/.claude/skills/
+cp -r SI-Claude-Plugin/skills/search-first ~/.claude/skills/
 ```
 
 ---
@@ -570,10 +567,10 @@ MCP 서버가 너무 많으면 컨텍스트를 잡아먹습니다. 각 MCP 도�
 
 ```bash
 # 에이전트만
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
 
 # 룰만
-cp -r everything-claude-code/rules/common/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
 ```
 
 각 컴포넌트는 완전히 독립적입니다.
@@ -699,26 +696,17 @@ Claude Code 사용 비용이 부담된다면 토큰 소비를 관리해야 합�
 
 ---
 
-## 스폰서
-
-이 프로젝트는 무료 오픈소스입니다. 스폰서의 지원으로 유지보수와 성장이 이루어집니다.
-
-[**스폰서 되기**](https://github.com/sponsors/affaan-m) | [스폰서 티어](../../SPONSORS.md) | [스폰서십 프로그램](../../SPONSORING.md)
-
----
-
 ## Star 히스토리
 
-[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code&type=Date)](https://star-history.com/#affaan-m/everything-claude-code&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=coreybowlby-os/SI-Claude-Plugin&type=Date)](https://star-history.com/#coreybowlby-os/SI-Claude-Plugin&Date)
 
 ---
 
 ## 링크
 
-- **요약 가이드 (여기서 시작):** [The Shorthand Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2012378465664745795)
-- **상세 가이드 (고급):** [The Longform Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2014040193557471352)
-- **팔로우:** [@affaanmustafa](https://x.com/affaanmustafa)
-- **zenith.chat:** [zenith.chat](https://zenith.chat)
+- **요약 가이드 (여기서 시작):** [The Shorthand Guide to SI Claude Plugin](https://x.com/affaanmustafa/status/2012378465664745795)
+- **상세 가이드 (고급):** [The Longform Guide to SI Claude Plugin](https://x.com/affaanmustafa/status/2014040193557471352)
+- **팔로우:** [SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
 
 ---
 

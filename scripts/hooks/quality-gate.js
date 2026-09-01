@@ -22,6 +22,9 @@ const { findProjectRoot, detectFormatter, resolveFormatterBin } = require('../li
 
 const MAX_STDIN = 1024 * 1024;
 
+const WEB_EXTS = new Set(['.ts', '.tsx', '.js', '.jsx', '.json', '.md']);
+const JS_EXTS  = new Set(['.ts', '.tsx', '.js', '.jsx']);
+
 /**
  * Execute a command synchronously, returning the spawnSync result.
  *
@@ -48,87 +51,101 @@ function log(msg) {
   process.stderr.write(`${msg}\n`);
 }
 
+function readEnvBool(name) {
+  return String(process.env[name] || '').toLowerCase() === 'true';
+}
+
+// ── Per-formatter / per-language handlers ────────────────────────
+
+function runBiomeCheck(filePath, ext, projectRoot, fix, strict) {
+  // JS/TS already handled by post-edit-format via `biome check --write`
+  if (JS_EXTS.has(ext)) return;
+  const resolved = resolveFormatterBin(projectRoot, 'biome');
+  if (!resolved) return;
+  const args = [...resolved.prefix, 'check', filePath];
+  if (fix) args.push('--write');
+  const result = exec(resolved.bin, args, projectRoot);
+  if (result.status !== 0 && strict) {
+    log(`[QualityGate] Biome check failed for ${filePath}`);
+  }
+}
+
+function runPrettierCheck(filePath, projectRoot, fix, strict) {
+  const resolved = resolveFormatterBin(projectRoot, 'prettier');
+  if (!resolved) return;
+  const args = [...resolved.prefix, fix ? '--write' : '--check', filePath];
+  const result = exec(resolved.bin, args, projectRoot);
+  if (result.status !== 0 && strict) {
+    log(`[QualityGate] Prettier check failed for ${filePath}`);
+  }
+}
+
+function warnNoFormatter(ext, projectRoot) {
+  // No formatter configured — emit a visible warning instead of silently skipping.
+  // Previously this code path returned silently, creating false confidence that checks
+  // ran when they did not. Engineers discovered the gap only during code review.
+  // A warning here makes the configuration gap immediately visible at edit time.
+  if (!JS_EXTS.has(ext)) return;
+  process.stderr.write(
+    `[quality-gate] WARNING: No formatter (Biome or Prettier) found in ${projectRoot}.\n` +
+    `  TypeScript/JavaScript files are not being checked or formatted.\n` +
+    `  Fix: create .prettierrc or biome.json in the project root.\n`
+  );
+}
+
+function runWebCheck(filePath, ext, projectRoot, fix, strict) {
+  const formatter = detectFormatter(projectRoot);
+  if (formatter === 'biome') { runBiomeCheck(filePath, ext, projectRoot, fix, strict); return; }
+  if (formatter === 'prettier') { runPrettierCheck(filePath, projectRoot, fix, strict); return; }
+  warnNoFormatter(ext, projectRoot);
+}
+
+function runGoCheck(filePath, fix, strict) {
+  if (fix) {
+    const r = exec('gofmt', ['-w', filePath]);
+    if (r.status !== 0 && strict) log(`[QualityGate] gofmt failed for ${filePath}`);
+    return;
+  }
+  if (strict) {
+    const r = exec('gofmt', ['-l', filePath]);
+    if (r.status !== 0) log(`[QualityGate] gofmt failed for ${filePath}`);
+    else if (r.stdout && r.stdout.trim()) log(`[QualityGate] gofmt check failed for ${filePath}`);
+  }
+}
+
+function runPythonCheck(filePath, fix, strict) {
+  const args = ['format'];
+  if (!fix) args.push('--check');
+  args.push(filePath);
+  const r = exec('ruff', args);
+  if (r.status !== 0 && strict) log(`[QualityGate] Ruff check failed for ${filePath}`);
+}
+
+// ── Dispatch table: extension → handler(filePath, fix, strict) ───
+
+const EXT_HANDLER = {
+  '.go': runGoCheck,
+  '.py': runPythonCheck,
+};
+
 /**
  * Run quality-gate checks for a single file based on its extension.
- * Skips JS/TS files when Biome is configured (handled by post-edit-format).
  *
  * @param {string} filePath - Path to the edited file
  */
 function maybeRunQualityGate(filePath) {
-  if (!filePath || !fs.existsSync(filePath)) {
-    return;
-  }
-
-  // Resolve to absolute path so projectRoot-relative comparisons work
+  if (!filePath || !fs.existsSync(filePath)) return;
   filePath = path.resolve(filePath);
+  const ext    = path.extname(filePath).toLowerCase();
+  const fix    = readEnvBool('ECC_QUALITY_GATE_FIX');
+  const strict = readEnvBool('ECC_QUALITY_GATE_STRICT');
 
-  const ext = path.extname(filePath).toLowerCase();
-  const fix = String(process.env.ECC_QUALITY_GATE_FIX || '').toLowerCase() === 'true';
-  const strict = String(process.env.ECC_QUALITY_GATE_STRICT || '').toLowerCase() === 'true';
-
-  if (['.ts', '.tsx', '.js', '.jsx', '.json', '.md'].includes(ext)) {
-    const projectRoot = findProjectRoot(path.dirname(filePath));
-    const formatter = detectFormatter(projectRoot);
-
-    if (formatter === 'biome') {
-      // JS/TS already handled by post-edit-format via `biome check --write`
-      if (['.ts', '.tsx', '.js', '.jsx'].includes(ext)) {
-        return;
-      }
-
-      // .json / .md — still need quality gate
-      const resolved = resolveFormatterBin(projectRoot, 'biome');
-      if (!resolved) return;
-      const args = [...resolved.prefix, 'check', filePath];
-      if (fix) args.push('--write');
-      const result = exec(resolved.bin, args, projectRoot);
-      if (result.status !== 0 && strict) {
-        log(`[QualityGate] Biome check failed for ${filePath}`);
-      }
-      return;
-    }
-
-    if (formatter === 'prettier') {
-      const resolved = resolveFormatterBin(projectRoot, 'prettier');
-      if (!resolved) return;
-      const args = [...resolved.prefix, fix ? '--write' : '--check', filePath];
-      const result = exec(resolved.bin, args, projectRoot);
-      if (result.status !== 0 && strict) {
-        log(`[QualityGate] Prettier check failed for ${filePath}`);
-      }
-      return;
-    }
-
-    // No formatter configured — skip
+  if (WEB_EXTS.has(ext)) {
+    runWebCheck(filePath, ext, findProjectRoot(path.dirname(filePath)), fix, strict);
     return;
   }
-
-  if (ext === '.go') {
-    if (fix) {
-      const r = exec('gofmt', ['-w', filePath]);
-      if (r.status !== 0 && strict) {
-        log(`[QualityGate] gofmt failed for ${filePath}`);
-      }
-    } else if (strict) {
-      const r = exec('gofmt', ['-l', filePath]);
-      if (r.status !== 0) {
-        log(`[QualityGate] gofmt failed for ${filePath}`);
-      } else if (r.stdout && r.stdout.trim()) {
-        log(`[QualityGate] gofmt check failed for ${filePath}`);
-      }
-    }
-    return;
-  }
-
-  if (ext === '.py') {
-    const args = ['format'];
-    if (!fix) args.push('--check');
-    args.push(filePath);
-    const r = exec('ruff', args);
-    if (r.status !== 0 && strict) {
-      log(`[QualityGate] Ruff check failed for ${filePath}`);
-    }
-  }
+  const handler = EXT_HANDLER[ext];
+  if (handler) handler(filePath, fix, strict);
 }
 
 /**

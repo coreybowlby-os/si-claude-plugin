@@ -1,4 +1,4 @@
-# Contribuindo para o Everything Claude Code
+# Contribuindo para o SI Claude Plugin
 
 Obrigado por querer contribuir! Este repositório é um recurso comunitário para usuários do Claude Code.
 
@@ -51,8 +51,8 @@ Comandos slash que invocam fluxos de trabalho úteis:
 
 ```bash
 # 1. Fork e clone
-gh repo fork affaan-m/everything-claude-code --clone
-cd everything-claude-code
+gh repo fork coreybowlby-os/SI-Claude-Plugin --clone
+cd SI-Claude-Plugin
 
 # 2. Criar uma branch
 git checkout -b feat/minha-contribuicao
@@ -418,8 +418,8 @@ Como você testou isso.
 
 ## Dúvidas?
 
-- **Issues:** [github.com/affaan-m/everything-claude-code/issues](https://github.com/affaan-m/everything-claude-code/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues:** [github.com/coreybowlby-os/SI-Claude-Plugin/issues](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues)
+- **GitHub:** [coreybowlby-os](https://github.com/coreybowlby-os/SI-Claude-Plugin)
 
 ---
 

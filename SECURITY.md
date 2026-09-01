@@ -10,11 +10,11 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in ECC, please report it responsibly.
+If you discover a security vulnerability, please report it responsibly.
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
-Instead, email **<security@ecc.tools>** with:
+Instead, open a private security advisory at **<https://github.com/coreybowlby-os/SI-Claude-Plugin/security/advisories/new>** with:
 
 - A description of the vulnerability
 - Steps to reproduce
@@ -39,11 +39,11 @@ If the vulnerability is declined, we will explain why and provide guidance on wh
 
 This policy covers:
 
-- The ECC plugin and all scripts in this repository
+- The sicp plugin and all scripts in this repository
 - Hook scripts that execute on your machine
 - Install/uninstall/repair lifecycle scripts
-- MCP configurations shipped with ECC
-- The AgentShield security scanner ([github.com/affaan-m/agentshield](https://github.com/affaan-m/agentshield))
+- MCP configurations shipped with sicp
+- The AgentShield security scanner ([AgentShield](https://github.com/coreybowlby-os/SI-Claude-Plugin))
 
 ## Security Resources
 

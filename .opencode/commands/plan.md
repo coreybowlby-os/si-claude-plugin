@@ -1,6 +1,6 @@
 ---
 description: Create implementation plan with risk assessment
-agent: everything-claude-code:planner
+agent: SI-Claude-Plugin:planner
 subtask: true
 ---
 

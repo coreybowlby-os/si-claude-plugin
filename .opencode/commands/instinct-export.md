@@ -1,6 +1,6 @@
 ---
 description: Export instincts for sharing
-agent: everything-claude-code:build
+agent: SI-Claude-Plugin:build
 ---
 
 # Instinct Export Command

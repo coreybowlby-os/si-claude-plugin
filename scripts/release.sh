@@ -2,9 +2,14 @@
 set -euo pipefail
 
 # Release script for bumping plugin version
-# Usage: ./scripts/release.sh VERSION
+# Usage: ./scripts/release.sh VERSION [--ci]
+#
+# --ci: Skip branch and working-tree checks (for use in GitHub Actions)
 
 VERSION="${1:-}"
+CI_MODE=false
+for arg in "$@"; do [[ "$arg" == "--ci" ]] && CI_MODE=true; done
+
 ROOT_PACKAGE_JSON="package.json"
 PLUGIN_JSON=".claude-plugin/plugin.json"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
@@ -12,7 +17,7 @@ OPENCODE_PACKAGE_JSON=".opencode/package.json"
 
 # Function to show usage
 usage() {
-  echo "Usage: $0 VERSION"
+  echo "Usage: $0 VERSION [--ci]"
   echo "Example: $0 1.5.0"
   exit 1
 }
@@ -29,17 +34,19 @@ if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   exit 1
 fi
 
-# Check current branch is main
-CURRENT_BRANCH=$(git branch --show-current)
-if [[ "$CURRENT_BRANCH" != "main" ]]; then
-  echo "Error: Must be on main branch (currently on $CURRENT_BRANCH)"
-  exit 1
-fi
+if [[ "$CI_MODE" == false ]]; then
+  # Check current branch is main (local only — CI checkout is detached or named by runner)
+  CURRENT_BRANCH=$(git branch --show-current)
+  if [[ "$CURRENT_BRANCH" != "main" ]]; then
+    echo "Error: Must be on main branch (currently on $CURRENT_BRANCH)"
+    exit 1
+  fi
 
-# Check working tree is clean
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  echo "Error: Working tree is not clean. Commit or stash changes first."
-  exit 1
+  # Check working tree is clean
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    echo "Error: Working tree is not clean. Commit or stash changes first."
+    exit 1
+  fi
 fi
 
 # Verify versioned manifests exist
@@ -81,10 +88,17 @@ update_version "$PLUGIN_JSON" "s|\"version\": *\"[^\"]*\"|\"version\": \"$VERSIO
 update_version "$MARKETPLACE_JSON" "0,/\"version\": *\"[^\"]*\"/s|\"version\": *\"[^\"]*\"|\"version\": \"$VERSION\"|"
 update_version "$OPENCODE_PACKAGE_JSON" "s|\"version\": *\"[^\"]*\"|\"version\": \"$VERSION\"|"
 
+# Regenerate lock files so npm ci in CI does not fail on version mismatch
+echo "Regenerating package-lock.json..."
+npm install --package-lock-only --no-audit --no-fund 2>/dev/null
+echo "Regenerating .opencode/package-lock.json..."
+npm install --package-lock-only --no-audit --no-fund --prefix .opencode 2>/dev/null
+
 # Stage, commit, tag, and push
-git add "$ROOT_PACKAGE_JSON" "$PLUGIN_JSON" "$MARKETPLACE_JSON" "$OPENCODE_PACKAGE_JSON"
+git add "$ROOT_PACKAGE_JSON" "$PLUGIN_JSON" "$MARKETPLACE_JSON" "$OPENCODE_PACKAGE_JSON" \
+        package-lock.json .opencode/package-lock.json
 git commit -m "chore: bump plugin version to $VERSION"
 git tag "v$VERSION"
-git push origin main "v$VERSION"
+git push origin HEAD:refs/heads/main "v$VERSION"
 
 echo "Released v$VERSION"

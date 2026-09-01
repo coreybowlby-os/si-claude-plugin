@@ -24,9 +24,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['18.x', '20.x', '22.x']
-        pm: [npm, pnpm, yarn, bun]
+        # Reduced matrix to stay within the GitHub Free tier quota.
+        # Original (36 jobs across 3 OS x 3 Node x 4 PM) consumed ~1,185 billing
+        # minutes per run and exhausted the GitHub Free tier quota.
+        # This matrix covers the platforms and Node versions this project targets
+        # (ubuntu LTS + windows, Node 20 LTS, the two primary PMs)
+        # at ~6 jobs per run (~18 billing minutes).
+        os: [ubuntu-latest, windows-latest]
+        node: ['20.x']
+        pm: [npm, yarn, bun]
         exclude:
           # Bun has limited Windows support
           - os: windows-latest
@@ -37,14 +43,14 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js ${{ matrix.node }}
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ matrix.node }}
 
       # Package manager setup
       - name: Setup pnpm
         if: matrix.pm == 'pnpm'
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4
+        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v4
         with:
           version: latest
 
@@ -68,7 +74,7 @@ jobs:
 
       - name: Cache npm
         if: matrix.pm == 'npm'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node-${{ matrix.node }}-npm-${{ hashFiles('**/package-lock.json') }}
@@ -83,7 +89,7 @@ jobs:
 
       - name: Cache pnpm
         if: matrix.pm == 'pnpm'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ steps.pnpm-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node-${{ matrix.node }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -104,7 +110,7 @@ jobs:
 
       - name: Cache yarn
         if: matrix.pm == 'yarn'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node-${{ matrix.node }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -113,7 +119,7 @@ jobs:
 
       - name: Cache bun
         if: matrix.pm == 'bun'
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
@@ -123,16 +129,20 @@ jobs:
       # Install dependencies
       # COREPACK_ENABLE_STRICT=0 allows pnpm to install even though
       # package.json declares "packageManager": "yarn@..."
+      # YARN_ENABLE_HARDENED_MODE=0 allows yarn to update the lockfile in CI
+      # when package.json versions have been bumped (e.g. after Dependabot updates).
       - name: Install dependencies
         shell: bash
         env:
           COREPACK_ENABLE_STRICT: '0'
+          YARN_ENABLE_HARDENED_MODE: '0'
         run: |
           case "${{ matrix.pm }}" in
-            npm) npm ci ;;
+            npm) npm install ;;
             pnpm) pnpm install --no-frozen-lockfile ;;
             # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature
-            yarn) yarn install ;;
+            # --no-immutable allows lockfile updates when package.json versions have been bumped
+            yarn) yarn install --no-immutable ;;
             bun) bun install ;;
             *) echo "Unsupported package manager: ${{ matrix.pm }}" && exit 1 ;;
           esac
@@ -146,7 +156,7 @@ jobs:
       # Upload test artifacts on failure
       - name: Upload test artifacts
         if: failure()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-${{ matrix.os }}-node${{ matrix.node }}-${{ matrix.pm }}
           path: |
@@ -163,12 +173,12 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '20.x'
 
       - name: Install validation dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --ignore-scripts
 
       - name: Validate agents
         run: node scripts/ci/validate-agents.js
@@ -212,7 +222,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '20.x'
 
@@ -230,12 +240,12 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '20.x'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run ESLint
         run: npx eslint scripts/**/*.js tests/**/*.js

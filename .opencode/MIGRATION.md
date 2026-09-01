@@ -1,6 +1,6 @@
 # Migration Guide: Claude Code to OpenCode
 
-This guide helps you migrate from Claude Code to OpenCode while using the Everything Claude Code (ECC) configuration.
+This guide helps you migrate from Claude Code to OpenCode while using the SI Claude Plugin (ECC) configuration.
 
 ## Overview
 
@@ -184,7 +184,7 @@ Create a detailed implementation plan for: {input}
 ```markdown
 ---
 description: Create implementation plan
-agent: everything-claude-code:planner
+agent: SI-Claude-Plugin:planner
 ---
 
 Create a detailed implementation plan for: $ARGUMENTS
@@ -287,13 +287,13 @@ The `.opencode/` directory contains everything pre-configured.
 ### Option 2: Install as npm Package
 
 ```bash
-npm install ecc-universal
+npm install sicp
 ```
 
 Then in your `opencode.json`:
 ```json
 {
-  "plugin": ["ecc-universal"]
+  "plugin": ["sicp"]
 }
 ```
 
@@ -331,7 +331,7 @@ If you want the full ECC OpenCode workflow surface, use the repository's bundled
 1. Verify the command is defined in `opencode.json` or as `.md` file in `.opencode/commands/`
 2. Check the referenced agent exists
 3. Ensure the template uses `$ARGUMENTS` for user input
-4. If you installed only `plugin: ["ecc-universal"]`, note that npm plugin install does not auto-add ECC commands or agents to your project config
+4. If you installed only `plugin: ["sicp"]`, note that npm plugin install does not auto-add ECC commands or agents to your project config
 
 ## Best Practices
 
@@ -365,4 +365,4 @@ If you need to switch back:
 
 For issues specific to:
 - **OpenCode CLI**: Report to OpenCode's issue tracker
-- **ECC Configuration**: Report to [github.com/affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
+- **ECC Configuration**: Report to [github.com/coreybowlby-os/SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)

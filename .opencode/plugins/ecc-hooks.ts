@@ -1,5 +1,5 @@
 /**
- * Everything Claude Code (ECC) Plugin Hooks for OpenCode
+ * SI Claude Plugin (ECC) Plugin Hooks for OpenCode
  *
  * This plugin translates Claude Code hooks to OpenCode's plugin system.
  * OpenCode's plugin system is MORE sophisticated than Claude Code with 20+ events
@@ -14,8 +14,8 @@
  */
 
 import type { PluginInput } from "@opencode-ai/plugin"
-import * as fs from "fs"
-import * as path from "path"
+import * as fs from "node:fs"
+import * as path from "node:path"
 import {
   initStore,
   recordChange,
@@ -65,7 +65,7 @@ export const ECCHooksPlugin: ECCHooksPluginFn = async ({
   const disabledHooks = new Set(
     (process.env.ECC_DISABLED_HOOKS || "")
       .split(",")
-      .map((item) => item.trim())
+      .map((item: string) => item.trim())
       .filter(Boolean)
   )
 
@@ -456,7 +456,7 @@ export const ECCHooksPlugin: ECCHooksPluginFn = async ({
       const contextBlock = [
         "# ECC Context (preserve across compaction)",
         "",
-        "## Active Plugin: Everything Claude Code v1.8.0",
+        "## Active Plugin: SI Claude Plugin v1.8.0",
         "- Hooks: file.edited, tool.execute.before/after, session.created/idle/deleted, shell.env, compacting, permission.ask",
         "- Tools: run-tests, check-coverage, security-audit, format-code, lint-check, git-summary, changed-files",
         "- Agents: 13 specialized (planner, architect, tdd-guide, code-reviewer, security-reviewer, build-error-resolver, e2e-runner, refactor-cleaner, doc-updater, go-reviewer, go-build-resolver, database-reviewer, python-reviewer)",

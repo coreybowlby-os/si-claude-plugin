@@ -1,9 +1,9 @@
-# Everything Claude Code
+# SI Claude Plugin
 
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
-[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
-[![npm ecc-universal](https://img.shields.io/npm/dw/ecc-universal?label=ecc-universal%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/ecc-universal)
+[![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
+[![Forks](https://img.shields.io/github/forks/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/network/members)
+[![Contributors](https://img.shields.io/github/contributors/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/graphs/contributors)
+[![npm sicp](https://img.shields.io/npm/dw/sicp?label=sicp%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/sicp)
 [![npm ecc-agentshield](https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield%20haftalık%20indirme&logo=npm)](https://www.npmjs.com/package/ecc-agentshield)
 [![GitHub App Install](https://img.shields.io/badge/GitHub%20App-150%20kurulum-2ea44f?logo=github)](https://github.com/marketplace/ecc-tools)
 [![License](https://img.shields.io/badge/lisans-MIT-blue.svg)](../../LICENSE)
@@ -15,7 +15,6 @@
 ![Perl](https://img.shields.io/badge/-Perl-39457E?logo=perl&logoColor=white)
 ![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
 
-> **140K+ yıldız** | **21K+ fork** | **170+ katkıda bulunan** | **12+ dil ekosistemi** | **Anthropic Hackathon Kazananı**
 
 ---
 
@@ -29,7 +28,6 @@
 
 ---
 
-**AI agent harness'ları için performans optimizasyon sistemi. Anthropic hackathon kazananından.**
 
 Sadece konfigürasyon dosyaları değil. Tam bir sistem: skill'ler, instinct'ler, memory optimizasyonu, sürekli öğrenme, güvenlik taraması ve araştırma odaklı geliştirme. 10+ ay boyunca gerçek ürünler inşa ederken yoğun günlük kullanımla evrimleşmiş production-ready agent'lar, hook'lar, command'lar, rule'lar ve MCP konfigürasyonları.
 
@@ -45,12 +43,12 @@ Bu repository yalnızca ham kodu içerir. Rehberler her şeyi açıklıyor.
 <tr>
 <td width="33%">
 <a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="../../assets/images/guides/shorthand-guide.png" alt="Everything Claude Code Kısa Rehberi" />
+<img src="../../assets/images/guides/shorthand-guide.png" alt="SI Claude Plugin Kısa Rehberi" />
 </a>
 </td>
 <td width="33%">
 <a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="../../assets/images/guides/longform-guide.png" alt="Everything Claude Code Uzun Rehberi" />
+<img src="../../assets/images/guides/longform-guide.png" alt="SI Claude Plugin Uzun Rehberi" />
 </a>
 </td>
 <td width="33%">
@@ -101,7 +99,7 @@ Bu repository yalnızca ham kodu içerir. Rehberler her şeyi açıklıyor.
 - **Çapraz harness paritesi** — Claude Code, Cursor, OpenCode ve Codex app/CLI arasında davranış sıkılaştırıldı.
 - **997 internal test geçiyor** — Hook/runtime refactor ve uyumluluk güncellemelerinden sonra tam suite yeşil.
 
-[Tam değişiklik günlüğü için Releases bölümüne bakın](https://github.com/affaan-m/everything-claude-code/releases).
+[Tam değişiklik günlüğü için Releases bölümüne bakın](https://github.com/coreybowlby-os/SI-Claude-Plugin/releases).
 
 ---
 
@@ -113,7 +111,7 @@ Bu repository yalnızca ham kodu içerir. Rehberler her şeyi açıklıyor.
 
 ```bash
 # Marketplace ekle
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
 
 # Plugin'i kur
 /plugin install ecc@ecc
@@ -125,8 +123,8 @@ Bu repository yalnızca ham kodu içerir. Rehberler her şeyi açıklıyor.
 
 ```bash
 # Önce repo'yu klonlayın
-git clone https://github.com/affaan-m/everything-claude-code.git
-cd everything-claude-code
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+cd SI-Claude-Plugin
 
 # Bağımlılıkları kurun (paket yöneticinizi seçin)
 npm install        # veya: pnpm install | yarn install | bun install
@@ -146,7 +144,7 @@ npm install        # veya: pnpm install | yarn install | bun install
 # .\install.ps1 --target antigravity typescript
 
 # npm-installed uyumluluk entry point'i de çapraz platform çalışır
-npx ecc-install typescript
+npx sicp-install typescript
 ```
 
 Manuel kurulum talimatları için `rules/` klasöründeki README'ye bakın.
@@ -220,7 +218,7 @@ export ECC_DISABLED_HOOKS="pre:bash:tmux-reminder,post:edit:typecheck"
 Bu repo bir **Claude Code plugin'i** - doğrudan kurun veya component'leri manuel olarak kopyalayın.
 
 ```
-everything-claude-code/
+SI-Claude-Plugin/
 |-- .claude-plugin/   # Plugin ve marketplace manifest'leri
 |   |-- plugin.json         # Plugin metadata ve component path'leri
 |   |-- marketplace.json    # /plugin marketplace add için marketplace kataloğu
@@ -352,7 +350,7 @@ Bu, plugin'den mevcut tüm agent'ları, command'ları ve skill'leri gösterir.
 <details>
 <summary><b>Hook'larım çalışmıyor / "Duplicate hooks file" hatası alıyorum</b></summary>
 
-Bu en yaygın sorundur. `.claude-plugin/plugin.json`'a bir `"hooks"` alanı **EKLEMEYİN**. Claude Code v2.1+ kurulu plugin'lerden `hooks/hooks.json`'ı otomatik olarak yükler. Açıkça belirtmek duplicate algılama hatalarına neden olur. Bkz. [#29](https://github.com/affaan-m/everything-claude-code/issues/29), [#52](https://github.com/affaan-m/everything-claude-code/issues/52), [#103](https://github.com/affaan-m/everything-claude-code/issues/103).
+Bu en yaygın sorundur. `.claude-plugin/plugin.json`'a bir `"hooks"` alanı **EKLEMEYİN**. Claude Code v2.1+ kurulu plugin'lerden `hooks/hooks.json`'ı otomatik olarak yükler. Açıkça belirtmek duplicate algılama hatalarına neden olur. Bkz. [#29](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/29), [#52](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/52), [#103](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/103).
 </details>
 
 <details>
@@ -378,10 +376,10 @@ Evet. Seçenek 2'yi (manuel kurulum) kullanın ve yalnızca ihtiyacınız olanı
 
 ```bash
 # Sadece agent'lar
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
 
 # Sadece rule'lar
-cp -r everything-claude-code/rules/common/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
 ```
 
 Her component tamamen bağımsızdır.
@@ -393,7 +391,7 @@ Her component tamamen bağımsızdır.
 Evet. ECC çapraz platformdur:
 - **Cursor**: `.cursor/` içinde önceden çevrilmiş config'ler. [Cursor IDE Desteği](../../README.md#cursor-ide-support) bölümüne bakın.
 - **OpenCode**: `.opencode/` içinde tam plugin desteği. [OpenCode Desteği](../../README.md#opencode-support) bölümüne bakın.
-- **Codex**: macOS app ve CLI için birinci sınıf destek. PR [#257](https://github.com/affaan-m/everything-claude-code/pull/257)'ye bakın.
+- **Codex**: macOS app ve CLI için birinci sınıf destek. PR [#257](https://github.com/coreybowlby-os/SI-Claude-Plugin/pull/257)'ye bakın.
 - **Antigravity**: İş akışları, skill'ler ve `.agent/` içinde düzleştirilmiş rule'lar için sıkı entegre kurulum.
 - **Claude Code**: Native — bu birincil hedeftir.
 </details>

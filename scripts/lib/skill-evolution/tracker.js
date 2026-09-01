@@ -34,52 +34,51 @@ function toNullableNumber(value, fieldName) {
   return numericValue;
 }
 
+function extractFields(input, options) {
+  return {
+    skillId:         input.skill_id || input.skillId,
+    skillVersion:    input.skill_version || input.skillVersion,
+    taskDescription: input.task_description || input.task_attempted || input.taskAttempted,
+    outcome:         input.outcome,
+    recordedAt:      input.recorded_at || options.now || new Date().toISOString(),
+    userFeedback:    input.user_feedback || input.userFeedback || null,
+    failureReason:   input.failure_reason || input.failureReason || null,
+    tokensUsed:      toNullableNumber(input.tokens_used ?? input.tokensUsed, 'tokens_used'),
+    durationMs:      toNullableNumber(input.duration_ms ?? input.durationMs, 'duration_ms'),
+  };
+}
+
+function validateFields(f) {
+  if (typeof f.skillId !== 'string' || f.skillId.trim().length === 0)
+    throw new Error('skill_id is required');
+  if (typeof f.skillVersion !== 'string' || f.skillVersion.trim().length === 0)
+    throw new Error('skill_version is required');
+  if (typeof f.taskDescription !== 'string' || f.taskDescription.trim().length === 0)
+    throw new Error('task_description is required');
+  if (!VALID_OUTCOMES.has(f.outcome))
+    throw new Error('outcome must be one of success, failure, or partial');
+  if (f.userFeedback !== null && !VALID_FEEDBACK.has(f.userFeedback))
+    throw new Error('user_feedback must be accepted, corrected, rejected, or null');
+  if (Number.isNaN(Date.parse(f.recordedAt)))
+    throw new Error('recorded_at must be an ISO timestamp');
+}
+
 function normalizeExecutionRecord(input, options = {}) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new Error('skill execution payload must be an object');
   }
-
-  const skillId = input.skill_id || input.skillId;
-  const skillVersion = input.skill_version || input.skillVersion;
-  const taskDescription = input.task_description || input.task_attempted || input.taskAttempted;
-  const outcome = input.outcome;
-  const recordedAt = input.recorded_at || options.now || new Date().toISOString();
-  const userFeedback = input.user_feedback || input.userFeedback || null;
-
-  if (typeof skillId !== 'string' || skillId.trim().length === 0) {
-    throw new Error('skill_id is required');
-  }
-
-  if (typeof skillVersion !== 'string' || skillVersion.trim().length === 0) {
-    throw new Error('skill_version is required');
-  }
-
-  if (typeof taskDescription !== 'string' || taskDescription.trim().length === 0) {
-    throw new Error('task_description is required');
-  }
-
-  if (!VALID_OUTCOMES.has(outcome)) {
-    throw new Error('outcome must be one of success, failure, or partial');
-  }
-
-  if (userFeedback !== null && !VALID_FEEDBACK.has(userFeedback)) {
-    throw new Error('user_feedback must be accepted, corrected, rejected, or null');
-  }
-
-  if (Number.isNaN(Date.parse(recordedAt))) {
-    throw new Error('recorded_at must be an ISO timestamp');
-  }
-
+  const f = extractFields(input, options);
+  validateFields(f);
   return {
-    skill_id: skillId,
-    skill_version: skillVersion,
-    task_description: taskDescription,
-    outcome,
-    failure_reason: input.failure_reason || input.failureReason || null,
-    tokens_used: toNullableNumber(input.tokens_used ?? input.tokensUsed, 'tokens_used'),
-    duration_ms: toNullableNumber(input.duration_ms ?? input.durationMs, 'duration_ms'),
-    user_feedback: userFeedback,
-    recorded_at: recordedAt,
+    skill_id:         f.skillId,
+    skill_version:    f.skillVersion,
+    task_description: f.taskDescription,
+    outcome:          f.outcome,
+    failure_reason:   f.failureReason,
+    tokens_used:      f.tokensUsed,
+    duration_ms:      f.durationMs,
+    user_feedback:    f.userFeedback,
+    recorded_at:      f.recordedAt,
   };
 }
 

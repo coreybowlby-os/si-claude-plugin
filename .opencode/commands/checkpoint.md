@@ -1,6 +1,6 @@
 ---
 description: Save verification state and progress checkpoint
-agent: everything-claude-code:build
+agent: SI-Claude-Plugin:build
 ---
 
 # Checkpoint Command

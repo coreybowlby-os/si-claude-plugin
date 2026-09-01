@@ -133,6 +133,76 @@ function emitGovernanceEvent(event) {
   process.stderr.write(`[governance] ${JSON.stringify(event)}\n`);
 }
 
+function makeEvent(eventType, sessionId, payload) {
+  return { id: generateEventId(), sessionId, eventType, payload, resolvedAt: null, resolution: null };
+}
+
+function buildAnalysisContext(input, context) {
+  const toolInput = input.tool_input || {};
+  return {
+    toolName:   input.tool_name || '',
+    toolInput,
+    toolOutput: typeof input.tool_output === 'string' ? input.tool_output : '',
+    sessionId:  context.sessionId || null,
+    hookPhase:  context.hookPhase || 'unknown',
+    inputText:  typeof toolInput === 'object' ? JSON.stringify(toolInput) : String(toolInput),
+  };
+}
+
+function detectSecretEvents(ctx) {
+  const inputSecrets  = detectSecrets(ctx.inputText);
+  const outputSecrets = detectSecrets(ctx.toolOutput);
+  const allSecrets    = [...inputSecrets, ...outputSecrets];
+  if (allSecrets.length === 0) return [];
+  return [makeEvent('secret_detected', ctx.sessionId, {
+    toolName:    ctx.toolName,
+    hookPhase:   ctx.hookPhase,
+    secretTypes: allSecrets.map(s => s.name),
+    location:    inputSecrets.length > 0 ? 'input' : 'output',
+    severity:    'critical',
+  })];
+}
+
+function detectApprovalEvents(ctx) {
+  if (ctx.toolName !== 'Bash') return [];
+  const command  = ctx.toolInput.command || '';
+  const findings = detectApprovalRequired(command);
+  if (findings.length === 0) return [];
+  return [makeEvent('approval_requested', ctx.sessionId, {
+    toolName:        ctx.toolName,
+    hookPhase:       ctx.hookPhase,
+    ...summarizeCommand(command),
+    matchedPatterns: findings.map(f => f.pattern),
+    severity:        'high',
+  })];
+}
+
+function detectPolicyViolationEvents(ctx) {
+  const filePath = ctx.toolInput.file_path || ctx.toolInput.path || '';
+  if (!filePath || !detectSensitivePath(filePath)) return [];
+  return [makeEvent('policy_violation', ctx.sessionId, {
+    toolName:  ctx.toolName,
+    hookPhase: ctx.hookPhase,
+    filePath:  filePath.slice(0, 200),
+    reason:    'sensitive_file_access',
+    severity:  'warning',
+  })];
+}
+
+function detectElevatedPrivilegeEvents(ctx) {
+  if (!SECURITY_RELEVANT_TOOLS.has(ctx.toolName) || ctx.hookPhase !== 'post') return [];
+  const command    = ctx.toolInput.command || '';
+  const hasElevated = /sudo\s/.test(command) || /chmod\s/.test(command) || /chown\s/.test(command);
+  if (!hasElevated) return [];
+  return [makeEvent('security_finding', ctx.sessionId, {
+    toolName:  ctx.toolName,
+    hookPhase: ctx.hookPhase,
+    ...summarizeCommand(command),
+    reason:    'elevated_privilege_command',
+    severity:  'medium',
+  })];
+}
+
 /**
  * Analyze a hook input payload and return governance events to capture.
  *
@@ -141,107 +211,13 @@ function emitGovernanceEvent(event) {
  * @returns {Array<Object>} Array of governance event objects
  */
 function analyzeForGovernanceEvents(input, context = {}) {
-  const events = [];
-  const toolName = input.tool_name || '';
-  const toolInput = input.tool_input || {};
-  const toolOutput = typeof input.tool_output === 'string' ? input.tool_output : '';
-  const sessionId = context.sessionId || null;
-  const hookPhase = context.hookPhase || 'unknown';
-
-  // 1. Secret detection in tool input content
-  const inputText = typeof toolInput === 'object'
-    ? JSON.stringify(toolInput)
-    : String(toolInput);
-
-  const inputSecrets = detectSecrets(inputText);
-  const outputSecrets = detectSecrets(toolOutput);
-  const allSecrets = [...inputSecrets, ...outputSecrets];
-
-  if (allSecrets.length > 0) {
-    events.push({
-      id: generateEventId(),
-      sessionId,
-      eventType: 'secret_detected',
-      payload: {
-        toolName,
-        hookPhase,
-        secretTypes: allSecrets.map(s => s.name),
-        location: inputSecrets.length > 0 ? 'input' : 'output',
-        severity: 'critical',
-      },
-      resolvedAt: null,
-      resolution: null,
-    });
-  }
-
-  // 2. Approval-required commands (Bash only)
-  if (toolName === 'Bash') {
-    const command = toolInput.command || '';
-    const approvalFindings = detectApprovalRequired(command);
-    const commandSummary = summarizeCommand(command);
-
-    if (approvalFindings.length > 0) {
-      events.push({
-        id: generateEventId(),
-        sessionId,
-        eventType: 'approval_requested',
-        payload: {
-          toolName,
-          hookPhase,
-          ...commandSummary,
-          matchedPatterns: approvalFindings.map(f => f.pattern),
-          severity: 'high',
-        },
-        resolvedAt: null,
-        resolution: null,
-      });
-    }
-  }
-
-  // 3. Policy violation: writing to sensitive paths
-  const filePath = toolInput.file_path || toolInput.path || '';
-  if (filePath && detectSensitivePath(filePath)) {
-    events.push({
-      id: generateEventId(),
-      sessionId,
-      eventType: 'policy_violation',
-      payload: {
-        toolName,
-        hookPhase,
-        filePath: filePath.slice(0, 200),
-        reason: 'sensitive_file_access',
-        severity: 'warning',
-      },
-      resolvedAt: null,
-      resolution: null,
-    });
-  }
-
-  // 4. Security-relevant tool usage tracking
-  if (SECURITY_RELEVANT_TOOLS.has(toolName) && hookPhase === 'post') {
-    const command = toolInput.command || '';
-    const hasElevated = /sudo\s/.test(command) || /chmod\s/.test(command) || /chown\s/.test(command);
-    const commandSummary = summarizeCommand(command);
-
-    if (hasElevated) {
-      events.push({
-        id: generateEventId(),
-        sessionId,
-        eventType: 'security_finding',
-        payload: {
-          toolName,
-          hookPhase,
-          ...commandSummary,
-          reason: 'elevated_privilege_command',
-          severity: 'medium',
-        },
-        resolvedAt: null,
-        resolution: null,
-      });
-    }
-  }
-
-  return events;
+  const ctx = buildAnalysisContext(input, context);
+  return [
+    ...detectSecretEvents(ctx),
+    ...detectApprovalEvents(ctx),
+    ...detectPolicyViolationEvents(ctx),
+    ...detectElevatedPrivilegeEvents(ctx),
+  ];
 }
 
 /**

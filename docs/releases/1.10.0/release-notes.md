@@ -10,7 +10,6 @@ The goal was to make the public repo, plugin metadata, install paths, and ecosys
 
 - Synced the live OSS surface to **38 agents, 156 skills, and 72 commands**.
 - Updated the Claude plugin, Codex plugin, OpenCode package metadata, and release-facing docs to **1.10.0**.
-- Refreshed top-line repo metrics to match the live public repo (**140K+ stars**, **21K+ forks**, **170+ contributors**).
 - Expanded the operator/workflow lane with:
   - `brand-voice`
   - `social-graph-ranker`
@@ -52,7 +51,7 @@ What this means:
 Current install surfaces:
 
 - Claude Code plugin
-- `ecc-universal` on npm
+- `sicp` on npm
 - Codex plugin manifest
 - OpenCode package/plugin surface
 - AgentShield CLI + npm + GitHub Marketplace action

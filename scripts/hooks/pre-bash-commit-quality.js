@@ -266,6 +266,77 @@ function runLinter(files) {
   return results;
 }
 
+// ── evaluate() phases ────────────────────────────────────────────
+
+function severityLabel(severity) {
+  if (severity === 'error') return 'ERROR';
+  if (severity === 'warning') return 'WARNING';
+  return 'INFO';
+}
+
+function reportFileIssues(filesToCheck, counts) {
+  for (const file of filesToCheck) {
+    const fileIssues = findFileIssues(file);
+    if (fileIssues.length === 0) continue;
+    console.error(`\n[FILE] ${file}`);
+    for (const issue of fileIssues) {
+      console.error(`  ${severityLabel(issue.severity)} Line ${issue.line}: ${issue.message}`);
+      counts.total++;
+      if (issue.severity === 'error')   counts.errors++;
+      if (issue.severity === 'warning') counts.warnings++;
+      if (issue.severity === 'info')    counts.infos++;
+    }
+  }
+}
+
+function reportCommitMessageIssues(command, counts) {
+  const messageValidation = validateCommitMessage(command);
+  if (!messageValidation || messageValidation.issues.length === 0) return;
+  console.error('\nCommit Message Issues:');
+  for (const issue of messageValidation.issues) {
+    console.error(`  WARNING ${issue.message}`);
+    if (issue.suggestion) console.error(`     TIP ${issue.suggestion}`);
+    counts.total++;
+    counts.warnings++;
+  }
+}
+
+function reportLintResults(lintResults, counts) {
+  if (lintResults.eslint && !lintResults.eslint.success) {
+    console.error('\nESLint Issues:');
+    console.error(lintResults.eslint.output);
+    counts.total++;
+    counts.errors++;
+  }
+  if (lintResults.pylint && !lintResults.pylint.success) {
+    console.error('\nPylint Issues:');
+    console.error(lintResults.pylint.output);
+    counts.total++;
+    counts.errors++;
+  }
+  if (lintResults.golint && !lintResults.golint.success) {
+    console.error('\ngolint Issues:');
+    console.error(lintResults.golint.output);
+    counts.total++;
+    counts.errors++;
+  }
+}
+
+function summarizeAndExit(rawInput, counts) {
+  if (counts.total === 0) {
+    console.error('\n[Hook] PASS: All checks passed!');
+    return { output: rawInput, exitCode: 0 };
+  }
+  console.error(`\nSummary: ${counts.total} issue(s) found (${counts.errors} error(s), ${counts.warnings} warning(s), ${counts.infos} info)`);
+  if (counts.errors > 0) {
+    console.error('\n[Hook] ERROR: Commit blocked due to critical issues. Fix them before committing.');
+    return { output: rawInput, exitCode: 2 };
+  }
+  console.error('\n[Hook] WARNING: Warnings found. Consider fixing them, but commit is allowed.');
+  console.error('[Hook] To bypass these checks, use: git commit --no-verify');
+  return { output: rawInput, exitCode: 0 };
+}
+
 /**
  * Core logic — exported for direct invocation
  * @param {string} rawInput - Raw JSON string from stdin
@@ -275,107 +346,29 @@ function evaluate(rawInput) {
   try {
     const input = JSON.parse(rawInput);
     const command = input.tool_input?.command || '';
-    
-    // Only run for git commit commands
-    if (!command.includes('git commit')) {
-      return { output: rawInput, exitCode: 0 };
-    }
-    
-    // Check if this is an amend (skip checks for amends to avoid blocking)
-    if (command.includes('--amend')) {
-      return { output: rawInput, exitCode: 0 };
-    }
-    
-    // Get staged files
+
+    if (!command.includes('git commit')) return { output: rawInput, exitCode: 0 };
+    if (command.includes('--amend'))     return { output: rawInput, exitCode: 0 };
+
     const stagedFiles = getStagedFiles();
-    
     if (stagedFiles.length === 0) {
       console.error('[Hook] No staged files found. Use "git add" to stage files first.');
       return { output: rawInput, exitCode: 0 };
     }
-    
+
     console.error(`[Hook] Checking ${stagedFiles.length} staged file(s)...`);
-    
-    // Check each staged file
     const filesToCheck = stagedFiles.filter(shouldCheckFile);
-    let totalIssues = 0;
-    let errorCount = 0;
-    let warningCount = 0;
-    let infoCount = 0;
-    
-    for (const file of filesToCheck) {
-      const fileIssues = findFileIssues(file);
-      if (fileIssues.length > 0) {
-        console.error(`\n[FILE] ${file}`);
-        for (const issue of fileIssues) {
-          const label = issue.severity === 'error' ? 'ERROR' : issue.severity === 'warning' ? 'WARNING' : 'INFO';
-          console.error(`  ${label} Line ${issue.line}: ${issue.message}`);
-          totalIssues++;
-          if (issue.severity === 'error') errorCount++;
-          if (issue.severity === 'warning') warningCount++;
-          if (issue.severity === 'info') infoCount++;
-        }
-      }
-    }
-    
-    // Validate commit message if provided
-    const messageValidation = validateCommitMessage(command);
-    if (messageValidation && messageValidation.issues.length > 0) {
-      console.error('\nCommit Message Issues:');
-      for (const issue of messageValidation.issues) {
-        console.error(`  WARNING ${issue.message}`);
-        if (issue.suggestion) {
-          console.error(`     TIP ${issue.suggestion}`);
-        }
-        totalIssues++;
-        warningCount++;
-      }
-    }
-    
-    // Run linter
-    const lintResults = runLinter(filesToCheck);
-    
-    if (lintResults.eslint && !lintResults.eslint.success) {
-      console.error('\nESLint Issues:');
-      console.error(lintResults.eslint.output);
-      totalIssues++;
-      errorCount++;
-    }
-    
-    if (lintResults.pylint && !lintResults.pylint.success) {
-      console.error('\nPylint Issues:');
-      console.error(lintResults.pylint.output);
-      totalIssues++;
-      errorCount++;
-    }
-    
-    if (lintResults.golint && !lintResults.golint.success) {
-      console.error('\ngolint Issues:');
-      console.error(lintResults.golint.output);
-      totalIssues++;
-      errorCount++;
-    }
-    
-    // Summary
-    if (totalIssues > 0) {
-      console.error(`\nSummary: ${totalIssues} issue(s) found (${errorCount} error(s), ${warningCount} warning(s), ${infoCount} info)`);
-      
-      if (errorCount > 0) {
-        console.error('\n[Hook] ERROR: Commit blocked due to critical issues. Fix them before committing.');
-        return { output: rawInput, exitCode: 2 };
-      } else {
-        console.error('\n[Hook] WARNING: Warnings found. Consider fixing them, but commit is allowed.');
-        console.error('[Hook] To bypass these checks, use: git commit --no-verify');
-      }
-    } else {
-      console.error('\n[Hook] PASS: All checks passed!');
-    }
-    
+    const counts = { total: 0, errors: 0, warnings: 0, infos: 0 };
+
+    reportFileIssues(filesToCheck, counts);
+    reportCommitMessageIssues(command, counts);
+    reportLintResults(runLinter(filesToCheck), counts);
+
+    return summarizeAndExit(rawInput, counts);
   } catch (error) {
     console.error(`[Hook] Error: ${error.message}`);
     // Non-blocking on error
   }
-  
   return { output: rawInput, exitCode: 0 };
 }
 

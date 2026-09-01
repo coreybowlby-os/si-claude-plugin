@@ -67,7 +67,7 @@
 - `ai-regression-testing` — AI regression test workflows (#433)
 - `claude-devfleet` — Multi-agent orchestration (#505)
 - `blueprint` — Multi-session construction planning
-- `everything-claude-code` — Self-referential ECC skill (#335)
+- `SI-Claude-Plugin` — Self-referential ECC skill (#335)
 - `prompt-optimizer` — Prompt optimization skill (#418)
 - 8 Evos operational domain skills (#290)
 - 3 Laravel skills (#420)
@@ -181,3 +181,9 @@
 
 - inspired by [zarazhangrui](https://github.com/zarazhangrui)
 - homunculus-inspired by [humanplane](https://github.com/humanplane)
+
+## [Unreleased]
+
+- Auto-release pipeline now gates on CI success and triggers via workflow_dispatch
+
+<!-- pipeline verified -->

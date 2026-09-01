@@ -1,6 +1,6 @@
-# Everything Claude Code for Trae
+# SI Claude Plugin for Trae
 
-Bring Everything Claude Code (ECC) workflows to Trae IDE. This repository provides custom commands, agents, skills, and rules that can be installed into any Trae project with a single command.
+Bring SI Claude Plugin (ECC) workflows to Trae IDE. This repository provides custom commands, agents, skills, and rules that can be installed into any Trae project with a single command.
 
 ## Quick Start
 

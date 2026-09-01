@@ -1,10 +1,10 @@
 **言語:** [English](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md)
 
-# Everything Claude Code
+# SI Claude Plugin
 
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
-[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
+[![Forks](https://img.shields.io/github/forks/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/network/members)
+[![Contributors](https://img.shields.io/github/contributors/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/graphs/contributors)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
@@ -13,7 +13,6 @@
 ![Java](https://img.shields.io/badge/-Java-ED8B00?logo=openjdk&logoColor=white)
 ![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
 
-> **140K+ stars** | **21K+ forks** | **170+ contributors** | **12+ language ecosystems**
 
 ---
 
@@ -41,12 +40,12 @@
 <tr>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="The Shorthand Guide to Everything Claude Code" />
+<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="The Shorthand Guide to SI Claude Plugin" />
 </a>
 </td>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="The Longform Guide to Everything Claude Code" />
+<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="The Longform Guide to SI Claude Plugin" />
 </a>
 </td>
 </tr>
@@ -71,7 +70,7 @@
 
 ### v1.4.1 — バグ修正（2026年2月）
 
-- **instinctインポート時のコンテンツ喪失を修正** — `/instinct-import`実行時に`parse_instinct_file()`がfrontmatter後のすべてのコンテンツ（Action、Evidence、Examplesセクション）を暗黙的に削除していた問題を修正。コミュニティ貢献者@ericcai0814により解決されました（[#148](https://github.com/affaan-m/everything-claude-code/issues/148), [#161](https://github.com/affaan-m/everything-claude-code/pull/161)）
+- **instinctインポート時のコンテンツ喪失を修正** — `/instinct-import`実行時に`parse_instinct_file()`がfrontmatter後のすべてのコンテンツ（Action、Evidence、Examplesセクション）を暗黙的に削除していた問題を修正。コミュニティ貢献者@ericcai0814により解決されました（[#148](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/148), [#161](https://github.com/coreybowlby-os/SI-Claude-Plugin/pull/161)）
 
 ### v1.4.0 — マルチ言語ルール、インストールウィザード & PM2（2026年2月）
 
@@ -95,7 +94,7 @@
 - **セッション管理** — セッション履歴用の`/sessions`コマンド
 - **継続的学習 v2** — 信頼度スコアリング、インポート/エクスポート、進化を伴うinstinctベースの学習
 
-完全なチェンジログは[Releases](https://github.com/affaan-m/everything-claude-code/releases)を参照してください。
+完全なチェンジログは[Releases](https://github.com/coreybowlby-os/SI-Claude-Plugin/releases)を参照してください。
 
 ---
 
@@ -107,7 +106,7 @@
 
 ```bash
 # マーケットプレイスを追加
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
 
 # プラグインをインストール
 /plugin install ecc@ecc
@@ -119,15 +118,15 @@
 
 ```bash
 # まずリポジトリをクローン
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
 
 # 共通ルールをインストール（必須）
-cp -r everything-claude-code/rules/common/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
 
 # 言語固有ルールをインストール（スタックを選択）
-cp -r everything-claude-code/rules/typescript/* ~/.claude/rules/
-cp -r everything-claude-code/rules/python/* ~/.claude/rules/
-cp -r everything-claude-code/rules/golang/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/python/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/golang/* ~/.claude/rules/
 ```
 
 ### ステップ3：使用開始
@@ -187,7 +186,7 @@ node scripts/setup-package-manager.js --detect
 このリポジトリは**Claude Codeプラグイン**です - 直接インストールするか、コンポーネントを手動でコピーできます。
 
 ```
-everything-claude-code/
+SI-Claude-Plugin/
 |-- .claude-plugin/   # プラグインとマーケットプレイスマニフェスト
 |   |-- plugin.json         # プラグインメタデータとコンポーネントパス
 |   |-- marketplace.json    # /plugin marketplace add 用のマーケットプレイスカタログ
@@ -336,7 +335,7 @@ everything-claude-code/
 
 高度な機能用（10k+ コミット、自動 PR、チーム共有）：
 
-[GitHub アプリをインストール](https://github.com/apps/skill-creator) | [ecc.tools](https://ecc.tools)
+[GitHub アプリをインストール](https://github.com/apps/skill-creator)
 
 ```bash
 # 任意の Issue にコメント：
@@ -370,9 +369,9 @@ npx ecc-agentshield init
 
 CLAUDE.md、settings.json、MCP サーバー、フック、エージェント定義をチェックします。セキュリティグレード（A-F）と実行可能な結果を生成します。
 
-Claude Codeで`/security-scan`を実行、または[GitHub Action](https://github.com/affaan-m/agentshield)でCIに追加できます。
+Claude Codeで`/security-scan`を実行、または[GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin)でCIに追加できます。
 
-[GitHub](https://github.com/affaan-m/agentshield) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+[GitHub](https://github.com/coreybowlby-os/SI-Claude-Plugin) | [npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### 継続的学習 v2
 
@@ -412,7 +411,7 @@ Claude Code v2.1+は、インストール済みプラグインの`hooks/hooks.js
 Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded file
 ```
 
-**背景:** これは本リポジトリで複数の修正/リバート循環を引き起こしました（[#29](https://github.com/affaan-m/everything-claude-code/issues/29), [#52](https://github.com/affaan-m/everything-claude-code/issues/52), [#103](https://github.com/affaan-m/everything-claude-code/issues/103)）。Claude Codeバージョン間で動作が変わったため混乱がありました。今後を防ぐため回帰テストがあります。
+**背景:** これは本リポジトリで複数の修正/リバート循環を引き起こしました（[#29](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/29), [#52](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/52), [#103](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/103)）。Claude Codeバージョン間で動作が変わったため混乱がありました。今後を防ぐため回帰テストがあります。
 
 ---
 
@@ -424,7 +423,7 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
 
 ```bash
 # このリポジトリをマーケットプレイスとして追加
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
+/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
 
 # プラグインをインストール
 /plugin install ecc@ecc
@@ -438,7 +437,7 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
     "ecc": {
       "source": {
         "source": "github",
-        "repo": "affaan-m/everything-claude-code"
+        "repo": "coreybowlby-os/SI-Claude-Plugin"
       }
     }
   },
@@ -454,19 +453,19 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
 >
 > ```bash
 > # まずリポジトリをクローン
-> git clone https://github.com/affaan-m/everything-claude-code.git
+> git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
 >
 > # オプション A：ユーザーレベルルール（すべてのプロジェクトに適用）
 > mkdir -p ~/.claude/rules
-> cp -r everything-claude-code/rules/common/* ~/.claude/rules/
-> cp -r everything-claude-code/rules/typescript/* ~/.claude/rules/   # スタックを選択
-> cp -r everything-claude-code/rules/python/* ~/.claude/rules/
-> cp -r everything-claude-code/rules/golang/* ~/.claude/rules/
+> cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
+> cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # スタックを選択
+> cp -r SI-Claude-Plugin/rules/python/* ~/.claude/rules/
+> cp -r SI-Claude-Plugin/rules/golang/* ~/.claude/rules/
 >
 > # オプション B：プロジェクトレベルルール（現在のプロジェクトのみ）
 > mkdir -p .claude/rules
-> cp -r everything-claude-code/rules/common/* .claude/rules/
-> cp -r everything-claude-code/rules/typescript/* .claude/rules/     # スタックを選択
+> cp -r SI-Claude-Plugin/rules/common/* .claude/rules/
+> cp -r SI-Claude-Plugin/rules/typescript/* .claude/rules/     # スタックを選択
 > ```
 
 ---
@@ -477,22 +476,22 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
 
 # エージェントを Claude 設定にコピー
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
 
 # ルール（共通 + 言語固有）をコピー
-cp -r everything-claude-code/rules/common/* ~/.claude/rules/
-cp -r everything-claude-code/rules/typescript/* ~/.claude/rules/   # スタックを選択
-cp -r everything-claude-code/rules/python/* ~/.claude/rules/
-cp -r everything-claude-code/rules/golang/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # スタックを選択
+cp -r SI-Claude-Plugin/rules/python/* ~/.claude/rules/
+cp -r SI-Claude-Plugin/rules/golang/* ~/.claude/rules/
 
 # コマンドをコピー
-cp everything-claude-code/commands/*.md ~/.claude/commands/
+cp SI-Claude-Plugin/commands/*.md ~/.claude/commands/
 
 # スキルをコピー
-cp -r everything-claude-code/skills/* ~/.claude/skills/
+cp -r SI-Claude-Plugin/skills/* ~/.claude/skills/
 ```
 
 #### settings.json にフックを追加
@@ -609,13 +608,13 @@ node tests/hooks/hooks.test.js
 
 ## Cursor IDE サポート
 
-ecc-universal は [Cursor IDE](https://cursor.com) の事前翻訳設定を含みます。`.cursor/` ディレクトリには、Cursor フォーマット向けに適応されたルール、エージェント、スキル、コマンド、MCP 設定が含まれています。
+sicp は [Cursor IDE](https://cursor.com) の事前翻訳設定を含みます。`.cursor/` ディレクトリには、Cursor フォーマット向けに適応されたルール、エージェント、スキル、コマンド、MCP 設定が含まれています。
 
 ### クイックスタート (Cursor)
 
 ```bash
 # パッケージをインストール
-npm install ecc-universal
+npm install sicp
 
 # 言語をインストール
 ./install.sh --target cursor typescript
@@ -712,19 +711,19 @@ OpenCodeのプラグインシステムはClaude Codeより高度で、20+イベ�
 
 **オプション1：直接使用**
 ```bash
-cd everything-claude-code
+cd SI-Claude-Plugin
 opencode
 ```
 
 **オプション2：npmパッケージとしてインストール**
 ```bash
-npm install ecc-universal
+npm install sicp
 ```
 
 その後`opencode.json`に追加：
 ```json
 {
-  "plugin": ["ecc-universal"]
+  "plugin": ["sicp"]
 }
 ```
 
@@ -739,7 +738,6 @@ npm install ecc-universal
 
 ## 背景
 
-実験的なリリース以来、Claude Codeを使用してきました。2025年9月、[@DRodriguezFX](https://x.com/DRodriguezFX)と一緒にClaude Codeで[zenith.chat](https://zenith.chat)を構築し、Anthropic x Forum Venturesハッカソンで優勝しました。
 
 これらの設定は複数の本番環境アプリケーションで実戦テストされています。
 
@@ -770,16 +768,15 @@ npm install ecc-universal
 
 ## Star 履歴
 
-[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code&type=Date)](https://star-history.com/#affaan-m/everything-claude-code&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=coreybowlby-os/SI-Claude-Plugin&type=Date)](https://star-history.com/#coreybowlby-os/SI-Claude-Plugin&Date)
 
 ---
 
 ## リンク
 
-- **簡潔ガイド（まずはこれ）:** [Everything Claude Code 簡潔ガイド](https://x.com/affaanmustafa/status/2012378465664745795)
-- **詳細ガイド（高度）:** [Everything Claude Code 詳細ガイド](https://x.com/affaanmustafa/status/2014040193557471352)
-- **フォロー:** [@affaanmustafa](https://x.com/affaanmustafa)
-- **zenith.chat:** [zenith.chat](https://zenith.chat)
+- **簡潔ガイド（まずはこれ）:** [SI Claude Plugin 簡潔ガイド](https://x.com/affaanmustafa/status/2012378465664745795)
+- **詳細ガイド（高度）:** [SI Claude Plugin 詳細ガイド](https://x.com/affaanmustafa/status/2014040193557471352)
+- **フォロー:** [SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
 - **スキル ディレクトリ:** awesome-agent-skills（コミュニティ管理のエージェントスキル ディレクトリ）
 
 ---

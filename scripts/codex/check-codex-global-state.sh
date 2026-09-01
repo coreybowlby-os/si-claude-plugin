@@ -81,7 +81,7 @@ require_file "$CONFIG_FILE" "Global config.toml"
 require_file "$AGENTS_FILE" "Global AGENTS.md"
 
 if [[ -f "$AGENTS_FILE" ]]; then
-  if search_file '^# Everything Claude Code \(ECC\)' "$AGENTS_FILE"; then
+  if search_file '^# SI Claude Plugin \(ECC\)' "$AGENTS_FILE"; then
     ok "AGENTS contains ECC root instructions"
   else
     fail "AGENTS missing ECC root instructions"
@@ -229,10 +229,10 @@ else
   warn "ecc-sync-codex is not in PATH"
 fi
 
-if command -v ecc-install-git-hooks >/dev/null 2>&1; then
-  ok "ecc-install-git-hooks command is in PATH"
+if command -v vcp-install-git-hooks >/dev/null 2>&1; then
+  ok "vcp-install-git-hooks command is in PATH"
 else
-  warn "ecc-install-git-hooks is not in PATH"
+  warn "vcp-install-git-hooks is not in PATH"
 fi
 
 if command -v ecc-check-codex >/dev/null 2>&1; then

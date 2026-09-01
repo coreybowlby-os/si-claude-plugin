@@ -1,10 +1,9 @@
 # Claude Code'un Her Şeyine Dair Kısa Kılavuz
 
-![Header: Anthropic Hackathon Winner - Tips & Tricks for Claude Code](../assets/images/shortform/00-header.png)
+![Header: Tips & Tricks for Claude Code](../assets/images/shortform/00-header.png)
 
 ---
 
-**Şubat ayında deneysel kullanıma sunulduğundan beri hevesli bir Claude Code kullanıcısıyım ve [@DRodriguezFX](https://x.com/DRodriguezFX) ile birlikte tamamen Claude Code kullanarak [zenith.chat](https://zenith.chat) projesiyle Anthropic x Forum Ventures hackathon'unu kazandım.**
 
 İşte 10 aylık günlük kullanım sonrası eksiksiz kurulumum: skill'ler, hook'lar, subagent'lar, MCP'ler, plugin'ler ve gerçekten işe yarayanlar.
 
@@ -428,4 +427,3 @@ affoon:~ ctx:65% Opus 4.5 19:52
 
 ---
 
-*NYC'de [@DRodriguezFX](https://x.com/DRodriguezFX) ile [zenith.chat](https://zenith.chat) oluşturarak Anthropic x Forum Ventures hackathon'unu kazandım*

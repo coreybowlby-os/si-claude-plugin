@@ -203,32 +203,28 @@ function removeServerFromText(raw, serverName, existing) {
 }
 
 // ---------------------------------------------------------------------------
-// Main
+// Main — extracted phases
 // ---------------------------------------------------------------------------
 
-function main() {
+function parseCliArgs() {
   const args = process.argv.slice(2);
   const configPath = args.find(a => !a.startsWith('-'));
   const dryRun = args.includes('--dry-run');
   const updateMcp = args.includes('--update-mcp');
   const disabledServers = new Set(parseDisabledMcpServers(process.env.ECC_DISABLED_MCPS));
-
   if (!configPath) {
     console.error('Usage: merge-mcp-config.js <config.toml> [--dry-run] [--update-mcp]');
     process.exit(1);
   }
-
   if (!fs.existsSync(configPath)) {
     console.error(`[ecc-mcp] Config file not found: ${configPath}`);
     process.exit(1);
   }
+  return { configPath, dryRun, updateMcp, disabledServers };
+}
 
-  log(`Package manager: ${PM_NAME} (exec: ${PM_EXEC})`);
-  if (disabledServers.size > 0) {
-    log(`Disabled via ECC_DISABLED_MCPS: ${[...disabledServers].join(', ')}`);
-  }
-
-  let raw = fs.readFileSync(configPath, 'utf8');
+function loadToml(configPath) {
+  const raw = fs.readFileSync(configPath, 'utf8');
   let parsed;
   try {
     parsed = TOML.parse(raw);
@@ -236,74 +232,72 @@ function main() {
     console.error(`[ecc-mcp] Failed to parse ${configPath}: ${err.message}`);
     process.exit(1);
   }
+  return { raw, existing: parsed.mcp_servers || {} };
+}
 
-  const existing = parsed.mcp_servers || {};
-  const toAppend = [];
-  const toRemoveLog = [];
+function resolveExistingEntry(name, existing) {
+  const entry = existing[name];
+  const aliases = LEGACY_ALIASES[name] || [];
+  const legacyName = aliases.find(a => existing[a] && typeof existing[a].command === 'string');
+  const hasCanonical = entry && typeof entry.command === 'string';
+  const resolvedEntry = hasCanonical ? entry : legacyName ? existing[legacyName] : null;
+  // For URL-based servers (exa), check for url field instead of command
+  const urlEntry = !resolvedEntry && entry && typeof entry.url === 'string' ? entry : null;
+  return {
+    finalEntry:    resolvedEntry || urlEntry,
+    resolvedLabel: hasCanonical ? name : legacyName || name,
+    legacyName,
+    hasCanonical,
+  };
+}
 
-  for (const [name, spec] of Object.entries(ECC_SERVERS)) {
-    const entry = existing[name];
-    const aliases = LEGACY_ALIASES[name] || [];
-    const legacyName = aliases.find(a => existing[a] && typeof existing[a].command === 'string');
-
-    // Prefer canonical entry over legacy alias
-    const hasCanonical = entry && typeof entry.command === 'string';
-    const resolvedEntry = hasCanonical ? entry : legacyName ? existing[legacyName] : null;
-    // For URL-based servers (exa), check for url field instead of command
-    const urlEntry = !resolvedEntry && entry && typeof entry.url === 'string' ? entry : null;
-    const finalEntry = resolvedEntry || urlEntry;
-    const resolvedLabel = hasCanonical ? name : legacyName || name;
-
-    if (disabledServers.has(name)) {
-      if (finalEntry) {
-        toRemoveLog.push(`mcp_servers.${resolvedLabel} (disabled)`);
-        raw = removeServerFromText(raw, resolvedLabel, existing);
-        if (resolvedLabel !== name) {
-          raw = removeServerFromText(raw, name, existing);
-        }
-      }
-      log(`  [skip] mcp_servers.${name} (disabled)`);
-      continue;
-    }
-
-    if (finalEntry) {
-      if (updateMcp) {
-        // --update-mcp: remove existing section (and legacy alias), will re-add below
-        toRemoveLog.push(`mcp_servers.${resolvedLabel}`);
-        raw = removeServerFromText(raw, resolvedLabel, existing);
-        if (resolvedLabel !== name) {
-          raw = removeServerFromText(raw, name, existing);
-        }
-        if (legacyName && hasCanonical) {
-          toRemoveLog.push(`mcp_servers.${legacyName}`);
-          raw = removeServerFromText(raw, legacyName, existing);
-        }
-        toAppend.push(spec.toml);
-      } else {
-        // Add-only mode: skip, but warn about drift
-        if (legacyName && !hasCanonical) {
-          warn(`mcp_servers.${legacyName} is a legacy name for ${name} (run with --update-mcp to migrate)`);
-        } else if (configDiffers(finalEntry, spec.fields)) {
-          warn(`mcp_servers.${name} differs from ECC recommendation (run with --update-mcp to refresh)`);
-        } else {
-          log(`  [ok] mcp_servers.${name}`);
-        }
-      }
-    } else {
-      log(`  [add] mcp_servers.${name}`);
-      toAppend.push(spec.toml);
-    }
+function processDisabledServer(name, resolved, state) {
+  if (resolved.finalEntry) {
+    state.toRemoveLog.push(`mcp_servers.${resolved.resolvedLabel} (disabled)`);
+    state.raw = removeServerFromText(state.raw, resolved.resolvedLabel, state.existing);
+    if (resolved.resolvedLabel !== name) state.raw = removeServerFromText(state.raw, name, state.existing);
   }
+  log(`  [skip] mcp_servers.${name} (disabled)`);
+}
 
+function processUpdateMode(name, spec, resolved, state) {
+  // --update-mcp: remove existing section (and legacy alias), will re-add below
+  state.toRemoveLog.push(`mcp_servers.${resolved.resolvedLabel}`);
+  state.raw = removeServerFromText(state.raw, resolved.resolvedLabel, state.existing);
+  if (resolved.resolvedLabel !== name) state.raw = removeServerFromText(state.raw, name, state.existing);
+  if (resolved.legacyName && resolved.hasCanonical) {
+    state.toRemoveLog.push(`mcp_servers.${resolved.legacyName}`);
+    state.raw = removeServerFromText(state.raw, resolved.legacyName, state.existing);
+  }
+  state.toAppend.push(spec.toml);
+}
+
+function processAddOnlyMode(name, spec, resolved) {
+  // Add-only mode: skip existing, but warn about drift
+  if (resolved.legacyName && !resolved.hasCanonical) {
+    warn(`mcp_servers.${resolved.legacyName} is a legacy name for ${name} (run with --update-mcp to migrate)`);
+  } else if (configDiffers(resolved.finalEntry, spec.fields)) {
+    warn(`mcp_servers.${name} differs from ECC recommendation (run with --update-mcp to refresh)`);
+  } else {
+    log(`  [ok] mcp_servers.${name}`);
+  }
+}
+
+function processServer(name, spec, resolved, state, { updateMcp, disabledServers }) {
+  if (disabledServers.has(name)) { processDisabledServer(name, resolved, state); return; }
+  if (!resolved.finalEntry)      { log(`  [add] mcp_servers.${name}`); state.toAppend.push(spec.toml); return; }
+  if (updateMcp) { processUpdateMode(name, spec, resolved, state); }
+  else           { processAddOnlyMode(name, spec, resolved); }
+}
+
+function writeChanges(configPath, state, { dryRun, updateMcp }) {
+  const { raw, toAppend, toRemoveLog } = state;
   const hasRemovals = toRemoveLog.length > 0;
-
   if (toAppend.length === 0 && !hasRemovals) {
     log('All ECC MCP servers already present. Nothing to do.');
     return;
   }
-
   const appendText = '\n' + toAppend.join('\n\n') + '\n';
-
   if (dryRun) {
     if (toRemoveLog.length > 0) {
       log('Dry run — would remove and re-add:');
@@ -313,9 +307,8 @@ function main() {
     console.log(appendText);
     return;
   }
-
   // Write: for add-only, append to preserve existing content byte-for-byte.
-  // For --update-mcp, we modified `raw` above, so write the full file + appended sections.
+  // For --update-mcp, we modified `raw` in processServer, so write full file + appended sections.
   if (updateMcp || hasRemovals) {
     for (const label of toRemoveLog) log(`  [update] ${label}`);
     const cleaned = raw.replace(/\n+$/, '\n');
@@ -323,13 +316,27 @@ function main() {
   } else {
     fs.appendFileSync(configPath, appendText, 'utf8');
   }
-
   if (hasRemovals && toAppend.length === 0) {
     log(`Done. Removed ${toRemoveLog.length} disabled server(s).`);
     return;
   }
-
   log(`Done. ${toAppend.length} server(s) ${updateMcp ? 'updated' : 'added'}.`);
+}
+
+function main() {
+  const { configPath, dryRun, updateMcp, disabledServers } = parseCliArgs();
+  const { raw: initialRaw, existing } = loadToml(configPath);
+
+  log(`Package manager: ${PM_NAME} (exec: ${PM_EXEC})`);
+  if (disabledServers.size > 0) log(`Disabled via ECC_DISABLED_MCPS: ${[...disabledServers].join(', ')}`);
+
+  const state = { raw: initialRaw, existing, toAppend: [], toRemoveLog: [] };
+
+  for (const [name, spec] of Object.entries(ECC_SERVERS)) {
+    processServer(name, spec, resolveExistingEntry(name, existing), state, { updateMcp, disabledServers });
+  }
+
+  writeChanges(configPath, state, { dryRun, updateMcp });
 }
 
 main();

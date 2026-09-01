@@ -8,6 +8,18 @@ function dedupeStrings(values) {
   return [...new Set((Array.isArray(values) ? values : []).map(value => String(value).trim()).filter(Boolean))];
 }
 
+// ── parseInstallArgs helpers ──────────────────────────────────────
+
+function consumeNextArg(args, index) {
+  return { value: args[index + 1] || null, next: index + 1 };
+}
+
+function handleComponentFlag(list, args, index) {
+  const value = (args[index + 1] || '').trim();
+  if (value) list.push(value);
+  return index + 1;
+}
+
 function parseInstallArgs(argv) {
   const args = argv.slice(2);
   const parsed = {
@@ -27,30 +39,19 @@ function parseInstallArgs(argv) {
     const arg = args[index];
 
     if (arg === '--target') {
-      parsed.target = args[index + 1] || null;
-      index += 1;
+      ({ value: parsed.target, next: index } = consumeNextArg(args, index));
     } else if (arg === '--config') {
-      parsed.configPath = args[index + 1] || null;
-      index += 1;
+      ({ value: parsed.configPath, next: index } = consumeNextArg(args, index));
     } else if (arg === '--profile') {
-      parsed.profileId = args[index + 1] || null;
-      index += 1;
+      ({ value: parsed.profileId, next: index } = consumeNextArg(args, index));
     } else if (arg === '--modules') {
-      const raw = args[index + 1] || '';
-      parsed.moduleIds = dedupeStrings(raw.split(','));
-      index += 1;
+      const { value: raw, next } = consumeNextArg(args, index);
+      parsed.moduleIds = dedupeStrings((raw || '').split(','));
+      index = next;
     } else if (arg === '--with') {
-      const componentId = args[index + 1] || '';
-      if (componentId.trim()) {
-        parsed.includeComponentIds.push(componentId.trim());
-      }
-      index += 1;
+      index = handleComponentFlag(parsed.includeComponentIds, args, index);
     } else if (arg === '--without') {
-      const componentId = args[index + 1] || '';
-      if (componentId.trim()) {
-        parsed.excludeComponentIds.push(componentId.trim());
-      }
-      index += 1;
+      index = handleComponentFlag(parsed.excludeComponentIds, args, index);
     } else if (arg === '--dry-run') {
       parsed.dryRun = true;
     } else if (arg === '--json') {
@@ -67,29 +68,35 @@ function parseInstallArgs(argv) {
   return parsed;
 }
 
-function normalizeInstallRequest(options = {}) {
-  const config = options.config && typeof options.config === 'object'
-    ? options.config
-    : null;
-  const profileId = options.profileId || config?.profileId || null;
-  const moduleIds = validateInstallModuleIds(
-    dedupeStrings([...(config?.moduleIds || []), ...(options.moduleIds || [])])
-  );
-  const includeComponentIds = dedupeStrings([
-    ...(config?.includeComponentIds || []),
-    ...(options.includeComponentIds || []),
-  ]);
-  const excludeComponentIds = dedupeStrings([
-    ...(config?.excludeComponentIds || []),
-    ...(options.excludeComponentIds || []),
-  ]);
-  const legacyLanguages = dedupeStrings(dedupeStrings([
+// ── normalizeInstallRequest helpers ──────────────────────────────
+
+function resolveConfig(options) {
+  return options.config && typeof options.config === 'object' ? options.config : null;
+}
+
+function mergeArrayField(config, options, field) {
+  return dedupeStrings([...(config?.[field] || []), ...(options[field] || [])]);
+}
+
+function resolveLegacyLanguages(options) {
+  const merged = [
     ...(Array.isArray(options.legacyLanguages) ? options.legacyLanguages : []),
-    ...(Array.isArray(options.languages) ? options.languages : []),
-  ]).map(language => language.toLowerCase()));
-  const target = options.target || config?.target || 'claude';
+    ...(Array.isArray(options.languages)        ? options.languages        : []),
+  ];
+  return dedupeStrings(merged.map(l => l.toLowerCase()));
+}
+
+function normalizeInstallRequest(options = {}) {
+  const config              = resolveConfig(options);
+  const profileId           = options.profileId || config?.profileId || null;
+  const moduleIds           = validateInstallModuleIds(mergeArrayField(config, options, 'moduleIds'));
+  const includeComponentIds = mergeArrayField(config, options, 'includeComponentIds');
+  const excludeComponentIds = mergeArrayField(config, options, 'excludeComponentIds');
+  const legacyLanguages     = resolveLegacyLanguages(options);
+  const target              = options.target || config?.target || 'claude';
+
   const hasManifestBaseSelection = Boolean(profileId) || moduleIds.length > 0 || includeComponentIds.length > 0;
-  const usingManifestMode = hasManifestBaseSelection || excludeComponentIds.length > 0;
+  const usingManifestMode        = hasManifestBaseSelection || excludeComponentIds.length > 0;
 
   if (usingManifestMode && legacyLanguages.length > 0) {
     throw new Error(

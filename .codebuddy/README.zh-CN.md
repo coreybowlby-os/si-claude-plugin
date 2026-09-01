@@ -1,6 +1,6 @@
-# Everything Claude Code for CodeBuddy
+# SI Claude Plugin for CodeBuddy
 
-为 CodeBuddy IDE 带来 Everything Claude Code (ECC) 工作流。此仓库提供自定义命令、智能体、技能和规则，可以通过统一的 Target Adapter 架构安装到任何 CodeBuddy 项目中。
+为 CodeBuddy IDE 带来 SI Claude Plugin (ECC) 工作流。此仓库提供自定义命令、智能体、技能和规则，可以通过统一的 Target Adapter 架构安装到任何 CodeBuddy 项目中。
 
 ## 快速开始（推荐）
 
@@ -69,7 +69,7 @@ cd /path/to/your/project
 ├── agents/             # 智能体文件（复用自项目根目录）
 ├── skills/             # 技能文件（复用自 skills/）
 ├── rules/              # 规则文件（从 rules/ 扁平化）
-├── ecc-install-state.json  # 安装状态跟踪
+├── vcp-install-state.json  # 安装状态跟踪
 ├── install.sh          # 旧版安装脚本
 ├── uninstall.sh        # 旧版卸载脚本
 └── README.zh-CN.md     # 此文件

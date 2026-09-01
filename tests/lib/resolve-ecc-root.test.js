@@ -133,10 +133,10 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('finds exact legacy plugin install at ~/.claude/plugins/everything-claude-code', () => {
+  if (test('finds exact legacy plugin install at ~/.claude/plugins/SI-Claude-Plugin', () => {
     const homeDir = createTempDir();
     try {
-      const expected = setupLegacyPluginInstall(homeDir, ['everything-claude-code']);
+      const expected = setupLegacyPluginInstall(homeDir, ['SI-Claude-Plugin']);
       const result = resolveEccRoot({ envRoot: '', homeDir });
       assert.strictEqual(result, expected);
     } finally {
@@ -144,10 +144,10 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('finds exact legacy plugin install at ~/.claude/plugins/everything-claude-code@everything-claude-code', () => {
+  if (test('finds exact legacy plugin install at ~/.claude/plugins/SI-Claude-Plugin@SI-Claude-Plugin', () => {
     const homeDir = createTempDir();
     try {
-      const expected = setupLegacyPluginInstall(homeDir, ['everything-claude-code@everything-claude-code']);
+      const expected = setupLegacyPluginInstall(homeDir, ['SI-Claude-Plugin@SI-Claude-Plugin']);
       const result = resolveEccRoot({ envRoot: '', homeDir });
       assert.strictEqual(result, expected);
     } finally {
@@ -166,10 +166,10 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('finds marketplace legacy plugin install at ~/.claude/plugins/marketplace/everything-claude-code', () => {
+  if (test('finds marketplace legacy plugin install at ~/.claude/plugins/marketplace/SI-Claude-Plugin', () => {
     const homeDir = createTempDir();
     try {
-      const expected = setupLegacyPluginInstall(homeDir, ['marketplace', 'everything-claude-code']);
+      const expected = setupLegacyPluginInstall(homeDir, ['marketplace', 'SI-Claude-Plugin']);
       const result = resolveEccRoot({ envRoot: '', homeDir });
       assert.strictEqual(result, expected);
     } finally {
@@ -190,10 +190,21 @@ function runTests() {
   })) passed++; else failed++;
   // ─── Plugin Cache Auto-Detection ───
 
-  if (test('discovers plugin root from cache directory', () => {
+  if (test('discovers plugin root from cache directory (legacy ecc/affaan-m slug)', () => {
     const homeDir = createTempDir();
     try {
       const expected = setupPluginCache(homeDir, 'ecc', 'affaan-m', '1.10.0');
+      const result = resolveEccRoot({ envRoot: '', homeDir });
+      assert.strictEqual(result, expected);
+    } finally {
+      fs.rmSync(homeDir, { recursive: true, force: true });
+    }
+  })) passed++; else failed++;
+
+  if (test('discovers plugin root from cache directory (current vcp/coreybowlby-os slug)', () => {
+    const homeDir = createTempDir();
+    try {
+      const expected = setupPluginCache(homeDir, 'sicp', 'coreybowlby-os', '2.0.0');
       const result = resolveEccRoot({ envRoot: '', homeDir });
       assert.strictEqual(result, expected);
     } finally {
@@ -217,13 +228,13 @@ function runTests() {
   if (test('handles multiple versions in plugin cache', () => {
     const homeDir = createTempDir();
     try {
-      setupPluginCache(homeDir, 'everything-claude-code', 'legacy-org', '1.7.0');
+      setupPluginCache(homeDir, 'SI-Claude-Plugin', 'legacy-org', '1.7.0');
       const expected = setupPluginCache(homeDir, 'ecc', 'affaan-m', '1.10.0');
       const result = resolveEccRoot({ envRoot: '', homeDir });
       // Should find one of them (either is valid)
       assert.ok(
         result === expected ||
-        result === path.join(homeDir, '.claude', 'plugins', 'cache', 'everything-claude-code', 'legacy-org', '1.7.0'),
+        result === path.join(homeDir, '.claude', 'plugins', 'cache', 'SI-Claude-Plugin', 'legacy-org', '1.7.0'),
         'Should resolve to a valid plugin cache directory'
       );
     } finally {

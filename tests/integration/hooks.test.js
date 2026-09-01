@@ -218,7 +218,10 @@ async function runTests() {
   let failed = 0;
 
   const scriptsDir = path.join(__dirname, '..', '..', 'scripts', 'hooks');
-  const hooksJsonPath = path.join(__dirname, '..', '..', 'hooks', 'hooks.json');
+  // hooks-template.json holds the authoritative hook definitions with ${CLAUDE_PLUGIN_ROOT}
+  // placeholders. hooks.json is intentionally kept empty in the repo so Claude Code does not
+  // try to execute unresolved placeholders when loading the plugin directory directly.
+  const hooksJsonPath = path.join(__dirname, '..', '..', 'hooks', 'hooks-template.json');
   const hooks = JSON.parse(fs.readFileSync(hooksJsonPath, 'utf8'));
 
   // ==========================================
@@ -533,7 +536,7 @@ async function runTests() {
           CLAUDE_HOOK_EVENT_NAME: 'PreToolUse',
           ECC_MCP_CONFIG_PATH: configPath,
           ECC_MCP_HEALTH_STATE_PATH: statePath,
-          ECC_MCP_HEALTH_TIMEOUT_MS: '100'
+          ECC_MCP_HEALTH_TIMEOUT_MS: process.platform === 'win32' ? '2000' : '100'
         }
       );
 

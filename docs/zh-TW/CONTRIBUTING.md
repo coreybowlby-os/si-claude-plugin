@@ -1,4 +1,4 @@
-# 貢獻 Everything Claude Code
+# 貢獻 SI Claude Plugin
 
 感謝您想要貢獻。本儲存庫旨在成為 Claude Code 使用者的社群資源。
 
@@ -60,8 +60,8 @@
 ### 1. Fork 儲存庫
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/everything-claude-code.git
-cd everything-claude-code
+git clone https://github.com/YOUR_USERNAME/SI-Claude-Plugin.git
+cd SI-Claude-Plugin
 ```
 
 ### 2. 建立分支
@@ -184,7 +184,7 @@ git push origin add-python-reviewer
 
 ## 有問題？
 
-開啟 issue 或在 X 上聯繫：[@affaanmustafa](https://x.com/affaanmustafa)
+開啟 issue 或在 X 上聯繫：[SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
 
 ---
 

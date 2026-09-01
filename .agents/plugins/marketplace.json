@@ -1,11 +1,11 @@
 {
-  "name": "ecc",
+  "name": "sicp",
   "interface": {
-    "displayName": "Everything Claude Code"
+    "displayName": "SI Claude Plugin"
   },
   "plugins": [
     {
-      "name": "ecc",
+      "name": "sicp",
       "source": {
         "source": "local",
         "path": "../.."

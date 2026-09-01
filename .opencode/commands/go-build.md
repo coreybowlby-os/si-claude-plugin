@@ -1,6 +1,6 @@
 ---
 description: Fix Go build and vet errors
-agent: everything-claude-code:go-build-resolver
+agent: SI-Claude-Plugin:go-build-resolver
 subtask: true
 ---
 
