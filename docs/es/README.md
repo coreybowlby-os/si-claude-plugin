@@ -1360,7 +1360,7 @@ Proyectos construidos sobre o inspirados en ECC:
 
 Este proyecto es gratuito y de código abierto. Los patrocinadores ayudan a mantenerlo y hacerlo crecer.
 
-[**Conviértete en Patrocinador**](https://github.com/sponsors/affaan-m) | [Niveles de Patrocinio](SPONSORS.md) | [Programa de Patrocinio](SPONSORING.md)
+[**Conviértete en Patrocinador**](https://github.com/sponsors/affaan-m)
 
 ---
 

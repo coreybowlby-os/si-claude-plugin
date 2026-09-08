@@ -1587,7 +1587,7 @@ Agent Teams создаёт несколько context windows. Каждый уч
 
 Этот проект бесплатный и open source. Спонсоры помогают поддерживать и развивать его.
 
-[**Стать спонсором**](https://github.com/sponsors/affaan-m) | [Уровни спонсорства](../../SPONSORS.md) | [Программа спонсорства](../../SPONSORING.md)
+[**Стать спонсором**](https://github.com/sponsors/affaan-m)
 
 ---
 

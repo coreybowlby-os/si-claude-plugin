@@ -1422,7 +1422,7 @@ ECC 是**第一个最大化利用每个主要 AI 编码工具的插件**。以�
 
 这个项目是免费和开源的。赞助商帮助保持其维护和发展。
 
-[**成为赞助商**](https://github.com/sponsors/affaan-m) | [赞助层级](SPONSORS.md) | [赞助计划](SPONSORING.md)
+[**成为赞助商**](https://github.com/sponsors/affaan-m)
 
 ***
 

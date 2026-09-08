@@ -1735,7 +1735,7 @@ Etwas mit ECC gebaut? Öffne einen PR, um es hier hinzuzufügen.
 
 Dieses Projekt ist kostenlos und Open Source. Sponsoren helfen, es gepflegt und wachsend zu halten.
 
-[**Sponsor werden**](https://github.com/sponsors/affaan-m) | [Sponsor-Stufen](../../SPONSORS.md) | [Sponsoring-Programm](../../SPONSORING.md)
+[**Sponsor werden**](https://github.com/sponsors/affaan-m)
 
 ---
 

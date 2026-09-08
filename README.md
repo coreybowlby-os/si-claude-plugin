@@ -35,9 +35,6 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/36yGMHGFbR"><img src="https://img.shields.io/discord/1496644400590094540?logo=discord&logoColor=white&label=Discord&color=5865F2" alt="Discord" /></a>
-  <a href="https://ecc.tools"><img src="https://img.shields.io/badge/Website-ecc.tools-E07856?logo=googlechrome&logoColor=white" alt="Website" /></a>
-  <a href="https://github.com/apps/ecc-tools"><img src="https://img.shields.io/badge/GitHub%20App-ECC%20Tools-181717?logo=github&logoColor=white" alt="GitHub App" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
 </p>
 
@@ -64,7 +61,9 @@
 </p>
 
 > [!WARNING]
-> **Official sources only.** Install ECC only from verified channels: the GitHub repository [github.com/affaan-m/ECC](https://github.com/affaan-m/ECC), the npm packages [`ecc-universal`](https://www.npmjs.com/package/si-claude-plugin) and [`ecc-agentshield`](https://www.npmjs.com/package/ecc-agentshield), the [GitHub App](https://github.com/apps/ecc-tools), the plugin slug `ecc@ecc`, and the project website [ecc.tools](https://ecc.tools). Third-party re-uploads and unofficial mirrors are not maintained or reviewed by the project and may contain malware.
+> **Official sources only.** Install SI Claude Plugin only from verified channels: the GitHub repository [github.com/coreybowlby-os/si-claude-plugin](https://github.com/coreybowlby-os/si-claude-plugin), the npm package [`si-claude-plugin`](https://www.npmjs.com/package/si-claude-plugin), and the plugin slug `SI-Claude-Plugin@SI-Claude-Plugin`. Third-party re-uploads and unofficial mirrors are not maintained or reviewed by this project and may contain malware.
+>
+> This is a fork of [ECC](https://github.com/affaan-m/ECC). ECC's own channels — its repository, its npm packages, its GitHub App and `ecc.tools` — are **not** sources for this package, and this package is not published or reviewed by ECC.
 
 ## Install with Claude Code
 
@@ -142,7 +141,7 @@ The native path installs ECC's skills, agents, commands, and plugin-managed hook
 
 <sub><strong>Community sponsors:</strong> <a href="https://github.com/mikejmorgan-ai">Mike Morgan</a> · <a href="https://github.com/jasonwu513">@jasonwu513</a> · <a href="https://github.com/1anter">@1anter</a> · <a href="https://github.com/massimotodaro">@massimotodaro</a> · <a href="https://github.com/meadmccabe">@meadmccabe</a></sub>
 
-<sub><a href="https://github.com/sponsors/affaan-m"><strong>Become a Sponsor</strong></a> · <a href="SPONSORS.md">Sponsor Tiers</a> · <a href="SPONSORING.md">Sponsorship Program</a></sub>
+<sub><a href="https://github.com/sponsors/affaan-m"><strong>Become a Sponsor</strong></a></sub>
 
 </div>
 
@@ -2148,7 +2147,7 @@ These configs are battle-tested across multiple production applications.
 <details>
 <summary><strong>Sponsors and ECC Pro</strong></summary>
 
-ECC stays free because sponsors and Pro users fund the work. Sponsor logos are at the top of this README; the full roster and tiers are in [SPONSORS.md](SPONSORS.md).
+SI Claude Plugin is MIT-licensed and free. It is a fork of [ECC](https://github.com/affaan-m/ECC) — if you find it useful, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m), whose work this builds on.
 
 ECC Pro adds private-repo analysis, PR-triggered audits, AgentShield-backed scanning, automatic push and PR checks, pooled team usage, and priority support through the hosted GitHub App.
 
@@ -2161,7 +2160,7 @@ ECC Pro adds private-repo analysis, PR-triggered audits, AgentShield-backed scan
 </tr>
 </table>
 
-[Become a sponsor](https://github.com/sponsors/affaan-m) | [Sponsor tiers](SPONSORS.md) | [Sponsorship program](SPONSORING.md)
+[Become a sponsor](https://github.com/sponsors/affaan-m)
 </details>
 
 <details>
