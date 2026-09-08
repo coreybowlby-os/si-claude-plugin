@@ -126,7 +126,7 @@ Windows PowerShell:
 ```
 
 Claude setup-only value:
-- `off` — disables local ECC hook work through `ecc setup`; it is not a runtime hook profile.
+- `off` — disables local ECC hook work through `sicp setup`; it is not a runtime hook profile.
 
 Runtime hook profiles:
 - `minimal` — keep essential lifecycle and safety hooks only.
@@ -134,7 +134,7 @@ Runtime hook profiles:
 - `strict` — enables additional reminders and stricter guardrails.
 
 The Claude plugin exposes the same choices as the personal `hooks_enabled` and
-`hook_profile` settings. Run `ecc setup --mode claude-plugin` to install or
+`hook_profile` settings. Run `sicp setup --mode claude-plugin` to install or
 update the plugin and change those preferences.
 
 ### Writing Your Own Hook

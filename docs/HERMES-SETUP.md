@@ -59,14 +59,14 @@ do not add the Memory Vault runtime to `PATH`; install it separately first:
 
 ```bash
 npm install -g ecc-universal
-ecc memory --help
+sicp memory --help
 command -v ecc-memory-mcp
 ```
 
 Then initialize the vault:
 
 ```bash
-ecc memory init --scope project --scope team
+sicp memory init --scope project --scope team
 ```
 
 Normal search recall covers active `project` and `team` memories. Use
@@ -89,7 +89,7 @@ process list:
 
 ```bash
 printf '%s\n' 'Research is complete. Verify the cited sources and implement the parser.' |
-  ecc memory handoff \
+  sicp memory handoff \
     --from hermes \
     --target codex \
     --title "Implement the research parser" \
@@ -100,8 +100,8 @@ printf '%s\n' 'Research is complete. Verify the cited sources and implement the 
 Codex can retrieve it with:
 
 ```bash
-ecc memory search "research parser" --target-harness codex
-ecc memory read <memory-id>
+sicp memory search "research parser" --target-harness codex
+sicp memory read <memory-id>
 ```
 
 For MCP access, copy only the `ecc-memory-vault` entry from
@@ -156,20 +156,20 @@ These stay local and should be configured per operator:
 
 ## Suggested Bring-Up Order
 
-0. Run `ecc migrate audit --source ~/.hermes` first to inventory the legacy workspace and see which parts already map onto ECC2.
+0. Run `sicp migrate audit --source ~/.hermes` first to inventory the legacy workspace and see which parts already map onto ECC2.
 0.5. Plan and scaffold migration artifacts before importing anything:
-   - generate reviewable plans with `ecc migrate plan` and `ecc migrate scaffold`
-   - scaffold reusable legacy skills with `ecc migrate import-skills --output-dir migration-artifacts/skills`
-   - scaffold tool translation templates with `ecc migrate import-tools --output-dir migration-artifacts/tools`
-   - scaffold bridge plugin templates with `ecc migrate import-plugins --output-dir migration-artifacts/plugins`
-   - preview recurring jobs with `ecc migrate import-schedules --dry-run`
-   - preview gateway dispatch with `ecc migrate import-remote --dry-run`
-   - preview safe env/service context with `ecc migrate import-env --dry-run`
-   - import sanitized workspace memory with `ecc migrate import-memory`
+   - generate reviewable plans with `sicp migrate plan` and `sicp migrate scaffold`
+   - scaffold reusable legacy skills with `sicp migrate import-skills --output-dir migration-artifacts/skills`
+   - scaffold tool translation templates with `sicp migrate import-tools --output-dir migration-artifacts/tools`
+   - scaffold bridge plugin templates with `sicp migrate import-plugins --output-dir migration-artifacts/plugins`
+   - preview recurring jobs with `sicp migrate import-schedules --dry-run`
+   - preview gateway dispatch with `sicp migrate import-remote --dry-run`
+   - preview safe env/service context with `sicp migrate import-env --dry-run`
+   - import sanitized workspace memory with `sicp migrate import-memory`
 1. Install ECC and verify the baseline harness setup with `node tests/run-all.js`; the expected result is a zero-failure test summary.
 2. Install Hermes and point it at ECC-imported skills.
 3. Initialize the shared ECC Memory Vault. Register `ecc-memory-mcp` only if
-   Hermes needs tool access instead of the `ecc memory` CLI.
+   Hermes needs tool access instead of the `sicp memory` CLI.
 4. Authenticate Google Drive first, then GitHub, then distribution channels.
 5. Start with a small cron surface: readiness check, content accountability, inbox triage, revenue monitor.
 6. Only then add heavier personal workflows like health, relationship graphing, or outbound sequencing.

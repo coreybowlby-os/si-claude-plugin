@@ -65,7 +65,7 @@ until the underlying module graph is split more finely.
 A user should be able to get a useful ECC install with one command:
 
 ```bash
-ecc install --target claude --profile core
+sicp install --target claude --profile core
 ```
 
 The default experience should not assume the user wants every skill family and
@@ -87,7 +87,7 @@ The user should not have to know raw internal repo paths.
 Every install path should support dry-run planning:
 
 ```bash
-ecc install --target cursor --profile developer --with lang:typescript --with framework:nextjs --dry-run
+sicp install --target cursor --profile developer --with lang:typescript --with framework:nextjs --dry-run
 ```
 
 The plan should clearly show:
@@ -103,7 +103,7 @@ The plan should clearly show:
 Teams should be able to commit a project-level install config and use:
 
 ```bash
-ecc install --config ecc-install.json
+sicp install --config ecc-install.json
 ```
 
 That allows deterministic installs across contributors and CI.
@@ -207,7 +207,7 @@ Profiles should be composable with additional `--with` and `--without` flags.
 Example:
 
 ```bash
-ecc install --target claude --profile developer --with lang:typescript --with framework:nextjs --without capability:orchestration
+sicp install --target claude --profile developer --with lang:typescript --with framework:nextjs --without capability:orchestration
 ```
 
 ## Proposed CLI Design
@@ -215,13 +215,13 @@ ecc install --target claude --profile developer --with lang:typescript --with fr
 ### Primary Commands
 
 ```bash
-ecc install
-ecc plan
-ecc list-installed
-ecc doctor
-ecc repair
-ecc uninstall
-ecc catalog
+sicp install
+sicp plan
+sicp list-installed
+sicp doctor
+sicp repair
+sicp uninstall
+sicp catalog
 ```
 
 ### Install CLI
@@ -229,16 +229,16 @@ ecc catalog
 Recommended shape:
 
 ```bash
-ecc install [--target <target>] [--profile <name>] [--with <component>]... [--without <component>]... [--config <path>] [--dry-run] [--json]
+sicp install [--target <target>] [--profile <name>] [--with <component>]... [--without <component>]... [--config <path>] [--dry-run] [--json]
 ```
 
 Examples:
 
 ```bash
-ecc install --target claude --profile core
-ecc install --target cursor --profile developer --with lang:typescript --with framework:nextjs
-ecc install --target antigravity --with capability:security --with lang:python
-ecc install --config ecc-install.json
+sicp install --target claude --profile core
+sicp install --target cursor --profile developer --with lang:typescript --with framework:nextjs
+sicp install --target antigravity --with capability:security --with lang:python
+sicp install --config ecc-install.json
 ```
 
 ### Plan CLI
@@ -246,7 +246,7 @@ ecc install --config ecc-install.json
 Recommended shape:
 
 ```bash
-ecc plan [same selection flags as install]
+sicp plan [same selection flags as install]
 ```
 
 Purpose:
@@ -259,10 +259,10 @@ Purpose:
 Recommended shape:
 
 ```bash
-ecc catalog profiles
-ecc catalog components
-ecc catalog components --family language
-ecc catalog show framework:nextjs
+sicp catalog profiles
+sicp catalog components
+sicp catalog components --family language
+sicp catalog show framework:nextjs
 ```
 
 Purpose:
@@ -277,7 +277,7 @@ These legacy flows should still work during migration:
 ```bash
 sicp-install typescript
 sicp-install --target cursor typescript
-ecc typescript
+sicp typescript
 ```
 
 Internally these should normalize into the new request model and write

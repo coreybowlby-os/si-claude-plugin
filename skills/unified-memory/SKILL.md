@@ -20,7 +20,7 @@ or MCP examples:
 
 ```bash
 npm install -g ecc-universal
-ecc memory --help
+sicp memory --help
 command -v ecc-memory-mcp
 ```
 
@@ -62,8 +62,8 @@ exists with unexpected content.
 Search for an existing memory before creating another copy:
 
 ```bash
-ecc memory search "authentication migration" --target-harness codex
-ecc memory read <memory-id>
+sicp memory search "authentication migration" --target-harness codex
+sicp memory read <memory-id>
 ```
 
 With the opt-in MCP server, use `memory_search` and `memory_read`.
@@ -80,7 +80,7 @@ process list:
 
 ```bash
 printf '%s\n' 'The migration tests pass; rollout is still pending.' |
-  ecc memory save \
+  sicp memory save \
     --title "Authentication migration status" \
     --kind context \
     --source-harness codex \
@@ -99,7 +99,7 @@ governed project artifact rather than changing memory frontmatter.
 Write a handoff when another harness should continue the task:
 
 ```bash
-ecc memory handoff \
+sicp memory handoff \
   --from codex \
   --target claude \
   --title "Finish authentication rollout" \
@@ -121,7 +121,7 @@ overwriting history.
 Run this before committing team memories or after resolving a handoff:
 
 ```bash
-ecc memory doctor
+sicp memory doctor
 ```
 
 Repair reported files manually. The doctor does not delete or rewrite memory.

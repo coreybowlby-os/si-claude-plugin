@@ -138,12 +138,12 @@ harnesses.
 
 | Command | What it does |
 |---------|-------------|
-| `ecc memory init` | Create project, team, or user vault directories |
-| `ecc memory save` | Create an unreviewed context, decision, fact, lesson, note, preference, or runbook |
-| `ecc memory handoff` | Transfer bounded work state from one harness to another |
-| `ecc memory search` | Search memories by text, scope, kind, or target harness |
-| `ecc memory read` | Read a memory and its backlinks by stable ID |
-| `ecc memory doctor` | Report malformed files, duplicate IDs, broken links, and skipped symlinks |
+| `sicp memory init` | Create project, team, or user vault directories |
+| `sicp memory save` | Create an unreviewed context, decision, fact, lesson, note, preference, or runbook |
+| `sicp memory handoff` | Transfer bounded work state from one harness to another |
+| `sicp memory search` | Search memories by text, scope, kind, or target harness |
+| `sicp memory read` | Read a memory and its backlinks by stable ID |
+| `sicp memory doctor` | Report malformed files, duplicate IDs, broken links, and skipped symlinks |
 | `ecc-memory-mcp` | Start the optional local stdio MCP server |
 
 Pass memory bodies with `--stdin` or `--body-file`; they are intentionally not
@@ -158,11 +158,11 @@ These lifecycle commands are also available through the `ecc` CLI.
 
 | Command | What it does |
 |---------|-------------|
-| `ecc list-installed` | Show installs recorded in ECC's managed state |
-| `ecc doctor` | Diagnose missing or drifted managed files and point failures to the short problem form |
-| `ecc repair` | Restore missing or drifted managed files |
-| `ecc uninstall` | Remove only install-state-managed files and optionally show the 20-second exit-feedback route |
-| `ecc feedback` | Show the public problem, quick-feedback, and feature routes without reading files or uploading diagnostics |
+| `sicp list-installed` | Show installs recorded in ECC's managed state |
+| `sicp doctor` | Diagnose missing or drifted managed files and point failures to the short problem form |
+| `sicp repair` | Restore missing or drifted managed files |
+| `sicp uninstall` | Remove only install-state-managed files and optionally show the 20-second exit-feedback route |
+| `sicp feedback` | Show the public problem, quick-feedback, and feature routes without reading files or uploading diagnostics |
 
 ---
 

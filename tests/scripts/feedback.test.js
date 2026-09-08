@@ -54,7 +54,7 @@ const TEST_CASES = [
     for (const flag of ['--help', '-h']) {
       const result = run([flag]);
       assert.strictEqual(result.status, 0, result.stderr);
-      assert.match(result.stdout, /Usage: ecc feedback \[--json\] \[--help\|-h\]/);
+      assert.match(result.stdout, /Usage: sicp feedback \[--json\] \[--help\|-h\]/);
       assert.doesNotMatch(result.stdout, /^ECC feedback$/m);
     }
   }],

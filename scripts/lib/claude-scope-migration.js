@@ -42,7 +42,7 @@ function recoveryCommands(sourceScope, destinationScope) {
     );
   }
   commands.push(
-    `ecc setup --mode claude-plugin --scope ${destinationScope} --move-scope --yes`
+    `sicp setup --mode claude-plugin --scope ${destinationScope} --move-scope --yes`
   );
   return commands;
 }
@@ -69,7 +69,7 @@ function assertMigrationInventory(plugins, destinationScope) {
       {
         observedScopes,
         recovery: [
-          `ecc setup --mode claude-plugin --scope ${destinationScope} --yes`,
+          `sicp setup --mode claude-plugin --scope ${destinationScope} --yes`,
         ],
       }
     );

@@ -113,10 +113,10 @@ Without install-state, lifecycle commands are guesswork.
 
 Introduce a durable install-state contract and the first lifecycle commands:
 
-- `ecc list-installed`
-- `ecc uninstall`
-- `ecc doctor`
-- `ecc repair`
+- `sicp list-installed`
+- `sicp uninstall`
+- `sicp doctor`
+- `sicp repair`
 
 Suggested state locations:
 

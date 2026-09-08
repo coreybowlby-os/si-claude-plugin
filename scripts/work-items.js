@@ -37,7 +37,7 @@ Usage:
   node scripts/work-items.js sync-github --repo <owner/repo> [--db <path>] [--json]
 
 Track Linear, GitHub, handoff, and manual roadmap items in the ECC SQLite state
-store so "ecc status" can include linked work and blocked operator follow-up.
+store so "sicp status" can include linked work and blocked operator follow-up.
 
 Options:
   --id <id>                 Stable local work-item id for upsert

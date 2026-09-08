@@ -12,7 +12,7 @@ only supported choices, preview, confirm once, apply non-interactively, verify,
 and show the welcome only after success. Never clone ECC into a temporary
 directory or copy plugin components by hand.
 
-For a human-operated terminal, the canonical entry points are `ecc setup` and
+For a human-operated terminal, the canonical entry points are `sicp setup` and
 `npx ecc-universal setup`. Inside a harness, use the explicit non-interactive
 commands below instead.
 
@@ -84,13 +84,13 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 If `$CLAUDE_PLUGIN_ROOT` is unavailable, use the published npm package:
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --dry-run --json
 ```
 
 Show exactly one confirmation summary containing the planned action, one scope,
 one hook mode, marketplace action, and any source-to-destination migration.
-Ask one yes/no question. Do not run a bare interactive `ecc setup` through a
+Ask one yes/no question. Do not run a bare interactive `sicp setup` through a
 harness shell tool because that shell is commonly non-TTY.
 
 ### 4. Apply the explicit choices
@@ -106,7 +106,7 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 Fallback:
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --yes --json
 ```
 
@@ -186,21 +186,21 @@ State the capability summary before confirmation: destination
 Claude scope or hook-mode questions. Preview first:
 
 ```bash
-npx --yes --package ecc-universal ecc install --profile core --target kimi --dry-run
+npx --yes --package ecc-universal sicp install --profile core --target kimi --dry-run
 ```
 
 Show one confirmation for that project destination, then apply the identical
 command without `--dry-run`. Verify with:
 
 ```bash
-npx --yes --package ecc-universal ecc doctor --target kimi
+npx --yes --package ecc-universal sicp doctor --target kimi
 ```
 
 Only after doctor succeeds and the installed instructions and skills remain
 inside `./.kimi-code`, render:
 
 ```bash
-npx --yes --package ecc-universal ecc welcome --action configured
+npx --yes --package ecc-universal sicp welcome --action configured
 ```
 
 Do not claim that Kimi installed or configured ECC lifecycle hooks.

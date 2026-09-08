@@ -64,7 +64,7 @@ function json(result) {
   return JSON.parse(result.stdout);
 }
 
-console.log('\n=== Testing ecc memory CLI ===\n');
+console.log('\n=== Testing sicp memory CLI ===\n');
 
 test('keeps runCommand focused on dispatch under the function-size guideline', () => {
   const lineCount = runCommand.toString().split('\n').length;
@@ -76,12 +76,12 @@ test('shows memory command help directly and through the ecc router', () => {
   try {
     const direct = run(MEMORY_SCRIPT, ['--help'], fixture);
     assert.strictEqual(direct.status, 0, direct.stderr);
-    assert.ok(direct.stdout.includes('ecc memory save'));
-    assert.ok(direct.stdout.includes('ecc-memory-mcp'));
+    assert.ok(direct.stdout.includes('sicp memory save'));
+    assert.ok(direct.stdout.includes('sicp-memory-mcp'));
 
     const routed = run(ECC_SCRIPT, ['memory', '--help'], fixture);
     assert.strictEqual(routed.status, 0, routed.stderr);
-    assert.ok(routed.stdout.includes('ecc memory search'));
+    assert.ok(routed.stdout.includes('sicp memory search'));
     assert.ok(routed.stdout.includes('Default recall scopes: project and team'));
     assert.ok(routed.stdout.includes('user scope must be requested explicitly'));
   } finally {
@@ -89,7 +89,7 @@ test('shows memory command help directly and through the ecc router', () => {
   }
 });
 
-test('routes stdin through ecc memory without dropping the body', () => {
+test('routes stdin through sicp memory without dropping the body', () => {
   const fixture = createFixture();
   try {
     const saved = json(run(ECC_SCRIPT, [

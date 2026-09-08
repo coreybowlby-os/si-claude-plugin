@@ -39,7 +39,7 @@ closed before confirmation.
 The intended command name is `train`. The future handoff must be equivalent to:
 
 ```sh
-ecc ito train \
+sicp ito train \
   --booking <server-verified-booking-id> \
   --manifest <absolute-reviewed-json-file> \
   --confirmation-ref <opaque-non-authorizing-reference> \

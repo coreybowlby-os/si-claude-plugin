@@ -61,7 +61,7 @@ for (const relativePath of configureEccDocs) {
   test(`${relativePath} delegates to guided plugin setup`, () => {
     const content = readConfigureEccDoc(relativePath);
 
-    assert.ok(content.includes('ecc setup'));
+    assert.ok(content.includes('sicp setup'));
     assert.ok(content.includes('npx ecc-universal setup'));
     assert.ok(content.includes('--mode claude-plugin'));
     assert.ok(content.includes('--scope <scope>'));
@@ -115,8 +115,8 @@ for (const relativePath of configureEccDocs) {
     const codexWelcomeIndex = content.indexOf(
       '["<installedPath>/scripts/welcome.js", "--action", "configured", "--version", "<installed-version>"]'
     );
-    const kimiVerifyIndex = content.indexOf('ecc doctor --target kimi');
-    const kimiWelcomeIndex = content.indexOf('ecc welcome --action configured');
+    const kimiVerifyIndex = content.indexOf('sicp doctor --target kimi');
+    const kimiWelcomeIndex = content.indexOf('sicp welcome --action configured');
 
     assert.ok(codexVerifyIndex > -1, 'missing Codex verification');
     assert.ok(codexWelcomeIndex > codexVerifyIndex, 'Codex welcome must follow verification');

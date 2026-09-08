@@ -183,7 +183,7 @@ function assertHookConsentReady(plan = {}) {
       + `${formatHookCapabilityDisclosure()}\n`
       + 'Confirm with --enable-hooks to install it, or --no-hooks to install '
       + 'everything else without the hook runtime. The guided installer '
-      + '(ecc install --guided) collects this choice interactively.'
+      + '(sicp install --guided) collects this choice interactively.'
   );
 }
 

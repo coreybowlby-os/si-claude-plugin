@@ -28,7 +28,7 @@ For the full-stack platform framing and product-integration loop, see
 | Hooks | `hooks/hooks.json`, `scripts/hooks/` | Claude native hooks, OpenCode plugin events, Cursor hook adapter | Hook-backed in Claude/OpenCode/Cursor; instruction-backed in Codex |
 | MCPs | `.mcp.json`, `mcp-configs/` | Native MCP config import per harness | Supported where the harness exposes MCP |
 | Commands | `commands/`, CLI scripts | Claude slash commands, compatibility shims, CLI entrypoints | Supported, but command semantics vary |
-| Memory | `.ecc/memory/`, `~/.ecc/memory/` | `ecc memory` CLI or opt-in `ecc-memory-mcp` stdio server | Supported with explicit recall and unreviewed writes |
+| Memory | `.ecc/memory/`, `~/.ecc/memory/` | `sicp memory` CLI or opt-in `ecc-memory-mcp` stdio server | Supported with explicit recall and unreviewed writes |
 | Sessions | `ecc2/`, session adapters, orchestration scripts | TUI/daemon, tmux/worktree orchestration, harness-specific runners | Alpha |
 
 ## What Travels Unchanged
@@ -69,7 +69,7 @@ Hermes, Cursor, OpenCode, and other agents. It stores portable
 
 Every harness must use the same repository working directory or the same
 `ECC_MEMORY_PROJECT_ROOT` and `ECC_MEMORY_USER_ROOT` overrides. The deterministic
-`ecc memory` CLI is the baseline interface. Harnesses with MCP support may
+`sicp memory` CLI is the baseline interface. Harnesses with MCP support may
 instead launch `ecc-memory-mcp` and use `memory_save`, `memory_search`,
 `memory_read`, and `memory_doctor`. Normal search recall is active-only across
 `project` and `team`; a direct ID read can inspect a non-active entry, and

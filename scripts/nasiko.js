@@ -16,10 +16,10 @@ function helpText() {
 ECC experimental Nasiko CLI lifecycle bridge
 
 Usage:
-  ecc nasiko status [--install-dir <absolute-path>] [--json]
-  ecc nasiko install --version v0.1.0 --yes [--install-dir <absolute-path>] [--json]
-  ecc nasiko install --version v0.1.0 --dry-run [--install-dir <absolute-path>] [--json]
-  ecc nasiko uninstall --version v0.1.0 --yes [--install-dir <absolute-path>] [--json]
+  sicp nasiko status [--install-dir <absolute-path>] [--json]
+  sicp nasiko install --version v0.1.0 --yes [--install-dir <absolute-path>] [--json]
+  sicp nasiko install --version v0.1.0 --dry-run [--install-dir <absolute-path>] [--json]
+  sicp nasiko uninstall --version v0.1.0 --yes [--install-dir <absolute-path>] [--json]
 
 The installer is opt-in, accepts only ECC-qualified pinned releases, downloads
 content-addressed OCI artifacts from registry.nasiko.dev, verifies SHA-256

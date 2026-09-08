@@ -35,8 +35,8 @@ Pick exactly one mode per request:
 - Never place, cancel, route, sign, simulate, or submit an order, trade,
   purchase, reservation, or RFQ. This skill has no execution path and no
   confirmation can give it one.
-- Never use the compute bridge for basket data: `ecc ito find` submits an
-  authenticated RFQ and `ecc ito status` reads RFQ/procurement status, not
+- Never use the compute bridge for basket data: `sicp ito find` submits an
+  authenticated RFQ and `sicp ito status` reads RFQ/procurement status, not
   basket data. The compute bridge, compute device credential, and compute MCP
   tools are a separate surface and are never a substitute for basket/market
   reads.
@@ -81,7 +81,7 @@ Use the weakest access that satisfies the request, in this order:
    environment: propose the exact package/version and get confirmation before
    installing.
 
-This skill never uses device authorization or `ecc ito login`; those belong to
+This skill never uses device authorization or `sicp ito login`; those belong to
 the compute surface and cannot unlock basket/market reads.
 
 ## Bundled read-only client

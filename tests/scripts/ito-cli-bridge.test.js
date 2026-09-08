@@ -652,12 +652,12 @@ async function main() {
           ECC_ITO_CLI_EXECUTABLE: probe.executable,
         });
         assert.strictEqual(result.status, 0, result.stderr);
-        assert.match(result.stdout, /ecc ito login \[--no-browser\]/);
-        assert.match(result.stdout, /ecc ito logout/);
-        assert.match(result.stdout, /ecc ito auth/);
-        assert.match(result.stdout, /ecc ito find/);
-        assert.match(result.stdout, /ecc ito status/);
-        assert.match(result.stdout, /ecc ito evals/);
+        assert.match(result.stdout, /sicp ito login \[--no-browser\]/);
+        assert.match(result.stdout, /sicp ito logout/);
+        assert.match(result.stdout, /sicp ito auth/);
+        assert.match(result.stdout, /sicp ito find/);
+        assert.match(result.stdout, /sicp ito status/);
+        assert.match(result.stdout, /sicp ito evals/);
         assert.match(result.stdout, /sixtytwo/i);
         assert.match(result.stdout, /ito_auth/);
         assert.match(result.stdout, /ito_find/);

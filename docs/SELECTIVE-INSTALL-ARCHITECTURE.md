@@ -728,17 +728,17 @@ State requirements:
 
 The following commands are the lifecycle surface for install-state:
 
-1. `ecc list-installed`
-2. `ecc uninstall`
-3. `ecc doctor`
-4. `ecc repair`
+1. `sicp list-installed`
+2. `sicp uninstall`
+3. `sicp doctor`
+4. `sicp repair`
 
 Current implementation status:
 
-- `ecc list-installed` routes to `node scripts/list-installed.js`
-- `ecc uninstall` routes to `node scripts/uninstall.js`
-- `ecc doctor` routes to `node scripts/doctor.js`
-- `ecc repair` routes to `node scripts/repair.js`
+- `sicp list-installed` routes to `node scripts/list-installed.js`
+- `sicp uninstall` routes to `node scripts/uninstall.js`
+- `sicp doctor` routes to `node scripts/doctor.js`
+- `sicp repair` routes to `node scripts/repair.js`
 - legacy script entrypoints remain available during migration
 
 ### `list-installed`
@@ -884,7 +884,7 @@ keep growing per-target shell branches.
 1. add stronger target-specific merge/remove semantics
 2. extend repair/uninstall coverage for non-copy operations
 3. reduce package shipping surface to the module graph instead of broad folders
-4. decide when `ecc-install` should become a thin alias for `ecc install`
+4. decide when `ecc-install` should become a thin alias for `sicp install`
 
 ### Phase 4: Publish And Future Targets
 
@@ -900,7 +900,7 @@ The highest-signal next implementation moves in this repo are:
 1. add target-specific merge/remove semantics for config-like modules
 2. extend repair and uninstall beyond simple copy-file operations
 3. reduce package shipping surface to the module graph instead of broad folders
-4. decide whether `ecc-install` remains separate or becomes `ecc install`
+4. decide whether `ecc-install` remains separate or becomes `sicp install`
 5. add tests that lock down:
    - target-specific merge/remove behavior
    - repair and uninstall safety for non-copy operations

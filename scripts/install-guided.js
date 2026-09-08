@@ -28,8 +28,8 @@ function showHelp(output = process.stdout) {
 ECC guided multi-harness install
 
 Usage:
-  ecc install --guided
-  ecc install --guided --harness claude --harness codex --harness kimi [options]
+  sicp install --guided
+  sicp install --guided --harness claude --harness codex --harness kimi [options]
 
 Guided harnesses:
   claude  Native Claude Code plugin; choose user, project, or local scope and an ECC hook profile.
@@ -48,7 +48,7 @@ Options:
   --json                  Emit machine-readable output
   --help, -h              Show this help
 
-Advanced managed adapters remain available through explicit ecc install --target commands:
+Advanced managed adapters remain available through explicit sicp install --target commands:
   ${ADVANCED_HARNESSES}
 
 This command configures ECC. It does not install or authenticate provider CLIs.
@@ -136,7 +136,7 @@ async function askHarnesses(terminal, output) {
     output.write(`  ${index + 1}. ${harness.label} — ${harness.destination}\n`);
   });
   output.write('  all. All three guided harnesses\n');
-  output.write(`\nAdvanced adapters (use ecc install --target): ${ADVANCED_HARNESSES}.\n\n`);
+  output.write(`\nAdvanced adapters (use sicp install --target): ${ADVANCED_HARNESSES}.\n\n`);
   while (true) {
     const answer = await terminal.question('Choose one or more (for example 1,3 or all): ');
     if (answer.length > 1024) {

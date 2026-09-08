@@ -11,7 +11,7 @@ metadata:
 収集し、プレビュー後に 1 回だけ確認し、非対話で適用・検証します。ウェルカム表示は成功後だけです。
 ECC を一時ディレクトリへ clone したり、プラグインを手作業でコピーしたりしないでください。
 
-ユーザー自身が操作するターミナルの正規エントリは `ecc setup` と `npx ecc-universal setup` です。
+ユーザー自身が操作するターミナルの正規エントリは `sicp setup` と `npx ecc-universal setup` です。
 ハーネス内では、代わりに以下の明示的な非対話コマンドを使います。
 
 ## 現在のハーネスで分岐
@@ -76,13 +76,13 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 `$CLAUDE_PLUGIN_ROOT` がない場合は公開 npm パッケージを使います。
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --dry-run --json
 ```
 
 確認サマリーは 1 回だけ表示します。予定アクション、1 スコープ、1 フックモード、marketplace アクション、
 および移行元から移行先を含め、yes/no を 1 回だけ質問します。ハーネスの Shell は通常非 TTY のため、
-そこで bare な対話式 `ecc setup` を実行しません。
+そこで bare な対話式 `sicp setup` を実行しません。
 
 ### 4. 明示した選択を適用
 
@@ -96,7 +96,7 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 フォールバック:
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --yes --json
 ```
 
@@ -166,20 +166,20 @@ Claude の `off | minimal | standard | strict` が Codex に適用されたと�
 `hooks=unsupported` です。Claude のスコープ/フックモードを質問しません。まずプレビューします。
 
 ```bash
-npx --yes --package ecc-universal ecc install --profile core --target kimi --dry-run
+npx --yes --package ecc-universal sicp install --profile core --target kimi --dry-run
 ```
 
 このプロジェクト導入先について 1 回だけ確認し、`--dry-run` を除いた同一コマンドを適用します。
 検証コマンド:
 
 ```bash
-npx --yes --package ecc-universal ecc doctor --target kimi
+npx --yes --package ecc-universal sicp doctor --target kimi
 ```
 
 doctor が成功し、導入された指示とスキルが `./.kimi-code` 内に留まることを確認した後だけ実行します。
 
 ```bash
-npx --yes --package ecc-universal ecc welcome --action configured
+npx --yes --package ecc-universal sicp welcome --action configured
 ```
 
 Kimi が ECC ライフサイクルフックを導入または設定したとは表現しません。

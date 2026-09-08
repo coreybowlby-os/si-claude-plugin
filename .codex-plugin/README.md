@@ -87,8 +87,8 @@ Codex; use the legacy managed sync only when you intentionally need its copied
 configuration layer.
 
 New sync runs record a versioned ownership manifest. Inspect or remove that
-layer explicitly with `ecc uninstall --legacy-codex-sync --dry-run`, followed
-by `ecc uninstall --legacy-codex-sync`. Cleanup never targets conversation
+layer explicitly with `sicp uninstall --legacy-codex-sync --dry-run`, followed
+by `sicp uninstall --legacy-codex-sync`. Cleanup never targets conversation
 history or native plugin caches. Older pre-manifest installs are cleaned
 conservatively and unverifiable files are retained with warnings.
 

@@ -7,7 +7,7 @@ const {
 
 function showHelp() {
   process.stdout.write(`
-Usage: ecc feedback [--json] [--help|-h]
+Usage: sicp feedback [--json] [--help|-h]
 
 Print ECC's low-friction public feedback routes. This command never uploads
 diagnostics or reads project files.

@@ -11,7 +11,7 @@ metadata:
 一次，以非交互方式执行，验证，最后才显示欢迎信息。不要把 ECC 克隆到
 临时目录，也不要手动复制插件组件。
 
-在用户自己操作的终端中，规范入口是 `ecc setup` 和 `npx ecc-universal setup`。
+在用户自己操作的终端中，规范入口是 `sicp setup` 和 `npx ecc-universal setup`。
 在工具内请改用下方参数完整的非交互命令。
 
 ## 按当前工具分流
@@ -75,13 +75,13 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 如果 `$CLAUDE_PLUGIN_ROOT` 不可用，使用已发布的 npm 包：
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --dry-run --json
 ```
 
 只显示一次确认摘要，内容包含计划操作、唯一范围、唯一 Hook 模式、marketplace 操作和
 任何从来源到目标的迁移。只问一个是/否问题。不要通过工具的 Shell 调用不带参数的
-交互式 `ecc setup`，因为该 Shell 通常不是 TTY。
+交互式 `sicp setup`，因为该 Shell 通常不是 TTY。
 
 ### 4. 应用明确选择
 
@@ -95,7 +95,7 @@ node "$CLAUDE_PLUGIN_ROOT/scripts/setup.js" --mode claude-plugin \
 备用命令：
 
 ```bash
-npx --yes --package ecc-universal ecc setup --mode claude-plugin \
+npx --yes --package ecc-universal sicp setup --mode claude-plugin \
   --scope <scope> --hooks <hooks> [--move-scope] --yes --json
 ```
 
@@ -163,19 +163,19 @@ JSON 中的值构造 shell 命令。
 不要询问 Claude 范围或 Hook 模式。先预览：
 
 ```bash
-npx --yes --package ecc-universal ecc install --profile core --target kimi --dry-run
+npx --yes --package ecc-universal sicp install --profile core --target kimi --dry-run
 ```
 
 只针对该项目目标确认一次，然后执行去掉 `--dry-run` 的同一命令。使用以下命令验证：
 
 ```bash
-npx --yes --package ecc-universal ecc doctor --target kimi
+npx --yes --package ecc-universal sicp doctor --target kimi
 ```
 
 只有 doctor 成功，且已安装的指令和技能仍位于 `./.kimi-code` 内时才运行：
 
 ```bash
-npx --yes --package ecc-universal ecc welcome --action configured
+npx --yes --package ecc-universal sicp welcome --action configured
 ```
 
 不要声称 Kimi 已安装或配置 ECC 生命周期 Hook。

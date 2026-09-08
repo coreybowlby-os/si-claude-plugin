@@ -24,7 +24,7 @@ function test(name, fn) {
   }
 }
 function createFixture(state = {}) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc setup cli '));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'sicp setup cli '));
   const homeDir = path.join(root, 'home');
   const configDir = path.join(root, 'config');
   const projectRoot = path.join(root, 'project');
@@ -616,7 +616,7 @@ test('migration JSON failures retain phase, scopes, and exact recovery', () => {
     assert.deepStrictEqual([...payload.error.observedScopes].sort(), ['project', 'user']);
     assert.deepStrictEqual(payload.error.recovery, [
       'claude plugin uninstall ecc@ecc --scope user --keep-data',
-      'ecc setup --mode claude-plugin --scope project --move-scope --yes',
+      'sicp setup --mode claude-plugin --scope project --move-scope --yes',
     ]);
   });
 });
@@ -634,7 +634,7 @@ test('help explains native scope names in user-facing language', () => {
   assert.match(result.stdout, /--move-scope/);
 });
 
-test('ecc setup delegates to the focused setup command', () => {
+test('sicp setup delegates to the focused setup command', () => {
   const result = spawnSync(process.execPath, [eccScript, 'setup', '--help'], {
     cwd: repoRoot,
     encoding: 'utf8',
@@ -645,7 +645,7 @@ test('ecc setup delegates to the focused setup command', () => {
   assert.match(result.stdout, /claude-plugin/);
 });
 
-test('ecc setup preserves a real terminal for the interactive wizard', () => {
+test('sicp setup preserves a real terminal for the interactive wizard', () => {
   if (process.platform === 'win32') return;
 
   withFixture({}, fixture => {

@@ -30,9 +30,9 @@ function showHelp() {
 ECC guided setup
 
 Usage:
-  ecc setup
-  ecc setup --mode claude-plugin --scope user|project|local [options]
-  ecc setup --mode claude-plugin --scope project --move-scope [options]
+  sicp setup
+  sicp setup --mode claude-plugin --scope user|project|local [options]
+  sicp setup --mode claude-plugin --scope project --move-scope [options]
 
 Install scopes:
   user      Global for this user; ECC is available in every project.

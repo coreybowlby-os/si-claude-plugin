@@ -136,17 +136,17 @@ function showHelp(exitCode = 0) {
 ECC selective-install CLI
 
 Usage:
-  ecc <command> [args...]
-  ecc [install args...]
-  ecc --dry-run <command> [args...]
+  sicp <command> [args...]
+  sicp [install args...]
+  sicp --dry-run <command> [args...]
 
 Commands:
 ${PRIMARY_COMMANDS.map(command => `  ${command.padEnd(15)} ${COMMANDS[command].description}`).join('\n')}
 
 Compatibility:
   sicp-install        Legacy install entrypoint retained for existing flows
-  ecc [args...]      Without a command, args are routed to "install"
-  ecc help <command> Show help for a specific command
+  sicp [args...]     Without a command, args are routed to "install"
+  sicp help <command> Show help for a specific command
 
 Global Flags:
   --dry-run          Preview actions without executing (sets ECC_DRY_RUN=1)
@@ -155,48 +155,48 @@ Compute:
   ${getComputeSponsorCopy()}
 
 Examples:
-  ecc setup
-  ecc setup --mode claude-plugin --scope user --hooks standard --yes
-  ecc welcome
-  ecc install --guided
-  ecc install --guided --harness claude --harness codex --harness kimi
+  sicp setup
+  sicp setup --mode claude-plugin --scope user --hooks standard --yes
+  sicp welcome
+  sicp install --guided
+  sicp install --guided --harness claude --harness codex --harness kimi
   ecc typescript
-  ecc install --profile developer --target claude
-  ecc plan --profile core --target cursor
-  ecc catalog profiles
-  ecc catalog components --family language
-  ecc catalog show framework:nextjs
-  ecc consult "security reviews"
-  ecc control-pane --port 8765
-  ecc ito login [--no-browser]
-  ecc ito logout
-  ecc ito auth
-  ecc ito find --gpu h200 --count 8 --nodes 1 --gpus-per-node 8 --days 30 --storage-tb 1 --start-window 2099-08-15 --max-rate 3.00 --form-factor bare_metal --contract-type reservation --fabric infiniband --region us-east-1
-  ecc ito status --json
-  ecc nasiko status --json
-  ecc nasiko install --version v0.1.0 --dry-run --json
-  ecc nasiko install --version v0.1.0 --yes --json
-  ecc ito evals --cluster clu_prod_example --live-sixtytwo --nodes gpu-01,gpu-02 --config-dir /absolute/path/to/qualification-config
-  ecc memory init
-  ecc memory handoff --from codex --target claude --title "Continue migration" --stdin
-  ecc memory search "migration blockers" --target-harness hermes
-  ecc list-installed --json
-  ecc doctor --target cursor
-  ecc feedback
-  ecc repair --dry-run
-  ecc auto-update --dry-run
-  ecc status --json
-  ecc status --exit-code
-  ecc status --markdown --write status.md
-  ecc platform-audit --json --allow-untracked docs/drafts/
-  ecc security-ioc-scan --home
-  ecc sessions
-  ecc sessions session-active --json
-  ecc work-items upsert linear-ecc-20 --source linear --source-id ECC-20 --title "Review control-plane contract" --status blocked
-  ecc work-items sync-github --repo affaan-m/ECC
-  ecc session-inspect claude:latest
-  ecc loop-status --json
-  ecc uninstall --target antigravity --dry-run
+  sicp install --profile developer --target claude
+  sicp plan --profile core --target cursor
+  sicp catalog profiles
+  sicp catalog components --family language
+  sicp catalog show framework:nextjs
+  sicp consult "security reviews"
+  sicp control-pane --port 8765
+  sicp ito login [--no-browser]
+  sicp ito logout
+  sicp ito auth
+  sicp ito find --gpu h200 --count 8 --nodes 1 --gpus-per-node 8 --days 30 --storage-tb 1 --start-window 2099-08-15 --max-rate 3.00 --form-factor bare_metal --contract-type reservation --fabric infiniband --region us-east-1
+  sicp ito status --json
+  sicp nasiko status --json
+  sicp nasiko install --version v0.1.0 --dry-run --json
+  sicp nasiko install --version v0.1.0 --yes --json
+  sicp ito evals --cluster clu_prod_example --live-sixtytwo --nodes gpu-01,gpu-02 --config-dir /absolute/path/to/qualification-config
+  sicp memory init
+  sicp memory handoff --from codex --target claude --title "Continue migration" --stdin
+  sicp memory search "migration blockers" --target-harness hermes
+  sicp list-installed --json
+  sicp doctor --target cursor
+  sicp feedback
+  sicp repair --dry-run
+  sicp auto-update --dry-run
+  sicp status --json
+  sicp status --exit-code
+  sicp status --markdown --write status.md
+  sicp platform-audit --json --allow-untracked docs/drafts/
+  sicp security-ioc-scan --home
+  sicp sessions
+  sicp sessions session-active --json
+  sicp work-items upsert linear-ecc-20 --source linear --source-id ECC-20 --title "Review control-plane contract" --status blocked
+  sicp work-items sync-github --repo affaan-m/ECC
+  sicp session-inspect claude:latest
+  sicp loop-status --json
+  sicp uninstall --target antigravity --dry-run
 `);
 
   process.exit(exitCode);

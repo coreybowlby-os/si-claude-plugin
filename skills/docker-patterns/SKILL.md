@@ -343,7 +343,7 @@ docker compose -p ecc-plugin-ubuntu-test \
 The dry run executes the current public command contract:
 
 ```bash
-ecc install --profile core --target claude-project --dry-run --json
+sicp install --profile core --target claude-project --dry-run --json
 ```
 
 Before that command runs, the container creates a locally packed npm artifact

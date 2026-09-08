@@ -453,7 +453,7 @@ function inspectPluginInventory(plugins, requestedScope) {
       {
         observedScopes,
         recovery: [
-          `ecc setup --mode claude-plugin --scope ${scope} --move-scope --yes`,
+          `sicp setup --mode claude-plugin --scope ${scope} --move-scope --yes`,
         ],
       }
     );

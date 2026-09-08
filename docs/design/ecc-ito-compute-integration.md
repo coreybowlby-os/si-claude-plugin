@@ -27,22 +27,22 @@ second API client or response schema.
 The wrapper exposes only the canonical CLI's `login`, `logout`, `auth`, `find`, `status`, and `evals`
 operations:
 
-    ecc ito login [--no-browser]
-    ecc ito logout
-    ecc ito auth
-    ecc ito find <all required RFQ constraints>
-    ecc ito status
-    ecc ito evals --cluster <id> --live-sixtytwo --nodes <list> --config-dir <dir>
+    sicp ito login [--no-browser]
+    sicp ito logout
+    sicp ito auth
+    sicp ito find <all required RFQ constraints>
+    sicp ito status
+    sicp ito evals --cluster <id> --live-sixtytwo --nodes <list> --config-dir <dir>
 
 The canonical MCP server exposes only `ito_auth`, `ito_find`, and `ito_status`.
 ECC includes an opt-in configuration template pointing to the local built MCP
 entry. It does not enable the server by default.
 
-The former browser/manual-copy command is retired. `ecc ito login` delegates to
+The former browser/manual-copy command is retired. `sicp ito login` delegates to
 the canonical CLI's device authorization, which opens the Itô verification page
 by default and persists a device token in macOS Keychain. `--no-browser`
 suppresses that page handoff. ECC itself performs no browser automation and
-stores no economic state. `ecc ito auth` is validation-only, never starts
+stores no economic state. `sicp ito auth` is validation-only, never starts
 device login, and rejects `--no-browser`.
 
 ## Local install

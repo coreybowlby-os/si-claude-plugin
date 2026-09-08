@@ -46,12 +46,12 @@ function usage() {
 ECC Memory Vault
 
 Usage:
-  ecc memory init [--scope project|team|user] [--json]
-  ecc memory save --title <text> (--stdin | --body-file <path>) [options]
-  ecc memory handoff --from <harness> --target <harness> --title <text> (--stdin | --body-file <path>) [options]
-  ecc memory search [query] [--scope <scope>] [--target-harness <harness>] [--kind <kind>] [--limit <n>] [--json]
-  ecc memory read <memory-id> [--scope <scope>] [--json]
-  ecc memory doctor [--scope <scope>] [--json]
+  sicp memory init [--scope project|team|user] [--json]
+  sicp memory save --title <text> (--stdin | --body-file <path>) [options]
+  sicp memory handoff --from <harness> --target <harness> --title <text> (--stdin | --body-file <path>) [options]
+  sicp memory search [query] [--scope <scope>] [--target-harness <harness>] [--kind <kind>] [--limit <n>] [--json]
+  sicp memory read <memory-id> [--scope <scope>] [--json]
+  sicp memory doctor [--scope <scope>] [--json]
 
 Recall:
   Default recall scopes: project and team; user scope must be requested explicitly
@@ -69,7 +69,7 @@ Write options:
   --body-file <path>         Read the body from a regular, non-symlink file
 
 MCP:
-  ecc-memory-mcp             Start the opt-in local stdio MCP server
+  sicp-memory-mcp             Start the opt-in local stdio MCP server
 
 Safety:
   Tool-created memories are always unreviewed context, never executable policy.

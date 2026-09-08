@@ -35,12 +35,12 @@ function main() {
     ["documents only the real CLI commands and MCP tools", () => {
       const skill = read("skills/ito-compute/SKILL.md");
       for (const command of [
-        "ecc ito login",
-        "ecc ito logout",
-        "ecc ito auth",
-        "ecc ito find",
-        "ecc ito status",
-        "ecc ito evals",
+        "sicp ito login",
+        "sicp ito logout",
+        "sicp ito auth",
+        "sicp ito find",
+        "sicp ito status",
+        "sicp ito evals",
       ]) {
         assert.match(skill, new RegExp(command.replace(" ", "\\s+")));
       }
@@ -59,7 +59,7 @@ function main() {
       assert.match(skill, /ECC_ITO_CLI_EXECUTABLE/);
       assert.match(skill, /explicit absolute built entry/);
       assert.match(skill, /never discovers[^\n]*through `PATH`/);
-      assert.match(skill, /ecc ito login --no-browser/);
+      assert.match(skill, /sicp ito login --no-browser/);
       assert.match(skill, /return to the originating (?:agent|task)/i);
       assert.match(skill, /revok/i);
       assert.match(skill, /rent or purchase/i);
@@ -86,11 +86,11 @@ function main() {
         "docs/design/ecc-ito-compute-integration.md",
       ]) {
         const source = read(relativePath);
-        assert.match(source, /ecc ito login \[?--no-browser\]?/i, relativePath);
-        assert.match(source, /ecc ito auth/i, relativePath);
+        assert.match(source, /sicp ito login \[?--no-browser\]?/i, relativePath);
+        assert.match(source, /sicp ito auth/i, relativePath);
         assert.match(source, /auth.*validat/i, relativePath);
         assert.match(source, /login.*(?:Keychain|device authorization)/is, relativePath);
-        assert.doesNotMatch(source, /ecc ito auth --no-browser/i, relativePath);
+        assert.doesNotMatch(source, /sicp ito auth --no-browser/i, relativePath);
         assert.match(source, /ITO_API_KEY.*(?:auth|find|status)/is, relativePath);
         assert.match(source, /ITO_AUTH_MODE=legacy[^.]*not required/i, relativePath);
       }

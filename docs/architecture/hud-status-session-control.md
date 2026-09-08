@@ -67,11 +67,11 @@ handoffs.
 
 ## Current Implementations
 
-- `ecc status --json` exposes readiness, active sessions, skill runs, install
+- `sicp status --json` exposes readiness, active sessions, skill runs, install
   health, governance, and linked work items from the SQLite state store.
-- `ecc loop-status --json --write-dir <dir>` writes live transcript snapshots
+- `sicp loop-status --json --write-dir <dir>` writes live transcript snapshots
   and attention signals for long-running loops.
-- `ecc session-inspect <target> --write <path>` emits canonical session
+- `sicp session-inspect <target> --write <path>` emits canonical session
   snapshots from dmux and Claude-history adapters.
 - `scripts/hooks/ecc-statusline.js` renders compact model, task, cost, tool,
   file, duration, directory, and context pressure signals inside Claude Code.

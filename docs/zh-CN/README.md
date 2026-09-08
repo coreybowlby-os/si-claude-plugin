@@ -169,7 +169,7 @@
 
 ## 统一记忆库
 
-`ecc memory` 使用可检查的 `ecc.memory.v1` Markdown 文档，在 Claude、
+`sicp memory` 使用可检查的 `ecc.memory.v1` Markdown 文档，在 Claude、
 Codex、Hermes 等 harness 之间传递上下文。常规搜索只召回 `project` 和
 `team` 范围内状态为 active 的条目，按 ID 直接读取仍可用于检查非 active
 条目；`user` 范围必须显式请求。首个版本中的所有记忆都保持 unreviewed，
@@ -186,7 +186,7 @@ Codex、Hermes 等 harness 之间传递上下文。常规搜索只召回 `projec
 
 ```bash
 npm install -g ecc-universal
-ecc memory --help
+sicp memory --help
 command -v ecc-memory-mcp
 ```
 

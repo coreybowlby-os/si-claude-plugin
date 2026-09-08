@@ -28,22 +28,22 @@ function showHelp() {
 ECC × Itô local CLI bridge
 
 Usage:
-  ecc ito login [--no-browser]
-  ecc ito logout
-  ecc ito auth
-  ecc ito find <all required RFQ options>
-  ecc ito status
-  ecc ito evals --cluster <id> --live-sixtytwo --nodes <list> --config-dir <dir>
-  ecc ito <login|logout|auth|find|status|evals> --json
+  sicp ito login [--no-browser]
+  sicp ito logout
+  sicp ito auth
+  sicp ito find <all required RFQ options>
+  sicp ito status
+  sicp ito evals --cluster <id> --live-sixtytwo --nodes <list> --config-dir <dir>
+  sicp ito <login|logout|auth|find|status|evals> --json
 
 The bridge invokes the separately installed canonical Itô CLI and returns its
-real stdout, stderr, and exit code unchanged. "ecc ito login" delegates to the
+real stdout, stderr, and exit code unchanged. "sicp ito login" delegates to the
 canonical CLI's device authorization. It opens the Itô verification page by default
 and persists its device token in macOS Keychain. Pass --no-browser to
 suppress that handoff. ECC itself performs no browser automation and adds no
 lock, workload, inference, or purchase path.
-"ecc ito auth" is validation-only and never starts device login.
-"ecc ito logout" asks the canonical CLI to revoke the current device credential
+"sicp ito auth" is validation-only and never starts device login.
+"sicp ito logout" asks the canonical CLI to revoke the current device credential
 and remove its local copy only after remote revocation is confirmed.
 
 Important:
@@ -168,7 +168,7 @@ function parseArgs(argv, environment = process.env) {
     );
   }
   if (command === "auth" && withoutJson.includes("--no-browser")) {
-    throw new Error("--no-browser is valid only for ecc ito login; auth is validation-only.");
+    throw new Error("--no-browser is valid only for sicp ito login; auth is validation-only.");
   }
   if (command === "evals") {
     validateNodeQualificationArgs(withoutJson, environment);

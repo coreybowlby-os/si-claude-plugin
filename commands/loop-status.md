@@ -11,7 +11,7 @@ need to inspect a wedged or sibling session, run the packaged CLI from another
 terminal:
 
 ```bash
-npx --package ecc-universal ecc loop-status --json
+npx --package ecc-universal sicp loop-status --json
 ```
 
 The CLI scans local Claude transcript JSONL files under
@@ -32,24 +32,24 @@ tool calls that have no matching `tool_result`.
 
 ## Cross-Session CLI
 
-- `ecc loop-status --json` emits machine-readable status for recent local
+- `sicp loop-status --json` emits machine-readable status for recent local
   Claude transcripts.
-- `ecc loop-status --home <dir>` scans a different home directory when
+- `sicp loop-status --home <dir>` scans a different home directory when
   inspecting another local profile or mounted workspace.
-- `ecc loop-status --transcript <session.jsonl>` inspects one transcript
+- `sicp loop-status --transcript <session.jsonl>` inspects one transcript
   directly.
-- `ecc loop-status --bash-timeout-seconds 1800` adjusts the stale Bash
+- `sicp loop-status --bash-timeout-seconds 1800` adjusts the stale Bash
   threshold.
-- `ecc loop-status --exit-code` exits `2` when stale loop or tool signals are
+- `sicp loop-status --exit-code` exits `2` when stale loop or tool signals are
   found, or `1` when transcripts cannot be scanned.
 - `--exit-code` with `--watch` requires `--watch-count` so watchdog scripts do
   not wait forever for a process exit.
-- `ecc loop-status --watch` refreshes status until interrupted.
-- `ecc loop-status --watch --watch-count 3 --exit-code` refreshes a bounded
+- `sicp loop-status --watch` refreshes status until interrupted.
+- `sicp loop-status --watch --watch-count 3 --exit-code` refreshes a bounded
   number of times, then exits with the highest status seen.
-- `ecc loop-status --watch --watch-count 3` emits a bounded watch stream for
+- `sicp loop-status --watch --watch-count 3` emits a bounded watch stream for
   scripts and handoffs.
-- `ecc loop-status --watch --write-dir ~/.claude/loops` maintains
+- `sicp loop-status --watch --write-dir ~/.claude/loops` maintains
   `index.json` and per-session JSON snapshots for sibling terminals or
   watchdog scripts.
 

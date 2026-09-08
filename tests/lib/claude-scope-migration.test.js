@@ -521,7 +521,7 @@ test('source uninstall failure reports both scopes and exact forward recovery', 
     assert.deepStrictEqual([...error.observedScopes].sort(), ['project', 'user']);
     assert.deepStrictEqual(error.recovery, [
       'claude plugin uninstall ecc@ecc --scope user --keep-data',
-      'ecc setup --mode claude-plugin --scope project --move-scope --yes',
+      'sicp setup --mode claude-plugin --scope project --move-scope --yes',
     ]);
     assert.ok(!readCalls(fixture).flat().includes('--prune'));
     assert.deepStrictEqual(
@@ -548,7 +548,7 @@ test('final verification failure is structured and leaves a resumable destinatio
     assert.strictEqual(error.phase, 'final-verification');
     assert.deepStrictEqual(error.observedScopes, []);
     assert.deepStrictEqual(error.recovery, [
-      'ecc setup --mode claude-plugin --scope project --move-scope --yes',
+      'sicp setup --mode claude-plugin --scope project --move-scope --yes',
     ]);
     assert.deepStrictEqual(readState(fixture).plugins.map(entry => entry.scope), ['project']);
   });

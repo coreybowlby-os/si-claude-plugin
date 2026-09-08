@@ -8,7 +8,7 @@ function getComputeSponsorCopy() {
     + ITO_COMPUTE_URL
     + '. Any GPU provider works. This sponsorship link is passive: it does not invoke '
     + 'an RFQ, reserve capacity, provision compute, or configure serving. Separately, '
-    + 'the opt-in "ecc ito find" bridge invokes the explicitly configured canonical '
+    + 'the opt-in "sicp ito find" bridge invokes the explicitly configured canonical '
     + 'Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. '
     + 'Managed inference through Itô is not live yet.';
 }

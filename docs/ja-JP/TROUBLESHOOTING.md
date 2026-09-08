@@ -250,9 +250,9 @@ tmux attach -t dev
 **解決策：**
 ```bash
 # まずECCがこのマシンについて認識している情報を確認
-ecc list-installed
-ecc doctor
-ecc repair
+sicp list-installed
+sicp doctor
+sicp repair
 
 # doctor/repairで不足ファイルを復元できない場合のみ再インストール
 

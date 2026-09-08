@@ -250,9 +250,9 @@ tmux attach -t dev
 **Solutions:**
 ```bash
 # First inspect what ECC still knows about this machine
-ecc list-installed
-ecc doctor
-ecc repair
+sicp list-installed
+sicp doctor
+sicp repair
 
 # Only reinstall if doctor/repair cannot restore the missing files
 
@@ -330,8 +330,8 @@ ResolveMessage: Cannot find module '../plugins/lib/changed-files-store.js' from 
 **Solutions:**
 ```bash
 # From the ECC repo, check for and repair missing/incomplete managed files
-ecc doctor --target opencode
-ecc repair --target opencode
+sicp doctor --target opencode
+sicp repair --target opencode
 
 # If that reports no drift but plugins/ is still missing on the device,
 # re-run the ECC installer for the opencode target
