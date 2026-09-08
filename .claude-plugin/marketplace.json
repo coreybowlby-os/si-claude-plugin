@@ -1,24 +1,23 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "SI-Claude-Plugin",
-  "description": "Battle-tested Claude Code configurations — agents, skills, hooks, rules, and legacy command shims evolved over 10+ months of intensive daily use",
   "owner": {
     "name": "Corey Bowlby"
   },
   "metadata": {
-    "description": "Battle-tested Claude Code configurations"
+    "description": "Harness-native ECC skills, hooks, rules, MCP conventions, and operator workflows"
   },
   "plugins": [
     {
       "name": "SI-Claude-Plugin",
       "source": "./",
-      "description": "A Claude Code plugin — 47 agents, 195 skills, 79 commands, selective install profiles, and production-ready hooks for TDD, security scanning, code review, and continuous learning",
-      "version": "1.17.3",
+      "description": "Harness-native ECC operator layer - 68 agents, 300 skills, 94 legacy command shims, reusable hooks, rules, selective install profiles, and production-ready workflows for Claude Code, Codex, OpenCode, Cursor, and related agent harnesses",
+      "version": "2.2.1",
       "author": {
-        "name": "Corey Bowlby"
+        "name": "Corey Bowlby",
+        "url": "https://github.com/coreybowlby-os/si-claude-plugin"
       },
-      "homepage": "https://github.com/coreybowlby-os/SI-Claude-Plugin",
-      "repository": "https://github.com/coreybowlby-os/SI-Claude-Plugin",
+      "homepage": "https://github.com/coreybowlby-os/si-claude-plugin",
+      "repository": "https://github.com/coreybowlby-os/si-claude-plugin",
       "license": "MIT",
       "keywords": [
         "agents",

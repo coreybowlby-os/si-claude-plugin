@@ -2,30 +2,55 @@
 'use strict';
 
 const MAX_STDIN = 1024 * 1024;
+const { buildPreToolUseAdditionalContext } = require('./pretooluse-visible-output');
 let raw = '';
 
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => {
-  if (raw.length < MAX_STDIN) {
-    const remaining = MAX_STDIN - raw.length;
-    raw += chunk.substring(0, remaining);
-  }
-});
-
-process.stdin.on('end', () => {
+function run(rawInput) {
   try {
-    const input = JSON.parse(raw);
+    const input = typeof rawInput === 'string' ? JSON.parse(rawInput) : rawInput;
     const cmd = String(input.tool_input?.command || '');
     if (/\bgit\s+push\b/.test(cmd)) {
-      process.stderr.write('[Hook] PRE-PUSH CHECKLIST:\n');
-      process.stderr.write('[Hook]   (1) Integration tests changed?  Run them locally first: ./mvnw test -Dtest="*IT" -DfailIfNoTests=false\n');
-      process.stderr.write('[Hook]   (2) New Docker image added?      Verify the tag resolves: docker pull <registry>/<image>:<tag>\n');
-      process.stderr.write('[Hook]   (3) Script + fixture added?      Run the script against the fixture before pushing\n');
-      process.stderr.write('[Hook]   (4) Hotfix to main?              Same rules apply -- no untested code on main\n');
+      return {
+        additionalContext: [
+          '[Hook] Review changes before push...',
+          '[Hook] Continuing with push (remove this hook to add interactive review)',
+        ],
+        exitCode: 0,
+      };
     }
   } catch {
-    /* ignore parse errors and pass through */
+    // ignore parse errors and pass through
   }
 
-  process.stdout.write(raw);
-});
+  return typeof rawInput === 'string' ? rawInput : JSON.stringify(rawInput);
+}
+
+if (require.main === module) {
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', chunk => {
+    if (raw.length < MAX_STDIN) {
+      const remaining = MAX_STDIN - raw.length;
+      raw += chunk.substring(0, remaining);
+    }
+  });
+
+  process.stdin.on('end', () => {
+    const result = run(raw);
+    if (result && typeof result === 'object') {
+      if (result.stderr) {
+        process.stderr.write(`${result.stderr}\n`);
+      }
+      if (Object.prototype.hasOwnProperty.call(result, 'additionalContext')) {
+        process.stdout.write(buildPreToolUseAdditionalContext(result.additionalContext));
+      } else {
+        process.stdout.write(String(result.stdout || ''));
+      }
+      process.exitCode = Number.isInteger(result.exitCode) ? result.exitCode : 0;
+      return;
+    }
+
+    process.stdout.write(String(result));
+  });
+}
+
+module.exports = { run };

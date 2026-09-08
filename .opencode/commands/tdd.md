@@ -1,6 +1,6 @@
 ---
 description: Enforce TDD workflow with 80%+ coverage
-agent: SI-Claude-Plugin:tdd-guide
+agent: tdd-guide
 subtask: true
 ---
 

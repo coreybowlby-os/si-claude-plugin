@@ -12,6 +12,7 @@ const INSTALL_SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'install-appl
 const DOCTOR_SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'doctor.js');
 const REPAIR_SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'repair.js');
 const REPO_ROOT = path.join(__dirname, '..', '..');
+const CLI_TIMEOUT_MS = 30000;
 const CURRENT_PACKAGE_VERSION = JSON.parse(
   fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8')
 ).version;
@@ -51,7 +52,7 @@ function runNode(scriptPath, args = [], options = {}) {
       env,
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      timeout: 10000,
+      timeout: options.timeout || CLI_TIMEOUT_MS,
     });
 
     return { code: 0, stdout, stderr: '' };
@@ -59,9 +60,19 @@ function runNode(scriptPath, args = [], options = {}) {
     return {
       code: error.status || 1,
       stdout: error.stdout || '',
-      stderr: error.stderr || '',
+      stderr: error.stderr || error.message || '',
     };
   }
+}
+
+function normalizeComparablePath(filePath) {
+  const normalized = path.normalize(filePath);
+  return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+}
+
+function pathListIncludes(paths, expectedPath) {
+  const normalizedExpected = normalizeComparablePath(expectedPath);
+  return paths.some(filePath => normalizeComparablePath(filePath) === normalizedExpected);
 }
 
 function test(name, fn) {
@@ -87,7 +98,7 @@ function runTests() {
     const projectRoot = createTempDir('repair-project-');
 
     try {
-      const installResult = runNode(INSTALL_SCRIPT, ['--target', 'cursor', 'typescript'], {
+      const installResult = runNode(INSTALL_SCRIPT, ['--target', 'cursor', 'typescript', '--enable-hooks'], {
         cwd: projectRoot,
         homeDir,
       });
@@ -95,7 +106,7 @@ function runTests() {
 
       const normalizedProjectRoot = fs.realpathSync(projectRoot);
       const managedPath = path.join(normalizedProjectRoot, '.cursor', 'hooks', 'session-start.js');
-      const statePath = path.join(normalizedProjectRoot, '.cursor', 'vcp-install-state.json');
+      const statePath = path.join(normalizedProjectRoot, '.cursor', 'ecc-install-state.json');
       const expectedContent = fs.readFileSync(
         path.join(REPO_ROOT, '.cursor', 'hooks', 'session-start.js'),
         'utf8'
@@ -117,9 +128,55 @@ function runTests() {
 
       const parsed = JSON.parse(repairResult.stdout);
       assert.strictEqual(parsed.results[0].status, 'repaired');
-      assert.ok(parsed.results[0].repairedPaths.includes(managedPath));
+      assert.ok(pathListIncludes(parsed.results[0].repairedPaths, managedPath));
       assert.strictEqual(fs.readFileSync(managedPath, 'utf8'), expectedContent);
       assert.ok(fs.existsSync(statePath));
+    } finally {
+      cleanup(homeDir);
+      cleanup(projectRoot);
+    }
+  })) passed++; else failed++;
+
+  if (test('repair preserves a declined hook decision and does not reinstall hooks', () => {
+    const homeDir = createTempDir('repair-home-');
+    const projectRoot = createTempDir('repair-project-');
+
+    try {
+      const installResult = runNode(INSTALL_SCRIPT, ['--target', 'cursor', '--profile', 'core', '--no-hooks'], {
+        cwd: projectRoot,
+        homeDir,
+      });
+      assert.strictEqual(installResult.code, 0, installResult.stderr);
+
+      const normalizedProjectRoot = fs.realpathSync(projectRoot);
+      const managedPath = path.join(normalizedProjectRoot, '.cursor', 'rules', 'common-coding-style.mdc');
+      const statePath = path.join(normalizedProjectRoot, '.cursor', 'ecc-install-state.json');
+      const hooksConfigPath = path.join(normalizedProjectRoot, '.cursor', 'hooks.json');
+      const expectedContent = fs.readFileSync(managedPath, 'utf8');
+      fs.rmSync(managedPath, { force: true });
+
+      const doctorBefore = runNode(DOCTOR_SCRIPT, ['--target', 'cursor', '--json'], {
+        cwd: projectRoot,
+        homeDir,
+      });
+      assert.strictEqual(doctorBefore.code, 1);
+      assert.ok(JSON.parse(doctorBefore.stdout).results[0].issues.some(issue => issue.code === 'missing-managed-files'));
+
+      const repairResult = runNode(REPAIR_SCRIPT, ['--target', 'cursor', '--json'], {
+        cwd: projectRoot,
+        homeDir,
+      });
+      assert.strictEqual(repairResult.code, 0, repairResult.stderr);
+
+      const parsed = JSON.parse(repairResult.stdout);
+      assert.strictEqual(parsed.results[0].status, 'repaired');
+      assert.ok(pathListIncludes(parsed.results[0].repairedPaths, managedPath));
+      assert.strictEqual(fs.readFileSync(managedPath, 'utf8'), expectedContent);
+      assert.ok(!fs.existsSync(hooksConfigPath));
+
+      const repairedState = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+      assert.strictEqual(repairedState.request.hookConsent, 'declined');
+      assert.ok(!repairedState.resolution.selectedModules.includes('hooks-runtime'));
     } finally {
       cleanup(homeDir);
       cleanup(projectRoot);
@@ -134,7 +191,7 @@ function runTests() {
       const targetRoot = path.join(projectRoot, '.cursor');
       fs.mkdirSync(targetRoot, { recursive: true });
       const normalizedTargetRoot = fs.realpathSync(targetRoot);
-      const statePath = path.join(normalizedTargetRoot, 'vcp-install-state.json');
+      const statePath = path.join(normalizedTargetRoot, 'ecc-install-state.json');
       const jsonPath = path.join(normalizedTargetRoot, 'hooks.json');
       const renderedPath = path.join(normalizedTargetRoot, 'generated.md');
       const removedPath = path.join(normalizedTargetRoot, 'legacy-note.txt');
@@ -254,7 +311,7 @@ function runTests() {
       const targetRoot = path.join(projectRoot, '.cursor');
       fs.mkdirSync(targetRoot, { recursive: true });
       const normalizedTargetRoot = fs.realpathSync(targetRoot);
-      const statePath = path.join(normalizedTargetRoot, 'vcp-install-state.json');
+      const statePath = path.join(normalizedTargetRoot, 'ecc-install-state.json');
       const renderedPath = path.join(normalizedTargetRoot, 'generated.md');
       fs.writeFileSync(renderedPath, '# drifted\n');
 

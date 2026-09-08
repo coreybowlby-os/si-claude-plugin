@@ -290,7 +290,7 @@ Bu da geçerli bir seçimdir ve Claude Code ile iyi çalışır. LSP işlevselli
 
 ```markdown
 ralph-wiggum@claude-code-plugins       # Loop otomasyonu
-frontend-design@claude-code-plugins    # UI/UX desenleri
+frontend-patterns@claude-code-plugins  # UI/UX desenleri
 commit-commands@claude-code-plugins    # Git iş akışı
 security-guidance@claude-code-plugins  # Güvenlik kontrolleri
 pr-review-toolkit@claude-code-plugins  # PR otomasyonu
@@ -365,7 +365,7 @@ Kullanıcı, dizin, kirli göstergeli git branch, kalan context %, model, zaman 
 *Mac root dizinimde örnek statusline*
 
 ```
-affoon:~ ctx:65% Opus 4.5 19:52
+dev:~ ctx:65% Opus 4.5 19:52
 ▌▌ plan mode on (shift+tab to cycle)
 ```
 

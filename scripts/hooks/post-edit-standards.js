@@ -174,11 +174,18 @@ function run(raw) {
   return raw;
 }
 
-var buf = '';
-process.stdin.on('data', function(chunk) { if (buf.length < MAX_STDIN) buf += chunk; });
-process.stdin.on('end', function() {
-  var out = run(buf);
-  if (out !== undefined) process.stdout.write(out);
-});
+// Guard the CLI entrypoint. Without this, requiring the module from
+// posttooluse-dispatcher.js attaches a second set of stdin listeners, so the
+// pass-through payload is written to stdout twice and is emitted even when the
+// dispatcher decides to suppress it. Every sibling hook uses the same guard.
+if (require.main === module) {
+  var buf = '';
+  process.stdin.on('data', function(chunk) { if (buf.length < MAX_STDIN) buf += chunk; });
+  process.stdin.on('end', function() {
+    var out = run(buf);
+    if (out !== undefined) process.stdout.write(out);
+    process.exit(0);
+  });
+}
 
 module.exports = { run };

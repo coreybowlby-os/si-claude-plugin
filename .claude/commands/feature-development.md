@@ -1,12 +1,12 @@
 ---
 name: feature-development
-description: Workflow command scaffold for feature-development in SI-Claude-Plugin.
-allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
+description: Workflow command scaffold for feature-development in everything-claude-code.
+allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 
 # /feature-development
 
-Use this workflow when working on **feature-development** in `SI-Claude-Plugin`.
+Use this workflow when working on **feature-development** in `everything-claude-code`.
 
 ## Goal
 

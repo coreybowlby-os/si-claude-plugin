@@ -209,7 +209,7 @@ git worktree add ../feature-branch feature-branch
 
 Stream and watch logs/bash processes Claude runs:
 
-<https://github.com/user-attachments/assets/shortform/07-tmux-video.mp4>
+[Watch: tmux session streaming a long-running command (video)](./assets/images/shortform/07-tmux-video.mp4)
 
 ```bash
 tmux new -s dev
@@ -290,7 +290,7 @@ This is also a viable choice and works well with Claude Code. You can use it in 
 
 ```markdown
 ralph-wiggum@claude-code-plugins       # Loop automation
-frontend-design@claude-code-plugins    # UI/UX patterns
+frontend-patterns@claude-code-plugins  # UI/UX patterns
 commit-commands@claude-code-plugins    # Git workflow
 security-guidance@claude-code-plugins  # Security checks
 pr-review-toolkit@claude-code-plugins  # PR automation
@@ -365,7 +365,7 @@ Shows user, directory, git branch with dirty indicator, context remaining %, mod
 *Example statusline in my Mac root directory*
 
 ```
-affoon:~ ctx:65% Opus 4.5 19:52
+dev:~ ctx:65% Opus 4.5 19:52
 ▌▌ plan mode on (shift+tab to cycle)
 ```
 

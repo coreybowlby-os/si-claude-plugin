@@ -1,12 +1,12 @@
 ---
 name: add-language-rules
-description: Workflow command scaffold for add-language-rules in SI-Claude-Plugin.
-allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
+description: Workflow command scaffold for add-language-rules in everything-claude-code.
+allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 
 # /add-language-rules
 
-Use this workflow when working on **add-language-rules** in `SI-Claude-Plugin`.
+Use this workflow when working on **add-language-rules** in `everything-claude-code`.
 
 ## Goal
 

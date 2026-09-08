@@ -1,6 +1,6 @@
 ---
 description: Run verification loop to validate implementation
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Verify Command

@@ -6,6 +6,9 @@ const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const CURRENT_PACKAGE_VERSION = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf8')
+).version;
 
 const {
   createInstallState,
@@ -43,12 +46,13 @@ function runTests() {
     const state = createInstallState({
       adapter: { id: 'cursor-project' },
       targetRoot: '/repo/.cursor',
-      installStatePath: '/repo/.cursor/vcp-install-state.json',
+      installStatePath: '/repo/.cursor/ecc-install-state.json',
       request: {
         profile: 'developer',
         modules: ['orchestration'],
         legacyLanguages: ['typescript'],
         legacyMode: true,
+        hookConsent: 'declined',
       },
       resolution: {
         selectedModules: ['rules-core', 'orchestration'],
@@ -66,7 +70,7 @@ function runTests() {
         },
       ],
       source: {
-        repoVersion: '1.10.0',
+        repoVersion: CURRENT_PACKAGE_VERSION,
         repoCommit: 'abc123',
         manifestVersion: 1,
       },
@@ -76,12 +80,13 @@ function runTests() {
     assert.strictEqual(state.schemaVersion, 'ecc.install.v1');
     assert.strictEqual(state.target.id, 'cursor-project');
     assert.strictEqual(state.request.profile, 'developer');
+    assert.strictEqual(state.request.hookConsent, 'declined');
     assert.strictEqual(state.operations.length, 1);
   })) passed++; else failed++;
 
   if (test('writes and reads install-state from disk', () => {
     const testDir = createTestDir();
-    const statePath = path.join(testDir, 'vcp-install-state.json');
+    const statePath = path.join(testDir, 'ecc-install-state.json');
 
     try {
       const state = createInstallState({
@@ -100,7 +105,7 @@ function runTests() {
         },
         operations: [],
         source: {
-          repoVersion: '1.10.0',
+          repoVersion: CURRENT_PACKAGE_VERSION,
           repoCommit: 'abc123',
           manifestVersion: 1,
         },
@@ -141,7 +146,7 @@ function runTests() {
     const state = createInstallState({
       adapter: { id: 'cursor-project' },
       targetRoot: '/repo/.cursor',
-      installStatePath: '/repo/.cursor/vcp-install-state.json',
+      installStatePath: '/repo/.cursor/ecc-install-state.json',
       request: {
         profile: null,
         modules: ['platform-configs'],
@@ -154,7 +159,7 @@ function runTests() {
       },
       operations: [operation],
       source: {
-        repoVersion: '1.10.0',
+        repoVersion: CURRENT_PACKAGE_VERSION,
         repoCommit: 'abc123',
         manifestVersion: 1,
       },
@@ -169,7 +174,7 @@ function runTests() {
 
   if (test('rejects invalid install-state payloads on read', () => {
     const testDir = createTestDir();
-    const statePath = path.join(testDir, 'vcp-install-state.json');
+    const statePath = path.join(testDir, 'ecc-install-state.json');
 
     try {
       fs.writeFileSync(statePath, JSON.stringify({ schemaVersion: 'ecc.install.v1' }, null, 2));
@@ -184,7 +189,7 @@ function runTests() {
 
   if (test('rejects unexpected properties and missing required request fields', () => {
     const testDir = createTestDir();
-    const statePath = path.join(testDir, 'vcp-install-state.json');
+    const statePath = path.join(testDir, 'ecc-install-state.json');
 
     try {
       fs.writeFileSync(statePath, JSON.stringify({
@@ -194,7 +199,7 @@ function runTests() {
         target: {
           id: 'cursor-project',
           root: '/repo/.cursor',
-          installStatePath: '/repo/.cursor/vcp-install-state.json',
+          installStatePath: '/repo/.cursor/ecc-install-state.json',
         },
         request: {
           modules: [],
@@ -208,7 +213,7 @@ function runTests() {
           skippedModules: [],
         },
         source: {
-          repoVersion: '1.10.0',
+          repoVersion: CURRENT_PACKAGE_VERSION,
           repoCommit: 'abc123',
           manifestVersion: 1,
         },

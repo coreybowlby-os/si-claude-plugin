@@ -1,6 +1,6 @@
 ---
 description: Remove dead code and consolidate duplicates
-agent: SI-Claude-Plugin:refactor-cleaner
+agent: refactor-cleaner
 subtask: true
 ---
 

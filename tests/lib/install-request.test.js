@@ -36,20 +36,63 @@ function runTests() {
       '--modules', 'platform-configs, workflow-quality ,platform-configs',
       '--with', 'lang:typescript',
       '--without', 'capability:media',
-      '--config', 'vcp-install.json',
+      '--config', 'ecc-install.json',
       '--dry-run',
       '--json'
     ]);
 
     assert.strictEqual(parsed.target, 'cursor');
     assert.strictEqual(parsed.profileId, 'developer');
-    assert.strictEqual(parsed.configPath, 'vcp-install.json');
+    assert.strictEqual(parsed.configPath, 'ecc-install.json');
     assert.deepStrictEqual(parsed.moduleIds, ['platform-configs', 'workflow-quality']);
     assert.deepStrictEqual(parsed.includeComponentIds, ['lang:typescript']);
     assert.deepStrictEqual(parsed.excludeComponentIds, ['capability:media']);
     assert.strictEqual(parsed.dryRun, true);
     assert.strictEqual(parsed.json, true);
     assert.deepStrictEqual(parsed.languages, []);
+  })) passed++; else failed++;
+
+  if (test('parses --locale argument', () => {
+    const parsed = parseInstallArgs([
+      'node',
+      'scripts/install-apply.js',
+      '--locale', 'ja'
+    ]);
+
+    assert.strictEqual(parsed.locale, 'ja');
+    assert.deepStrictEqual(parsed.languages, []);
+  })) passed++; else failed++;
+
+  if (test('parses explicit hook consent flags', () => {
+    const enabled = parseInstallArgs([
+      'node',
+      'scripts/install-apply.js',
+      '--profile', 'core',
+      '--enable-hooks',
+    ]);
+    const declined = parseInstallArgs([
+      'node',
+      'scripts/install-apply.js',
+      '--profile', 'core',
+      '--no-hooks',
+    ]);
+
+    assert.strictEqual(enabled.enableHooks, true);
+    assert.strictEqual(enabled.noHooks, false);
+    assert.strictEqual(declined.enableHooks, false);
+    assert.strictEqual(declined.noHooks, true);
+  })) passed++; else failed++;
+
+  if (test('requires a --locale value', () => {
+    assert.throws(
+      () => parseInstallArgs([
+        'node',
+        'scripts/install-apply.js',
+        '--locale',
+        '--dry-run'
+      ]),
+      /Missing value for --locale/
+    );
   })) passed++; else failed++;
 
   if (test('normalizes legacy language installs into a canonical request', () => {
@@ -67,6 +110,69 @@ function runTests() {
     assert.strictEqual(request.profileId, null);
   })) passed++; else failed++;
 
+  if (test('normalizes locale-only installs as manifest component requests', () => {
+    const request = normalizeInstallRequest({
+      target: 'claude',
+      profileId: null,
+      moduleIds: [],
+      includeComponentIds: [],
+      excludeComponentIds: [],
+      languages: [],
+      locale: 'ja',
+    });
+
+    assert.strictEqual(request.mode, 'manifest');
+    assert.strictEqual(request.target, 'claude');
+    assert.deepStrictEqual(request.includeComponentIds, ['locale:ja']);
+    assert.deepStrictEqual(request.legacyLanguages, []);
+  })) passed++; else failed++;
+
+  if (test('allows legacy language installs to include a locale component', () => {
+    const request = normalizeInstallRequest({
+      target: 'claude',
+      profileId: null,
+      moduleIds: [],
+      includeComponentIds: [],
+      excludeComponentIds: [],
+      languages: ['typescript'],
+      locale: 'ja-JP',
+    });
+
+    assert.strictEqual(request.mode, 'legacy-compat');
+    assert.deepStrictEqual(request.legacyLanguages, ['typescript']);
+    assert.deepStrictEqual(request.includeComponentIds, ['locale:ja']);
+  })) passed++; else failed++;
+
+  if (test('rejects unsupported locale codes', () => {
+    assert.throws(
+      () => normalizeInstallRequest({
+        target: 'claude',
+        profileId: null,
+        moduleIds: [],
+        includeComponentIds: [],
+        excludeComponentIds: [],
+        languages: [],
+        locale: 'fr',
+      }),
+      /Unsupported locale/
+    );
+  })) passed++; else failed++;
+
+  if (test('rejects --locale for non-Claude targets', () => {
+    assert.throws(
+      () => normalizeInstallRequest({
+        target: 'cursor',
+        profileId: null,
+        moduleIds: [],
+        includeComponentIds: [],
+        excludeComponentIds: [],
+        languages: [],
+        locale: 'ja',
+      }),
+      /--locale can only be used with --target claude/
+    );
+  })) passed++; else failed++;
+
   if (test('normalizes manifest installs into a canonical request', () => {
     const request = normalizeInstallRequest({
       target: 'cursor',
@@ -74,12 +180,14 @@ function runTests() {
       moduleIds: [],
       includeComponentIds: ['lang:typescript'],
       excludeComponentIds: ['capability:media'],
-      languages: []
+      languages: [],
+      enableHooks: true,
     });
 
     assert.strictEqual(request.mode, 'manifest');
     assert.strictEqual(request.target, 'cursor');
     assert.strictEqual(request.profileId, 'developer');
+    assert.strictEqual(request.hookConsent, 'enabled');
     assert.deepStrictEqual(request.includeComponentIds, ['lang:typescript']);
     assert.deepStrictEqual(request.excludeComponentIds, ['capability:media']);
     assert.deepStrictEqual(request.legacyLanguages, []);
@@ -93,9 +201,9 @@ function runTests() {
       includeComponentIds: ['framework:nextjs'],
       excludeComponentIds: ['capability:media'],
       languages: [],
-      configPath: '/workspace/app/vcp-install.json',
+      configPath: '/workspace/app/ecc-install.json',
       config: {
-        path: '/workspace/app/vcp-install.json',
+        path: '/workspace/app/ecc-install.json',
         target: 'claude',
         profileId: 'developer',
         moduleIds: ['workflow-quality'],
@@ -110,7 +218,7 @@ function runTests() {
     assert.deepStrictEqual(request.moduleIds, ['workflow-quality', 'platform-configs']);
     assert.deepStrictEqual(request.includeComponentIds, ['lang:typescript', 'framework:nextjs']);
     assert.deepStrictEqual(request.excludeComponentIds, ['capability:orchestration', 'capability:media']);
-    assert.strictEqual(request.configPath, '/workspace/app/vcp-install.json');
+    assert.strictEqual(request.configPath, '/workspace/app/ecc-install.json');
   })) passed++; else failed++;
 
   if (test('validates explicit module IDs against the manifest catalog', () => {
@@ -138,6 +246,21 @@ function runTests() {
         languages: ['typescript']
       }),
       /cannot be combined/
+    );
+  })) passed++; else failed++;
+
+  if (test('rejects --no-hooks with an explicit hooks-runtime selection', () => {
+    assert.throws(
+      () => normalizeInstallRequest({
+        target: 'claude',
+        profileId: null,
+        moduleIds: ['hooks-runtime'],
+        includeComponentIds: [],
+        excludeComponentIds: [],
+        languages: [],
+        noHooks: true,
+      }),
+      /--no-hooks cannot be combined/
     );
   })) passed++; else failed++;
 

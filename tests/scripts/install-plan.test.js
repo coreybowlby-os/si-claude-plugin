@@ -109,9 +109,23 @@ function runTests() {
     assert.ok(parsed.operations.length > 0);
   })) passed++; else failed++;
 
-  if (test('loads planning intent from vcp-install.json', () => {
+  if (test('emits JSON for --skills without pulling parent module', () => {
+    const result = run([
+      '--skills', 'continuous-learning-v2',
+      '--target', 'claude',
+      '--json',
+    ]);
+    assert.strictEqual(result.code, 0);
+    const parsed = JSON.parse(result.stdout);
+    assert.deepStrictEqual(parsed.includedComponentIds, ['skill:continuous-learning-v2']);
+    assert.deepStrictEqual(parsed.selectedModuleIds, ['skill-continuous-learning-v2']);
+    assert.ok(parsed.operations.some(operation => operation.sourceRelativePath === 'skills/continuous-learning-v2'));
+    assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/tdd-workflow'));
+  })) passed++; else failed++;
+
+  if (test('loads planning intent from ecc-install.json', () => {
     const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-config');
-    const configPath = path.join(configDir, 'vcp-install.json');
+    const configPath = path.join(configDir, 'ecc-install.json');
 
     try {
       require('fs').mkdirSync(configDir, { recursive: true });
@@ -136,9 +150,9 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('auto-detects planning intent from project vcp-install.json', () => {
+  if (test('auto-detects planning intent from project ecc-install.json', () => {
     const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-autodetect');
-    const configPath = path.join(configDir, 'vcp-install.json');
+    const configPath = path.join(configDir, 'ecc-install.json');
 
     try {
       require('fs').mkdirSync(configDir, { recursive: true });

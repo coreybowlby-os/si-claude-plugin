@@ -1,6 +1,6 @@
 ---
 description: Orchestrate multiple agents for complex tasks
-agent: SI-Claude-Plugin:planner
+agent: planner
 subtask: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Promote project instincts to global scope
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Promote Command

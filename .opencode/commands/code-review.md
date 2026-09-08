@@ -1,6 +1,6 @@
 ---
 description: Review code for quality, security, and maintainability
-agent: SI-Claude-Plugin:code-reviewer
+agent: code-reviewer
 subtask: true
 ---
 

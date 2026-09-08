@@ -1,6 +1,6 @@
 ---
 description: Analyze and improve test coverage
-agent: SI-Claude-Plugin:tdd-guide
+agent: tdd-guide
 subtask: true
 ---
 

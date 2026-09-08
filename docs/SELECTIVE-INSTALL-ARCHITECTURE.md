@@ -35,7 +35,7 @@ The first selective-install substrate already exists in-repo:
 - `scripts/lib/install-state.js`
 - `scripts/lib/install-executor.js`
 - `scripts/lib/install-lifecycle.js`
-- `scripts/sicp.js`
+- `scripts/ecc.js`
 - `scripts/install-apply.js`
 - `scripts/install-plan.js`
 - `scripts/list-installed.js`
@@ -58,7 +58,7 @@ Current capabilities:
 Current limitation:
 
 - target-specific merge/remove semantics are still scaffold-level for some modules
-- legacy `sicp-install` compatibility still points at `install.sh`
+- legacy `ecc-install` compatibility still points at `install.sh`
 - publish surface is still broad in `package.json`
 
 ## Current Code Review
@@ -168,7 +168,7 @@ Should not own:
 Suggested files:
 
 ```text
-scripts/sicp.js
+scripts/ecc.js
 scripts/install-apply.js
 scripts/install-plan.js
 scripts/doctor.js
@@ -403,7 +403,7 @@ The lowest-risk migration path is evolutionary, not a rewrite.
 ### Keep
 
 - `install.sh` as the public compatibility shim
-- `scripts/sicp.js` as the unified CLI
+- `scripts/ecc.js` as the unified CLI
 - `scripts/lib/install-state.js` as the starting point for the state store
 - current target adapter IDs and state locations
 
@@ -478,7 +478,7 @@ target-specific semantics.
 
 ## Design Constraints
 
-1. Keep `SI-Claude-Plugin` as the canonical source repo.
+1. Keep `everything-claude-code` as the canonical source repo.
 2. Preserve existing `install.sh` flows during migration.
 3. Support home-scoped and project-scoped targets from the same planner.
 4. Make uninstall/repair/doctor possible without guessing.
@@ -593,7 +593,7 @@ Suggested first adapters:
 2. `cursor-project`
    writes into `./.cursor/...`
 3. `antigravity-project`
-   writes into `./.agent/...`
+   writes into `./.agents/...`
 4. `codex-home`
    later
 5. `opencode-home`
@@ -640,7 +640,7 @@ Suggested operation shape:
   "kind": "copy",
   "moduleId": "rules-core",
   "source": "rules/common/coding-style.md",
-  "destination": "/Users/example/.claude/rules/common/coding-style.md",
+  "destination": "/Users/example/.claude/rules/ecc/common/coding-style.md",
   "ownership": "managed",
   "overwritePolicy": "replace"
 }
@@ -666,11 +666,11 @@ Suggested path conventions:
 - Claude target:
   `~/.claude/ecc/install-state.json`
 - Cursor target:
-  `./.cursor/vcp-install-state.json`
+  `./.cursor/ecc-install-state.json`
 - Antigravity target:
-  `./.agent/vcp-install-state.json`
+  `./.agents/ecc-install-state.json`
 - future Codex target:
-  `~/.codex/vcp-install-state.json`
+  `~/.codex/ecc-install-state.json`
 
 Suggested payload:
 
@@ -703,7 +703,7 @@ Suggested payload:
     "skippedModules": []
   },
   "source": {
-    "repoVersion": "1.10.0",
+    "repoVersion": "2.2.1",
     "repoCommit": "git-sha",
     "manifestVersion": 1
   },
@@ -711,7 +711,7 @@ Suggested payload:
     {
       "kind": "copy",
       "moduleId": "rules-core",
-      "destination": "/Users/example/.claude/rules/common/coding-style.md",
+      "destination": "/Users/example/.claude/rules/ecc/common/coding-style.md",
       "digest": "sha256:..."
     }
   ]
@@ -848,7 +848,7 @@ scripts/lib/install-targets/
   antigravity-project.js
   registry.js
 scripts/lib/install-state.js
-scripts/sicp.js
+scripts/ecc.js
 scripts/install-apply.js
 scripts/list-installed.js
 scripts/uninstall.js
@@ -884,7 +884,7 @@ keep growing per-target shell branches.
 1. add stronger target-specific merge/remove semantics
 2. extend repair/uninstall coverage for non-copy operations
 3. reduce package shipping surface to the module graph instead of broad folders
-4. decide when `sicp-install` should become a thin alias for `ecc install`
+4. decide when `ecc-install` should become a thin alias for `ecc install`
 
 ### Phase 4: Publish And Future Targets
 
@@ -900,7 +900,7 @@ The highest-signal next implementation moves in this repo are:
 1. add target-specific merge/remove semantics for config-like modules
 2. extend repair and uninstall beyond simple copy-file operations
 3. reduce package shipping surface to the module graph instead of broad folders
-4. decide whether `sicp-install` remains separate or becomes `ecc install`
+4. decide whether `ecc-install` remains separate or becomes `ecc install`
 5. add tests that lock down:
    - target-specific merge/remove behavior
    - repair and uninstall safety for non-copy operations

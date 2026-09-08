@@ -103,7 +103,7 @@ The plan should clearly show:
 Teams should be able to commit a project-level install config and use:
 
 ```bash
-ecc install --config vcp-install.json
+ecc install --config ecc-install.json
 ```
 
 That allows deterministic installs across contributors and CI.
@@ -238,7 +238,7 @@ Examples:
 ecc install --target claude --profile core
 ecc install --target cursor --profile developer --with lang:typescript --with framework:nextjs
 ecc install --target antigravity --with capability:security --with lang:python
-ecc install --config vcp-install.json
+ecc install --config ecc-install.json
 ```
 
 ### Plan CLI
@@ -289,7 +289,7 @@ install-state the same way as modern installs.
 
 Recommended default:
 
-- `vcp-install.json`
+- `ecc-install.json`
 
 Optional future support:
 
@@ -299,7 +299,7 @@ Optional future support:
 
 ```json
 {
-  "$schema": "./schemas/vcp-install-config.schema.json",
+  "$schema": "./schemas/ecc-install-config.schema.json",
   "version": 1,
   "target": "cursor",
   "profile": "developer",
@@ -414,7 +414,7 @@ the current substrate into a cleaner user-facing component model.
 ### Feasible In Phase 1
 
 - profile + include/exclude selection
-- `vcp-install.json` config file parsing
+- `ecc-install.json` config file parsing
 - catalog/discovery command
 - alias mapping from user-facing component IDs to internal module sets
 - dry-run and JSON planning

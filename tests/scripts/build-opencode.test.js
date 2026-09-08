@@ -6,6 +6,7 @@ const assert = require("assert")
 const fs = require("fs")
 const path = require("path")
 const { spawnSync } = require("child_process")
+const { getNpmPackEntry } = require("../lib/npm-pack-output")
 
 function runTest(name, fn) {
   try {
@@ -35,7 +36,7 @@ function main() {
     ["package.json exposes the OpenCode build and prepack hooks", () => {
       assert.strictEqual(packageJson.scripts["build:opencode"], "node scripts/build-opencode.js")
       assert.strictEqual(packageJson.scripts.prepack, "npm run build:opencode")
-      assert.ok(packageJson.files.includes(".opencode/dist/"))
+      assert.ok(packageJson.files.includes(".opencode/"))
     }],
     ["build script generates .opencode/dist", () => {
       const result = spawnSync("node", [buildScript], {
@@ -45,16 +46,88 @@ function main() {
       assert.strictEqual(result.status, 0, result.stderr)
       assert.ok(fs.existsSync(distEntry), ".opencode/dist/index.js should exist after build")
     }],
-    ["npm pack includes the compiled OpenCode dist payload", () => {
-      const result = spawnSync("npm", ["pack", "--dry-run", "--json"], {
+    ["built OpenCode entry exports only the plugin function", () => {
+      const check = `
+        const assert = require("assert")
+        const { pathToFileURL } = require("url")
+
+        async function main() {
+          let mod
+          try {
+            mod = await import(pathToFileURL(process.argv[1]).href)
+          } catch (error) {
+            console.error(error)
+            process.exit(1)
+          }
+          assert.deepStrictEqual(Object.keys(mod).sort(), ["default"])
+          assert.strictEqual(typeof mod.default, "function")
+
+          let shellCalls = 0
+          const plugin = await mod.default({
+            client: { app: { log: () => {} } },
+            $: async () => {
+              shellCalls += 1
+              throw new Error("$ must not be called during plugin init")
+            },
+            directory: process.cwd(),
+            worktree: process.cwd(),
+          })
+          assert.strictEqual(shellCalls, 0, "$ must not be called during plugin init")
+          assert.ok(plugin && typeof plugin === "object", "default export must return a plugin record")
+          const expectedHooks = [
+            "file.edited",
+            "tool.execute.after",
+            "tool.execute.before",
+            "session.created",
+            "session.idle",
+            "session.deleted",
+            "file.watcher.updated",
+            "todo.updated",
+            "shell.env",
+            "experimental.session.compacting",
+            "permission.ask",
+          ]
+          for (const hook of expectedHooks) {
+            assert.strictEqual(typeof plugin[hook], "function", "missing hook: " + hook)
+          }
+          assert.ok(plugin.tool && typeof plugin.tool === "object", "plugin record must expose a tool object")
+          assert.deepStrictEqual(
+            Object.keys(plugin.tool).sort(),
+            ["changed-files", "dependency-analyzer"],
+            "plugin.tool must expose exactly the custom tools"
+          )
+          for (const toolName of ["changed-files", "dependency-analyzer"]) {
+            const toolDefinition = plugin.tool[toolName]
+            assert.ok(toolDefinition && typeof toolDefinition === "object", "missing tool: " + toolName)
+            assert.strictEqual(typeof toolDefinition.description, "string", toolName + " must declare a description")
+            assert.ok(toolDefinition.args && typeof toolDefinition.args === "object", toolName + " must declare args")
+            assert.strictEqual(typeof toolDefinition.execute, "function", toolName + " must declare an execute function")
+          }
+        }
+
+        main().catch((error) => {
+          console.error(error)
+          process.exit(1)
+        })
+      `
+      const result = spawnSync(process.execPath, ["-e", check, distEntry], {
         cwd: repoRoot,
         encoding: "utf8",
         shell: true,
       })
       assert.strictEqual(result.status, 0, result.stderr)
+    }],
+    ["npm pack includes the compiled OpenCode dist payload", () => {
+      const result = spawnSync("npm", ["pack", "--dry-run", "--json"], {
+        cwd: repoRoot,
+        encoding: "utf8",
+        shell: process.platform === "win32",
+      })
+      assert.strictEqual(result.status, 0, result.error?.message || result.stderr)
 
       const packOutput = JSON.parse(result.stdout)
-      const packagedPaths = new Set(packOutput[0]?.files?.map((file) => file.path) ?? [])
+      const packEntry = getNpmPackEntry(packOutput, packageJson.name)
+      const packagedPaths = new Set(packEntry?.files?.map((file) => file.path) ?? [])
 
       assert.ok(
         packagedPaths.has(".opencode/dist/index.js"),
@@ -67,6 +140,42 @@ function main() {
       assert.ok(
         packagedPaths.has(".opencode/dist/tools/index.js"),
         "npm pack should include compiled OpenCode tool output"
+      )
+      assert.ok(
+        packagedPaths.has(".claude-plugin/marketplace.json"),
+        "npm pack should include .claude-plugin/marketplace.json"
+      )
+      assert.ok(
+        packagedPaths.has(".claude-plugin/plugin.json"),
+        "npm pack should include .claude-plugin/plugin.json"
+      )
+      assert.ok(
+        packagedPaths.has(".codex-plugin/plugin.json"),
+        "npm pack should include .codex-plugin/plugin.json"
+      )
+      assert.ok(
+        packagedPaths.has(".agents/plugins/marketplace.json"),
+        "npm pack should include .agents/plugins/marketplace.json"
+      )
+      assert.ok(
+        packagedPaths.has(".opencode/package.json"),
+        "npm pack should include .opencode/package.json"
+      )
+      assert.ok(
+        packagedPaths.has(".opencode/package-lock.json"),
+        "npm pack should include .opencode/package-lock.json"
+      )
+      assert.ok(
+        packagedPaths.has("agent.yaml"),
+        "npm pack should include agent.yaml"
+      )
+      assert.ok(
+        packagedPaths.has("AGENTS.md"),
+        "npm pack should include AGENTS.md"
+      )
+      assert.ok(
+        packagedPaths.has("VERSION"),
+        "npm pack should include VERSION"
       )
     }],
   ]

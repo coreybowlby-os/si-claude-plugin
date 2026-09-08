@@ -1,6 +1,6 @@
 ---
 description: Update documentation for recent changes
-agent: SI-Claude-Plugin:doc-updater
+agent: doc-updater
 subtask: true
 ---
 

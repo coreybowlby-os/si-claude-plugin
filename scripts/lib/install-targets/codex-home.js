@@ -5,6 +5,6 @@ module.exports = createInstallTargetAdapter({
   target: 'codex',
   kind: 'home',
   rootSegments: ['.codex'],
-  installStatePathSegments: ['vcp-install-state.json'],
+  installStatePathSegments: ['ecc-install-state.json'],
   nativeRootRelativePath: '.codex',
 });

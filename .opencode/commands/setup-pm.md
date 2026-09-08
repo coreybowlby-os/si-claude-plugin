@@ -1,6 +1,6 @@
 ---
 description: Configure package manager preference
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Setup Package Manager Command

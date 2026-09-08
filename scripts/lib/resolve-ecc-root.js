@@ -6,15 +6,44 @@ const os = require('os');
 
 // The slug is the Claude Code PLUGIN name — as in .claude-plugin/plugin.json and the
 // directory Claude Code creates at ~/.claude/plugins/marketplaces/<slug>. It is not
-// the npm package name.
-const PLUGIN_SLUG = 'SI-Claude-Plugin';
-const PLUGIN_HANDLE = `${PLUGIN_SLUG}@${PLUGIN_SLUG}`;
-const PLUGIN_CACHE_SLUGS = [PLUGIN_SLUG];
+// the npm package name. ECC's own slugs are deliberately absent: a real ECC install
+// is a different plugin and must not resolve as this one.
+const CURRENT_PLUGIN_SLUG = 'SI-Claude-Plugin';
+const CURRENT_PLUGIN_HANDLE = `${CURRENT_PLUGIN_SLUG}@${CURRENT_PLUGIN_SLUG}`;
+const PLUGIN_CACHE_SLUGS = [CURRENT_PLUGIN_SLUG];
 const PLUGIN_ROOT_SEGMENTS = [
-  [PLUGIN_SLUG],
-  [PLUGIN_HANDLE],
-  ['marketplaces', PLUGIN_SLUG],
+  [CURRENT_PLUGIN_SLUG],
+  [CURRENT_PLUGIN_HANDLE],
+  ['marketplaces', CURRENT_PLUGIN_SLUG],
 ];
+
+// The marketplace a fresh install registers against. Single source of truth: the
+// setup paths for Claude and Codex, and the scope migration, all import these rather
+// than repeating literals — three copies is how they drifted apart before.
+//
+// These also drive a supply-chain guard: setup refuses to proceed when a marketplace
+// already named OFFICIAL_MARKETPLACE_NAME resolves to a repository other than
+// OFFICIAL_MARKETPLACE_REPO. Repository comparisons are lowercased by
+// github-origin.normalizeGitHubGitOrigin, so REPO must stay lowercase; URL is what
+// gets passed to `plugin marketplace add`.
+// Claude Code's marketplace carries the plugin slug; Codex's carries the lowercase
+// npm-style name, matching .codex-plugin/plugin.json and plugins/si-claude-plugin/.
+// Both point at the same repository.
+const OFFICIAL_MARKETPLACE_NAME = CURRENT_PLUGIN_SLUG;
+const CODEX_MARKETPLACE_NAME = 'si-claude-plugin';
+const OFFICIAL_MARKETPLACE_REPO = 'coreybowlby-os/si-claude-plugin';
+const OFFICIAL_MARKETPLACE_URL = `https://github.com/${OFFICIAL_MARKETPLACE_REPO}`;
+
+// Artifacts that identify a COMPLETE ECC root when the caller gives no explicit
+// probe. A real ECC root ships both the script tree AND ECC's skills; a partial
+// install (scripts copied, skills not) must not qualify for skill-resolving
+// callers, which build `skills/...` paths against the resolved root (#2544).
+// Checking "skills/ exists" is not enough — a user's own ~/.claude/skills/ can
+// be present with none of ECC's skills — so we probe for a sentinel skill that
+// ships in every ECC root and is exactly what the failing skill commands need.
+// If that skill is ever renamed, move this sentinel with it.
+const DEFAULT_SCRIPT_PROBE = path.join('scripts', 'lib', 'utils.js');
+const DEFAULT_SKILL_PROBE = path.join('skills', 'continuous-learning-v2');
 
 /**
  * Resolve the ECC source root directory.
@@ -23,14 +52,20 @@ const PLUGIN_ROOT_SEGMENTS = [
  *   1. CLAUDE_PLUGIN_ROOT env var (set by Claude Code for hooks, or by user)
  *   2. Standard install location (~/.claude/) — when scripts exist there
  *   3. Known plugin roots under ~/.claude/plugins/ (current + legacy slugs)
- *   4. Plugin cache auto-detection — scans ~/.claude/plugins/cache/{ecc,SI-Claude-Plugin}/
+ *   4. Plugin cache auto-detection — scans ~/.claude/plugins/cache/{ecc,everything-claude-code}/
  *   5. Fallback to ~/.claude/ (original behaviour)
  *
  * @param {object} [options]
  * @param {string} [options.homeDir]  Override home directory (for testing)
  * @param {string} [options.envRoot]  Override CLAUDE_PLUGIN_ROOT (for testing)
- * @param {string} [options.probe]    Relative path used to verify a candidate root
- *                                    contains ECC scripts. Default: 'scripts/lib/utils.js'
+ * @param {string} [options.probe]    Relative path used to verify a candidate
+ *                                    root contains what the caller needs. When
+ *                                    given, it is honored exactly (script
+ *                                    consumers pass their own script path). When
+ *                                    omitted, a candidate must contain BOTH the
+ *                                    ECC script tree and a sentinel ECC skill,
+ *                                    so a partial install (scripts without
+ *                                    skills) is rejected for skill consumers.
  * @returns {string} Resolved ECC root path
  */
 function resolveEccRoot(options = {}) {
@@ -44,10 +79,20 @@ function resolveEccRoot(options = {}) {
 
   const homeDir = options.homeDir || os.homedir();
   const claudeDir = path.join(homeDir, '.claude');
-  const probe = options.probe || path.join('scripts', 'lib', 'utils.js');
+
+  // Decide whether a candidate directory is a usable ECC root. An explicit
+  // caller probe is honored exactly (script consumers know the artifact they
+  // need). With the default probe the caller is a skill consumer, so a
+  // candidate must contain both ECC's scripts and a sentinel ECC skill —
+  // otherwise a scripts-only ~/.claude short-circuits and every skill path
+  // resolves to a location that does not exist (#2544).
+  const isRoot = options.probe
+    ? (dir) => fs.existsSync(path.join(dir, options.probe))
+    : (dir) => fs.existsSync(path.join(dir, DEFAULT_SCRIPT_PROBE))
+            && fs.existsSync(path.join(dir, DEFAULT_SKILL_PROBE));
 
   // Standard install — files are copied directly into ~/.claude/
-  if (fs.existsSync(path.join(claudeDir, probe))) {
+  if (isRoot(claudeDir)) {
     return claudeDir;
   }
 
@@ -58,15 +103,15 @@ function resolveEccRoot(options = {}) {
   );
 
   for (const candidate of legacyPluginRoots) {
-    if (fs.existsSync(path.join(candidate, probe))) {
+    if (isRoot(candidate)) {
       return candidate;
     }
   }
 
   // Plugin cache — Claude Code stores marketplace plugins under
   // ~/.claude/plugins/cache/<plugin-name>/<org>/<version>/
-  for (const slug of PLUGIN_CACHE_SLUGS) {
-    try {
+  try {
+    for (const slug of PLUGIN_CACHE_SLUGS) {
       const cacheBase = path.join(claudeDir, 'plugins', 'cache', slug);
       const orgDirs = fs.readdirSync(cacheBase, { withFileTypes: true });
 
@@ -84,34 +129,48 @@ function resolveEccRoot(options = {}) {
         for (const verEntry of versionDirs) {
           if (!verEntry.isDirectory()) continue;
           const candidate = path.join(orgPath, verEntry.name);
-          if (fs.existsSync(path.join(candidate, probe))) {
+          if (isRoot(candidate)) {
             return candidate;
           }
         }
       }
-    } catch {
-      // This slug's cache dir doesn't exist or isn't readable — try the next
-      continue;
     }
+  } catch {
+    // Plugin cache doesn't exist or isn't readable — continue to fallback
   }
 
   return claudeDir;
 }
 
 /**
- * Compact inline version for embedding in command .md code blocks.
+ * Compact inline locator for embedding in hooks.json and command .md code blocks.
  *
- * This is the minified form of resolveEccRoot() suitable for use in
- * node -e "..." scripts where require() is not available before the
- * root is known.
+ * Earlier revisions inlined the *entire* resolveEccRoot() search (~700 chars,
+ * duplicated ~80×). That blob used a spread (`...s`) over nested array literals,
+ * which broke Windows hook execution due to shell quoting (#2368).
+ *
+ * This minified form contains no spread, no nested array literals, and no
+ * escaped double quotes, so it survives `node -e "..."` quoting on every shell.
+ * When CLAUDE_PLUGIN_ROOT is set (as Claude Code does for plugin hooks and
+ * commands) it is used directly. Otherwise the inline probes the same set of
+ * locations resolveEccRoot() knows about — ~/.claude, the exact plugin roots
+ * under ~/.claude/plugins/, and the versioned plugin cache — only far enough to
+ * load the committed resolve-ecc-root module, then delegates the authoritative
+ * decision to resolveEccRoot(). This keeps discovery behaviour identical to the
+ * old inline while centralising the real logic in one tested module.
  *
  * Usage in commands:
  *   const _r = <paste INLINE_RESOLVE>;
  *   const sm = require(_r + '/scripts/lib/session-manager');
  */
-const INLINE_RESOLVE = `(()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;for(var s of ${JSON.stringify(PLUGIN_ROOT_SEGMENTS)}){var l=p.join(d,'plugins',...s);if(f.existsSync(p.join(l,q)))return l}for(var g of ${JSON.stringify(PLUGIN_CACHE_SLUGS)}){try{var b=p.join(d,'plugins','cache',g);for(var o of f.readdirSync(b,{withFileTypes:true})){if(!o.isDirectory())continue;try{for(var v of f.readdirSync(p.join(b,o.name),{withFileTypes:true})){if(!v.isDirectory())continue;var c=p.join(b,o.name,v.name);if(f.existsSync(p.join(c,q)))return c}}catch(x){}}}catch(x){}}return d})()`;
+const INLINE_RESOLVE = `(function(){var p=require('path'),f=require('fs'),o=require('os');var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var d=p.join(o.homedir(),'.claude');function L(x){try{return require(p.join(x,'scripts','lib','resolve-ecc-root')).resolveEccRoot()}catch(_){return null}}var r=L(d);if(r)return r;var s=${JSON.stringify(PLUGIN_ROOT_SEGMENTS.map(seg => seg.join('/')))};for(var i=0;i<s.length;i++){r=L(p.join(d,'plugins',s[i]));if(r)return r}try{var g=${JSON.stringify(PLUGIN_CACHE_SLUGS)};for(var j=0;j<g.length;j++){var c=p.join(d,'plugins','cache',g[j]);var O=f.readdirSync(c);for(var k=0;k<O.length;k++){var q=p.join(c,O[k]);var V=f.readdirSync(q);for(var m=0;m<V.length;m++){r=L(p.join(q,V[m]));if(r)return r}}}}catch(_){}return d})()`;
 
 module.exports = {
   resolveEccRoot,
   INLINE_RESOLVE,
+  CURRENT_PLUGIN_SLUG,
+  OFFICIAL_MARKETPLACE_NAME,
+  CODEX_MARKETPLACE_NAME,
+  OFFICIAL_MARKETPLACE_REPO,
+  OFFICIAL_MARKETPLACE_URL,
 };

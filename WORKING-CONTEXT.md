@@ -1,6 +1,6 @@
 # Working Context
 
-Last updated: 2026-04-05
+Last updated: 2026-04-08
 
 ## Purpose
 
@@ -10,8 +10,8 @@ Public ECC plugin repo for agents, skills, commands, hooks, rules, install surfa
 
 - Default branch: `main`
 - Public release surface is aligned at `v1.10.0`
-- Public catalog truth is `39` agents, `73` commands, and `179` skills
-- Public plugin slug is now `ecc`; legacy `SI-Claude-Plugin` install paths remain supported for compatibility
+- Public catalog truth is `47` agents, `79` commands, and `181` skills
+- Public plugin slug is now `ecc`; legacy `everything-claude-code` install paths remain supported for compatibility
 - Release discussion: `#1272`
 - ECC 2.0 exists in-tree and builds, but it is still alpha rather than GA
 - Main active operational work:
@@ -36,6 +36,7 @@ Public ECC plugin repo for agents, skills, commands, hooks, rules, install surfa
   - control plane primitives
   - operator surface
   - self-improving skills
+  - keep `agent.yaml` export parity with the shipped `commands/` and `skills/` directories so modern install surfaces do not silently lose command registration
 - Skill quality:
   - rewrite content-facing skills to use source-backed voice modeling
   - remove generic LLM rhetoric, canned CTA patterns, and forced platform stereotypes
@@ -50,10 +51,10 @@ Public ECC plugin repo for agents, skills, commands, hooks, rules, install surfa
 ## Open PR Classification
 
 - Closed on 2026-04-01 under backlog hygiene / merge policy:
-  - `#1069` `feat: add SI-Claude-Plugin ECC bundle`
-  - `#1068` `feat: add SI-Claude-Plugin-conventions ECC bundle`
-  - `#1080` `feat: add SI-Claude-Plugin ECC bundle`
-  - `#1079` `feat: add SI-Claude-Plugin-conventions ECC bundle`
+  - `#1069` `feat: add everything-claude-code ECC bundle`
+  - `#1068` `feat: add everything-claude-code-conventions ECC bundle`
+  - `#1080` `feat: add everything-claude-code ECC bundle`
+  - `#1079` `feat: add everything-claude-code-conventions ECC bundle`
   - `#1064` `chore(deps-dev): bump @eslint/js from 9.39.2 to 10.0.1`
   - `#1063` `chore(deps-dev): bump eslint from 9.39.2 to 10.1.0`
 - Closed on 2026-04-01 because the content is sourced from external ecosystems and should only land via manual ECC-native re-port:
@@ -149,6 +150,7 @@ Keep this file detailed for only the current sprint, blockers, and next actions.
 - 2026-04-05: Closed the latest auto-generated ECC bundle PR wave (`#1275`-`#1281`) after deploying `ECC-Tools/main` fix `f615905`, which now blocks repo-level issue-comment `/analyze` requests from opening repeated bundle PRs while still allowing PR-thread retry analysis to run against immutable head SHAs.
 - 2026-04-05: Filled the SEO gap by direct-porting `agents/seo-specialist.md` and `skills/seo/SKILL.md` into `main`, then wiring `skills/seo` into `business-content`. This resolves the stale `team-builder` reference to an SEO specialist and brings the public catalog to `39` agents and `163` skills without merging the stale PR wholesale.
 - 2026-04-05: Salvaged the useful common-rule deltas from `#1214` directly into `rules/common/coding-style.md` and `rules/common/testing.md` (KISS/DRY/YAGNI reminders, naming conventions, code-smell guidance, and AAA-style test guidance), then closed the original mixed deletion PR. The broad skill removals in that PR were intentionally not replayed.
+- 2026-04-05: Fixed the stale-row bug in `.github/workflows/monthly-metrics.yml` with `bf5961e`. The workflow now refreshes the current month row in issue `#1087` instead of early-returning when the month already exists, and the dispatched run updated the April snapshot to the current star/fork/release counts.
 - 2026-04-05: Recovered the useful cost-control workflow from the divergent Hermes branch as a small ECC-native operator skill instead of replaying the branch. `skills/ecc-tools-cost-audit/SKILL.md` is now wired into `operator-workflows` and focused on webhook -> queue -> worker tracing, burn containment, quota bypass, premium-model leakage, and retry fanout in the sibling `ECC-Tools` repo.
 - 2026-04-05: Added `skills/council/SKILL.md` in `753da37` as an ECC-native four-voice decision workflow. The useful protocol from PR `#1254` was retained, but the shadow `~/.claude/notes` write path was explicitly removed in favor of `knowledge-ops`, `/save-session`, or direct GitHub/Linear updates when a decision delta matters.
 - 2026-04-05: Direct-ported the safe `globals` bump from PR `#1243` into `main` as part of the council lane and closed the PR as superseded.
@@ -174,3 +176,4 @@ Keep this file detailed for only the current sprint, blockers, and next actions.
   - `skills/oura-health` and `skills/pmx-guidelines` are user- or project-specific, not canonical ECC surfaces
   - `docs/releases/2.0.0-preview/*` is premature collateral and should be rebuilt from current product truth later
   - nested `skills/hermes-generated/*` is superseded by the top-level ECC-native operator skills already ported to `main`
+- 2026-04-08: Fixed the command-export regression reported in `#1327` by restoring a canonical `commands:` section in `agent.yaml` and adding `tests/ci/agent-yaml-surface.test.js` to enforce exact parity between the YAML export surface and the real `commands/` directory. Verified with the full repo test sweep: `1764/1764` passing.

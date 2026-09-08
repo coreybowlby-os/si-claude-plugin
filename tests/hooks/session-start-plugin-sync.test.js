@@ -38,11 +38,11 @@ function test(name, fn) {
  * Creates an isolated temp directory that mimics ~/.claude for a test run.
  */
 function makeTempClaude() {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sicp-test-'));
   const pluginsDir = path.join(tmpDir, 'plugins');
-  const vcpDir = path.join(tmpDir, 'SI-Claude-Plugin');
+  const pluginDir = path.join(tmpDir, 'SI-Claude-Plugin');
   fs.mkdirSync(pluginsDir, { recursive: true });
-  fs.mkdirSync(vcpDir, { recursive: true });
+  fs.mkdirSync(pluginDir, { recursive: true });
 
   function writeInstalledPlugins(version) {
     fs.writeFileSync(
@@ -55,12 +55,12 @@ function makeTempClaude() {
   }
 
   function writeTracker(version) {
-    fs.writeFileSync(path.join(vcpDir, 'installed-version.txt'), version);
+    fs.writeFileSync(path.join(pluginDir, 'installed-version.txt'), version);
   }
 
   function writeMarketplaceCheck(ageMs) {
     const ts = ageMs === 'fresh' ? String(Date.now()) : String(Date.now() - ageMs);
-    fs.writeFileSync(path.join(vcpDir, 'last-marketplace-check.txt'), ts);
+    fs.writeFileSync(path.join(pluginDir, 'last-marketplace-check.txt'), ts);
   }
 
   function run(env = {}) {

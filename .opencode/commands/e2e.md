@@ -1,6 +1,6 @@
 ---
 description: Generate and run E2E tests with Playwright
-agent: SI-Claude-Plugin:e2e-runner
+agent: e2e-runner
 subtask: true
 ---
 

@@ -77,13 +77,28 @@ function runTests() {
   let passed = 0;
   let failed = 0;
 
+  if (test('points users without install state to the guided problem report', () => {
+    const homeDir = createTempDir('doctor-home-');
+    const projectRoot = createTempDir('doctor-project-');
+
+    try {
+      const result = run([], { cwd: projectRoot, homeDir });
+      assert.strictEqual(result.code, 0, result.stderr);
+      assert.ok(result.stdout.includes('install-problem.yml'));
+      assert.ok(result.stdout.includes('does not upload diagnostics'));
+    } finally {
+      cleanup(homeDir);
+      cleanup(projectRoot);
+    }
+  })) passed++; else failed++;
+
   if (test('reports a healthy install with exit code 0', () => {
     const homeDir = createTempDir('doctor-home-');
     const projectRoot = createTempDir('doctor-project-');
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const managedFile = path.join(targetRoot, 'rules', 'common', 'coding-style.md');
       const sourceContent = fs.readFileSync(path.join(REPO_ROOT, 'rules', 'common', 'coding-style.md'), 'utf8');
       fs.mkdirSync(path.dirname(managedFile), { recursive: true });
@@ -137,7 +152,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'vcp-install-state.json');
+      const statePath = path.join(targetRoot, 'ecc-install-state.json');
       fs.mkdirSync(targetRoot, { recursive: true });
 
       writeState(statePath, {

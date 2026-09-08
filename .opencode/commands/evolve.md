@@ -1,6 +1,6 @@
 ---
 description: Analyze instincts and suggest or generate evolved structures
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Evolve Command

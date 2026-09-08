@@ -121,8 +121,8 @@ Introduce a durable install-state contract and the first lifecycle commands:
 Suggested state locations:
 
 - Claude: `~/.claude/ecc/install-state.json`
-- Cursor: `./.cursor/vcp-install-state.json`
-- Antigravity: `./.agent/vcp-install-state.json`
+- Cursor: `./.cursor/ecc-install-state.json`
+- Antigravity: `./.agent/ecc-install-state.json`
 
 The state file should capture at minimum:
 

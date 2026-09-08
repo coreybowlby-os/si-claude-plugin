@@ -5,6 +5,6 @@ module.exports = createInstallTargetAdapter({
   target: 'gemini',
   kind: 'project',
   rootSegments: ['.gemini'],
-  installStatePathSegments: ['vcp-install-state.json'],
+  installStatePathSegments: ['ecc-install-state.json'],
   nativeRootRelativePath: '.gemini',
 });

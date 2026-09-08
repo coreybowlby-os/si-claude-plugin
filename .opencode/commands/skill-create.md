@@ -1,6 +1,6 @@
 ---
 description: Generate skills from git history analysis
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Skill Create Command

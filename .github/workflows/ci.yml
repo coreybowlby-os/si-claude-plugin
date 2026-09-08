@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
+    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -19,20 +20,14 @@ jobs:
   test:
     name: Test (${{ matrix.os }}, Node ${{ matrix.node }}, ${{ matrix.pm }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     strategy:
       fail-fast: false
       matrix:
-        # Reduced matrix to stay within the GitHub Free tier quota.
-        # Original (36 jobs across 3 OS x 3 Node x 4 PM) consumed ~1,185 billing
-        # minutes per run and exhausted the GitHub Free tier quota.
-        # This matrix covers the platforms and Node versions this project targets
-        # (ubuntu LTS + windows, Node 20 LTS, the two primary PMs)
-        # at ~6 jobs per run (~18 billing minutes).
-        os: [ubuntu-latest, windows-latest]
-        node: ['20.x']
-        pm: [npm, yarn, bun]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['18.x', '20.x', '22.x']
+        pm: [npm, pnpm, yarn, bun]
         exclude:
           # Bun has limited Windows support
           - os: windows-latest
@@ -40,19 +35,29 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js ${{ matrix.node }}
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
 
       # Package manager setup
       - name: Setup pnpm
-        if: matrix.pm == 'pnpm'
-        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v4
+        if: matrix.pm == 'pnpm' && matrix.node != '18.x'
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
-          version: latest
+          # Keep an explicit pnpm major because this repo's packageManager is Yarn.
+          version: 10
+
+      - name: Setup pnpm (via Corepack)
+        if: matrix.pm == 'pnpm' && matrix.node == '18.x'
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@9 --activate
 
       - name: Setup Yarn (via Corepack)
         if: matrix.pm == 'yarn'
@@ -65,85 +70,25 @@ jobs:
         if: matrix.pm == 'bun'
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
 
-      # Cache configuration
-      - name: Get npm cache directory
-        if: matrix.pm == 'npm'
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-
-      - name: Cache npm
-        if: matrix.pm == 'npm'
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ${{ steps.npm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ matrix.node }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node }}-npm-
-
-      - name: Get pnpm store directory
-        if: matrix.pm == 'pnpm'
-        id: pnpm-cache-dir
-        shell: bash
-        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache pnpm
-        if: matrix.pm == 'pnpm'
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ matrix.node }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node }}-pnpm-
-
-      - name: Get yarn cache directory
-        if: matrix.pm == 'yarn'
-        id: yarn-cache-dir
-        shell: bash
-        run: |
-          # Try Yarn Berry first, fall back to Yarn v1
-          if yarn config get cacheFolder >/dev/null 2>&1; then
-            echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-          else
-            echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Cache yarn
-        if: matrix.pm == 'yarn'
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ matrix.node }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ matrix.node }}-yarn-
-
-      - name: Cache bun
-        if: matrix.pm == 'bun'
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
       # Install dependencies
       # COREPACK_ENABLE_STRICT=0 allows pnpm to install even though
       # package.json declares "packageManager": "yarn@..."
-      # YARN_ENABLE_HARDENED_MODE=0 allows yarn to update the lockfile in CI
-      # when package.json versions have been bumped (e.g. after Dependabot updates).
       - name: Install dependencies
         shell: bash
         env:
           COREPACK_ENABLE_STRICT: '0'
-          YARN_ENABLE_HARDENED_MODE: '0'
+          npm_config_ignore_scripts: 'true'
+          YARN_ENABLE_SCRIPTS: 'false'
         run: |
           case "${{ matrix.pm }}" in
-            npm) npm install ;;
-            pnpm) pnpm install --no-frozen-lockfile ;;
+            npm) npm ci --ignore-scripts ;;
+            # pnpm v10 can fail CI on ignored native build scripts
+            # (for example msgpackr-extract) even though this repo is Yarn-native
+            # and pnpm is only exercised here as a compatibility lane.
+            pnpm) pnpm install --ignore-scripts --config.strict-dep-builds=false --no-frozen-lockfile ;;
             # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature
-            # --no-immutable allows lockfile updates when package.json versions have been bumped
-            yarn) yarn install --no-immutable ;;
-            bun) bun install ;;
+            yarn) yarn install --mode=skip-build ;;
+            bun) bun install --ignore-scripts ;;
             *) echo "Unsupported package manager: ${{ matrix.pm }}" && exit 1 ;;
           esac
 
@@ -163,6 +108,74 @@ jobs:
             tests/
             !tests/node_modules/
 
+  pack-installer:
+    name: Pack Installer Artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      package_file: ${{ steps.pack.outputs.package_file }}
+      package_sha256: ${{ steps.pack.outputs.package_sha256 }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Pack exact installer artifact
+        id: pack
+        run: |
+          npm pack --json > npm-pack.json
+          node -e "const crypto = require('crypto'); const fs = require('fs'); const data = JSON.parse(fs.readFileSync('npm-pack.json', 'utf8')); const file = data[0]?.filename; if (!/^si-claude-plugin-[0-9A-Za-z.+-]+\.tgz$/.test(file || '')) throw new Error('Unexpected packed filename'); const archives = fs.readdirSync('.').filter(name => name.endsWith('.tgz')); if (archives.length !== 1 || archives[0] !== file) throw new Error('Expected exactly one packed archive'); const digest = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'); fs.appendFileSync(process.env.GITHUB_OUTPUT, 'package_file=' + file + '\npackage_sha256=' + digest + '\n')"
+
+      - name: Upload exact installer artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ecc-ci-installer-artifact
+          path: ${{ steps.pack.outputs.package_file }}
+          if-no-files-found: error
+
+  packed-install-lifecycle:
+    name: Packed Install (${{ matrix.os }})
+    needs: pack-installer
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout lifecycle test
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20.x'
+
+      - name: Download exact installer artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ecc-ci-installer-artifact
+          path: release-artifacts
+
+      - name: Verify packed install lifecycle
+        env:
+          ECC_RELEASE_PACKAGE: release-artifacts/${{ needs.pack-installer.outputs.package_file }}
+          ECC_RELEASE_SHA256: ${{ needs.pack-installer.outputs.package_sha256 }}
+        run: node tests/ci/packed-artifact-lifecycle.js
+
   validate:
     name: Validate Components
     runs-on: ubuntu-latest
@@ -170,15 +183,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '20.x'
 
       - name: Install validation dependencies
-        run: npm install --ignore-scripts
+        run: npm ci --ignore-scripts
 
       - name: Validate agents
         run: node scripts/ci/validate-agents.js
@@ -200,6 +215,10 @@ jobs:
         run: node scripts/ci/validate-install-manifests.js
         continue-on-error: false
 
+      - name: Validate workflow security
+        run: node scripts/ci/validate-workflow-security.js
+        continue-on-error: false
+
       - name: Validate rules
         run: node scripts/ci/validate-rules.js
         continue-on-error: false
@@ -208,9 +227,45 @@ jobs:
         run: node scripts/ci/catalog.js --text
         continue-on-error: false
 
+      - name: Validate command registry
+        run: npm run command-registry:check
+        continue-on-error: false
+
       - name: Check unicode safety
         run: node scripts/ci/check-unicode-safety.js
         continue-on-error: false
+
+      - name: Validate no personal paths
+        run: node scripts/ci/validate-no-personal-paths.js
+        continue-on-error: false
+
+  python-tests:
+    name: Python Lint, Type Check & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e '.[dev]'
+
+      - name: Run ruff (lint)
+        run: python -m ruff check src tests
+
+      - name: Run mypy (type check)
+        run: python -m mypy src
+
+      - name: Run Python tests
+        run: python -m pytest tests/test_*.py -m "not integration"
 
   security:
     name: Security Scan
@@ -219,16 +274,56 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '20.x'
 
+      - name: Install audit dependencies
+        run: npm ci --ignore-scripts
+
       - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true  # Allows PR to proceed, but marks job as failed if vulnerabilities found
+        run: |
+          npm audit signatures
+          # Runtime/package advisories are release blockers. Development-only
+          # lint tooling remains covered by signature and IOC verification.
+          npm audit --omit=dev --audit-level=high
+
+      - name: Run supply-chain IOC scan
+        run: npm run security:ioc-scan
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run coverage
+        run: npm run coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-ubuntu-node20-npm
+          path: coverage/
 
   lint:
     name: Lint
@@ -237,18 +332,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '20.x'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
-      - name: Run ESLint
-        run: npx eslint scripts/**/*.js tests/**/*.js
-
-      - name: Run markdownlint
-        run: npx markdownlint "agents/**/*.md" "skills/**/*.md" "commands/**/*.md" "rules/**/*.md"
+      - name: Run lint
+        run: npm run lint

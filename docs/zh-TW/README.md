@@ -1,6 +1,6 @@
-# SI Claude Plugin
+# Everything Claude Code
 
-[![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
+[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
@@ -11,14 +11,15 @@
 
 <div align="center">
 
-**Language / 语言 / 語言 / Dil**
+**Language / 语言 / 語言 / Dil / Язык / Ngôn ngữ**
 
-[**English**](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md)
+[**English**](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | **繁體中文** | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md) | [Русский](../ru/README.md) | [Tiếng Việt](../vi-VN/README.md) | [ไทย](../th/README.md) | [Deutsch](../de-DE/README.md) | [Українська](../uk-UA/README.md)
 
 </div>
 
 ---
 
+**來自 Anthropic 黑客松冠軍的完整 Claude Code 設定集合。**
 
 經過 10 個月以上密集日常使用、打造真實產品所淬煉出的生產就緒代理程式、技能、鉤子、指令、規則和 MCP 設定。
 
@@ -32,12 +33,12 @@
 <tr>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="SI Claude Plugin 簡明指南" />
+<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="Everything Claude Code 簡明指南" />
 </a>
 </td>
 <td width="50%">
 <a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="SI Claude Plugin 完整指南" />
+<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="Everything Claude Code 完整指南" />
 </a>
 </td>
 </tr>
@@ -66,7 +67,7 @@
 
 ```bash
 # 新增市集
-/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # 安裝外掛程式
 /plugin install ecc@ecc
@@ -78,10 +79,10 @@
 
 ```bash
 # 首先複製儲存庫
-git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+git clone https://github.com/affaan-m/everything-claude-code.git
 
 # 複製規則（應用於所有專案）
-cp -r SI-Claude-Plugin/rules/* ~/.claude/rules/
+cp -r everything-claude-code/rules/* ~/.claude/rules/
 ```
 
 ### 第三步：開始使用
@@ -141,7 +142,7 @@ node scripts/setup-package-manager.js --detect
 本儲存庫是一個 **Claude Code 外掛程式** - 可直接安裝或手動複製元件。
 
 ```
-SI-Claude-Plugin/
+everything-claude-code/
 |-- .claude-plugin/   # 外掛程式和市集清單
 |   |-- plugin.json         # 外掛程式中繼資料和元件路徑
 |   |-- marketplace.json    # 用於 /plugin marketplace add 的市集目錄
@@ -238,11 +239,11 @@ SI-Claude-Plugin/
 
 ## 生態系統工具
 
-### 技能建立器
+### ecc.tools - 技能建立器
 
 從您的儲存庫自動生成 Claude Code 技能。
 
-[安裝 GitHub App](https://github.com/apps/skill-creator)
+[安裝 GitHub App](https://github.com/apps/skill-creator) | [ecc.tools](https://ecc.tools)
 
 分析您的儲存庫並建立：
 - **SKILL.md 檔案** - 可直接用於 Claude Code 的技能
@@ -266,7 +267,7 @@ SI-Claude-Plugin/
 
 ```bash
 # 將此儲存庫新增為市集
-/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # 安裝外掛程式
 /plugin install ecc@ecc
@@ -280,7 +281,7 @@ SI-Claude-Plugin/
     "ecc": {
       "source": {
         "source": "github",
-        "repo": "coreybowlby-os/SI-Claude-Plugin"
+        "repo": "affaan-m/everything-claude-code"
       }
     }
   },
@@ -300,24 +301,26 @@ SI-Claude-Plugin/
 
 ```bash
 # 複製儲存庫
-git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+git clone https://github.com/affaan-m/everything-claude-code.git
 
 # 將代理程式複製到您的 Claude 設定
-cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
+cp everything-claude-code/agents/*.md ~/.claude/agents/
 
 # 複製規則
-cp SI-Claude-Plugin/rules/*.md ~/.claude/rules/
+cp everything-claude-code/rules/*.md ~/.claude/rules/
 
 # 複製指令
-cp SI-Claude-Plugin/commands/*.md ~/.claude/commands/
+cp everything-claude-code/commands/*.md ~/.claude/commands/
 
 # 複製技能
-cp -r SI-Claude-Plugin/skills/* ~/.claude/skills/
+cp -r everything-claude-code/skills/* ~/.claude/skills/
 ```
 
 #### 將鉤子新增到 settings.json
 
-將 `hooks/hooks.json` 中的鉤子複製到您的 `~/.claude/settings.json`。
+僅在手動安裝時，才將 `hooks/hooks.json` 中的鉤子複製到您的 `~/.claude/settings.json`。
+
+如果您是透過 `/plugin install` 安裝 ECC，請不要再把這些鉤子複製到 `settings.json`。Claude Code v2.1+ 會自動載入外掛中的 `hooks/hooks.json`，重複註冊會導致重複執行以及 `${CLAUDE_PLUGIN_ROOT}` 無法解析。
 
 #### 設定 MCP
 
@@ -425,6 +428,7 @@ node tests/hooks/hooks.test.js
 
 ## 背景
 
+我從實驗性推出就開始使用 Claude Code。2025 年 9 月與 [@DRodriguezFX](https://x.com/DRodriguezFX) 一起使用 Claude Code 打造 [zenith.chat](https://zenith.chat)，贏得了 Anthropic x Forum Ventures 黑客松。
 
 這些設定已在多個生產應用程式中經過實戰測試。
 
@@ -455,15 +459,16 @@ node tests/hooks/hooks.test.js
 
 ## Star 歷史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=coreybowlby-os/SI-Claude-Plugin&type=Date)](https://star-history.com/#coreybowlby-os/SI-Claude-Plugin&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code&type=Date)](https://star-history.com/#affaan-m/everything-claude-code&Date)
 
 ---
 
 ## 連結
 
-- **簡明指南（從這裡開始）：** [SI Claude Plugin 簡明指南](https://x.com/affaanmustafa/status/2012378465664745795)
-- **完整指南（進階）：** [SI Claude Plugin 完整指南](https://x.com/affaanmustafa/status/2014040193557471352)
-- **追蹤：** [SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+- **簡明指南（從這裡開始）：** [Everything Claude Code 簡明指南](https://x.com/affaanmustafa/status/2012378465664745795)
+- **完整指南（進階）：** [Everything Claude Code 完整指南](https://x.com/affaanmustafa/status/2014040193557471352)
+- **追蹤：** [@affaanmustafa](https://x.com/affaanmustafa)
+- **zenith.chat：** [zenith.chat](https://zenith.chat)
 - **技能目錄：** awesome-agent-skills（社區維護的智能體技能目錄）
 
 ---

@@ -1,6 +1,6 @@
 ---
 description: Run comprehensive security review
-agent: SI-Claude-Plugin:security-reviewer
+agent: security-reviewer
 subtask: true
 ---
 

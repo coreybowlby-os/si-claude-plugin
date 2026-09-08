@@ -1,13 +1,13 @@
-**语言：** [English](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md)
+**语言：** [English](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md) | [Русский](../ru/README.md) | [Tiếng Việt](../vi-VN/README.md) | [ไทย](../th/README.md) | [Українська](../uk-UA/README.md)
 
-# SI Claude Plugin
+# Everything Claude Code
 
-[![Stars](https://img.shields.io/github/stars/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/stargazers)
-[![Forks](https://img.shields.io/github/forks/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/network/members)
-[![Contributors](https://img.shields.io/github/contributors/coreybowlby-os/SI-Claude-Plugin?style=flat)](https://github.com/coreybowlby-os/SI-Claude-Plugin/graphs/contributors)
-[![npm si-claude-plugin](https://img.shields.io/npm/dw/si-claude-plugin?label=si-claude-plugin%20weekly%20downloads\&logo=npm)](https://www.npmjs.com/package/si-claude-plugin)
+[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
+[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
+[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
+[![npm ecc-universal](https://img.shields.io/npm/dw/ecc-universal?label=ecc-universal%20weekly%20downloads\&logo=npm)](https://www.npmjs.com/package/si-claude-plugin)
 [![npm ecc-agentshield](https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield%20weekly%20downloads\&logo=npm)](https://www.npmjs.com/package/ecc-agentshield)
-[![GitHub App Install](https://img.shields.io/badge/GitHub%20App-150%20installs-2ea44f?logo=github)](https://github.com/marketplace/ecc-tools)
+[![GitHub App Install](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.ecc.tools%2Fbadge%2Finstalls&logo=github)](https://github.com/marketplace/ecc-tools)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash\&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript\&logoColor=white)
@@ -17,19 +17,21 @@
 ![Perl](https://img.shields.io/badge/-Perl-39457E?logo=perl\&logoColor=white)
 ![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown\&logoColor=white)
 
+> **140K+ stars** | **21K+ forks** | **170+ contributors** | **12+ language ecosystems** | **Anthropic Hackathon Winner**
 
 ***
 
 <div align="center">
 
-**语言 / Language / 語言 / Dil**
+**语言 / Language / 語言 / Dil / Язык / Ngôn ngữ**
 
-[**English**](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md)
+[**English**](../../README.md) | [Português (Brasil)](../pt-BR/README.md) | [简体中文](../../README.zh-CN.md) | [繁體中文](../zh-TW/README.md) | [日本語](../ja-JP/README.md) | [한국어](../ko-KR/README.md) | [Türkçe](../tr/README.md) | [Русский](../ru/README.md) | [Tiếng Việt](../vi-VN/README.md) | [ไทย](../th/README.md) | [Українська](../uk-UA/README.md)
 
 </div>
 
 ***
 
+**适用于 AI 智能体平台的性能优化系统。来自 Anthropic 黑客马拉松的获奖作品。**
 
 不仅仅是配置。一个完整的系统：技能、本能、内存优化、持续学习、安全扫描以及研究优先的开发。经过 10 多个月的密集日常使用和构建真实产品的经验，演进出生产就绪的智能体、钩子、命令、规则和 MCP 配置。
 
@@ -55,6 +57,7 @@
 </td>
 <td width="33%">
 <a href="https://x.com/affaanmustafa/status/2033263813387223421">
+<img src="../../assets/images/security/security-guide-header.png" alt="Agentic安全简明指南" />
 </a>
 </td>
 </tr>
@@ -77,6 +80,23 @@
 ***
 
 ## 最新动态
+
+### v2.2.1 — 引导式多 Harness 安装（2026年8月）
+
+新增可审查的 Claude Code、Codex 与 Kimi Code 多 Harness 安装流程，并提供同步的 npm 命令入口。
+
+### v2.1.0 — 智能体 Harness 操作系统（2026年6月）
+
+2.0 主线稳定版：261 个技能、control-pane 基底（会话适配器 + MCP 清单）、worktree 生命周期服务，以及 [ECC Discord 社区](https://discord.gg/36yGMHGFbR)。
+
+### v2.0.0-rc.1 — 表面同步、运营工作流与 ECC 2.0 Alpha（2026年4月）
+
+* **公共表面已与真实仓库同步** —— 元数据、目录数量、插件清单以及安装文档现在都与实际开源表面保持一致。
+* **运营与外向型工作流扩展** —— `brand-voice`、`social-graph-ranker`、`customer-billing-ops`、`google-workspace-ops` 等运营型 skill 已纳入同一系统。
+* **媒体与发布工具补齐** —— `manim-video`、`remotion-video-creation` 以及社媒发布能力让技术讲解和发布流程直接在同一仓库内完成。
+* **框架与产品表面继续扩展** —— `nestjs-patterns`、更完整的 Codex/OpenCode 安装表面，以及跨 harness 打包改进，让仓库不再局限于 Claude Code。
+* **ECC 2.0 alpha 已进入仓库** —— `ecc2/` 下的 Rust 控制层现已可在本地构建，并提供 `dashboard`、`start`、`sessions`、`status`、`stop`、`resume` 与 `daemon` 命令。
+* **生态加固持续推进** —— AgentShield、ECC Tools 成本控制、计费门户工作与网站刷新仍围绕核心插件持续交付。
 
 ### v1.9.0 — 选择性安装与语言扩展 (2026年3月)
 
@@ -119,7 +139,7 @@
 
 ### v1.4.1 — 错误修复 (2026年2月)
 
-* **修复了直觉导入内容丢失问题** — `parse_instinct_file()` 在 `/instinct-import` 期间会静默丢弃 frontmatter 之后的所有内容（Action, Evidence, Examples 部分）。已由社区贡献者 @ericcai0814 修复 ([#148](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/148), [#161](https://github.com/coreybowlby-os/SI-Claude-Plugin/pull/161))
+* **修复了直觉导入内容丢失问题** — `parse_instinct_file()` 在 `/instinct-import` 期间会静默丢弃 frontmatter 之后的所有内容（Action, Evidence, Examples 部分）。已由社区贡献者 @ericcai0814 修复 ([#148](https://github.com/affaan-m/everything-claude-code/issues/148), [#161](https://github.com/affaan-m/everything-claude-code/pull/161))
 
 ### v1.4.0 — 多语言规则、安装向导 & PM2 (2026年2月)
 
@@ -143,9 +163,37 @@
 * **会话管理** — `/sessions` 命令用于查看会话历史
 * **持续学习 v2** — 基于直觉的学习，带有置信度评分、导入/导出、进化
 
-完整的更新日志请参见 [Releases](https://github.com/coreybowlby-os/SI-Claude-Plugin/releases)。
+完整的更新日志请参见 [Releases](https://github.com/affaan-m/everything-claude-code/releases)。
 
 ***
+
+## 统一记忆库
+
+`ecc memory` 使用可检查的 `ecc.memory.v1` Markdown 文档，在 Claude、
+Codex、Hermes 等 harness 之间传递上下文。常规搜索只召回 `project` 和
+`team` 范围内状态为 active 的条目，按 ID 直接读取仍可用于检查非 active
+条目；`user` 范围必须显式请求。首个版本中的所有记忆都保持 unreviewed，
+接受后的知识应进入受治理的项目文档，
+而不是修改记忆的信任字段。召回内容始终是不可信数据，不能作为指令执行。
+
+可选的 `ecc-memory-mcp` 服务必须由操作者设置小写
+`ECC_MEMORY_HARNESS` 身份；工具调用方不能覆盖该身份。只有操作者另外设置
+`ECC_MEMORY_ALLOW_USER_SCOPE=1` 后，MCP 调用才能显式请求 `user` 范围。
+该服务默认不会启用。
+
+仅安装 skill、最小配置、手动复制或 Claude 插件不会把记忆库运行时加入
+`PATH`。请先单独安装 ECC npm 运行时：
+
+```bash
+npm install -g ecc-universal
+ecc memory --help
+command -v ecc-memory-mcp
+```
+
+如需启用 MCP，请从 `mcp-configs/mcp-servers.json` 复制
+`ecc-memory-vault` 配置到对应 harness，并为每个 harness 分别启动一个服务
+进程，例如 `ECC_MEMORY_HARNESS=codex ecc-memory-mcp`。不同 harness 可以共享
+同一个二进制文件和记忆库目录，但不能共用同一个服务进程。
 
 ## 快速开始
 
@@ -155,7 +203,7 @@
 
 ```bash
 # Add marketplace
-/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # Install plugin
 /plugin install ecc@ecc
@@ -163,32 +211,38 @@
 
 ### 步骤 2：安装规则（必需）
 
-> WARNING: **重要提示：** Claude Code 插件无法自动分发 `rules`。请手动安装它们：
+> WARNING: **重要提示：** Claude Code 插件无法自动分发 `rules`。
+>
+> 如果你已经通过 `/plugin install` 安装了 ECC，**不要再运行 `./install.sh --profile full`、`.\install.ps1 --profile full` 或 `npx ecc-universal install --profile full`**。插件已经会自动加载 ECC 的技能、命令和 hooks；此时再执行完整安装，会把同一批内容再次复制到用户目录，导致技能重复以及运行时行为重复。
+>
+> 对于插件安装路径，请只手动复制你需要的 `rules/` 目录。只有在你完全不走插件安装、而是选择“纯手动安装 ECC”时，才应该使用完整安装器。
 
 ```bash
 # Clone the repo first
-git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
-cd SI-Claude-Plugin
+git clone https://github.com/affaan-m/everything-claude-code.git
+cd everything-claude-code
 
 # Install dependencies (pick your package manager)
 npm install        # or: pnpm install | yarn install | bun install
 
-# macOS/Linux
-./install.sh typescript    # or python or golang or swift or php
-# ./install.sh typescript python golang swift php
-# ./install.sh --target cursor typescript
-# ./install.sh --target antigravity typescript
+# Plugin install path: copy rules only
+mkdir -p ~/.claude/rules
+cp -R rules/common ~/.claude/rules/
+cp -R rules/typescript ~/.claude/rules/
+
+# Fully manual ECC install path (do this instead of /plugin install)
+# ./install.sh --profile full
 ```
 
 ```powershell
 # Windows PowerShell
-.\install.ps1 typescript   # or python or golang or swift or php
-# .\install.ps1 typescript python golang swift php
-# .\install.ps1 --target cursor typescript
-# .\install.ps1 --target antigravity typescript
+New-Item -ItemType Directory -Force -Path "$HOME/.claude/rules" | Out-Null
+Copy-Item -Recurse rules/common "$HOME/.claude/rules/"
+Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/"
 
-# npm-installed compatibility entrypoint also works cross-platform
-npx -p si-claude-plugin sicp-install typescript
+# Fully manual ECC install path (do this instead of /plugin install)
+# .\install.ps1 --profile full
+# npx ecc-universal install --profile full
 ```
 
 手动安装说明请参阅 `rules/` 文件夹中的 README。
@@ -206,7 +260,7 @@ npx -p si-claude-plugin sicp-install typescript
 /plugin list ecc@ecc
 ```
 
-**搞定！** 你现在可以使用 47 个智能体、195 项技能和 79 个命令了。
+**搞定！** 你现在可以使用 68 个智能体、300 项技能和 94 个命令了。
 
 ***
 
@@ -262,7 +316,7 @@ export ECC_DISABLED_HOOKS="pre:bash:tmux-reminder,post:edit:typecheck"
 此仓库是一个 **Claude Code 插件** - 可以直接安装或手动复制组件。
 
 ```
-SI-Claude-Plugin/
+everything-claude-code/
 |-- .claude-plugin/   # 插件和市场清单
 |   |-- plugin.json         # 插件元数据和组件路径
 |   |-- marketplace.json    # 用于 /plugin marketplace add 的市场目录
@@ -330,6 +384,10 @@ SI-Claude-Plugin/
 |   |-- laravel-verification/       # Laravel 验证循环（新增）
 |   |-- python-patterns/            # Python 习惯用法与最佳实践（新增）
 |   |-- python-testing/             # 使用 pytest 的 Python 测试（新增）
+|   |-- quarkus-patterns/            # Java Quarkus 模式（新增）
+|   |-- quarkus-security/            # Quarkus 安全（新增）
+|   |-- quarkus-tdd/                 # Quarkus TDD（新增）
+|   |-- quarkus-verification/        # Quarkus 验证（新增）
 |   |-- springboot-patterns/        # Java Spring Boot 模式（新增）
 |   |-- springboot-security/        # Spring Boot 安全（新增）
 |   |-- springboot-tdd/             # Spring Boot TDD（新增）
@@ -362,17 +420,15 @@ SI-Claude-Plugin/
 |   |-- autonomous-loops/           # 自主循环模式：顺序流水线、PR 循环与 DAG 编排（新增）
 |   |-- plankton-code-quality/      # 使用 Plankton hooks 的编写期代码质量控制（新增）
 |
-|-- commands/         # 快速执行的斜杠命令
-|   |-- tdd.md              # /tdd - 测试驱动开发
+|-- commands/         # 维护中的斜杠命令兼容层；优先使用 skills/
 |   |-- plan.md             # /plan - 实现规划
-|   |-- e2e.md              # /e2e - 端到端测试生成
 |   |-- code-review.md      # /code-review - 质量审查
 |   |-- build-fix.md        # /build-fix - 修复构建错误
 |   |-- refactor-clean.md   # /refactor-clean - 无用代码清理
+|   |-- quality-gate.md     # /quality-gate - 验证门禁
 |   |-- learn.md            # /learn - 会话中提取模式（长文指南）
 |   |-- learn-eval.md       # /learn-eval - 提取、评估并保存模式（新增）
 |   |-- checkpoint.md       # /checkpoint - 保存验证状态（长文指南）
-|   |-- verify.md           # /verify - 运行验证循环（长文指南）
 |   |-- setup-pm.md         # /setup-pm - 配置包管理器
 |   |-- go-review.md        # /go-review - Go 代码审查（新增）
 |   |-- go-test.md          # /go-test - Go TDD 工作流（新增）
@@ -388,13 +444,17 @@ SI-Claude-Plugin/
 |   |-- multi-backend.md    # /multi-backend - 后端多服务编排（新增）
 |   |-- multi-frontend.md   # /multi-frontend - 前端多服务编排（新增）
 |   |-- multi-workflow.md   # /multi-workflow - 通用多服务工作流（新增）
-|   |-- orchestrate.md      # /orchestrate - 多代理协调
 |   |-- sessions.md         # /sessions - 会话历史管理
-|   |-- eval.md             # /eval - 按标准评估
 |   |-- test-coverage.md    # /test-coverage - 测试覆盖率分析
 |   |-- update-docs.md      # /update-docs - 更新文档
 |   |-- update-codemaps.md  # /update-codemaps - 更新代码映射
 |   |-- python-review.md    # /python-review - Python 代码审查（新增）
+|-- legacy-command-shims/   # 已退役短命令的按需归档，例如 /tdd 和 /eval
+|   |-- tdd.md              # /tdd - 优先使用 tdd-workflow 技能
+|   |-- e2e.md              # /e2e - 优先使用 e2e-testing 技能
+|   |-- eval.md             # /eval - 优先使用 eval-harness 技能
+|   |-- verify.md           # /verify - 优先使用 verification-loop 技能
+|   |-- orchestrate.md      # /orchestrate - 优先使用 dmux-workflows 或 multi-workflow
 |
 |-- rules/            # 必须遵循的规则（复制到 ~/.claude/rules/）
 |   |-- README.md            # 结构说明与安装指南
@@ -479,7 +539,7 @@ SI-Claude-Plugin/
 
 适用于高级功能（10k+ 提交、自动 PR、团队共享）：
 
-[安装 GitHub 应用](https://github.com/apps/skill-creator)
+[安装 GitHub 应用](https://github.com/apps/skill-creator) | [ecc.tools](https://ecc.tools)
 
 ```bash
 # Comment on any issue:
@@ -496,6 +556,7 @@ SI-Claude-Plugin/
 
 ### AgentShield — 安全审计器
 
+> 在 Claude Code 黑客马拉松（Cerebral Valley x Anthropic，2026年2月）上构建。1282 项测试，98% 覆盖率，102 条静态分析规则。
 
 扫描您的 Claude Code 配置，查找漏洞、错误配置和注入风险。
 
@@ -519,9 +580,9 @@ npx ecc-agentshield init
 
 **输出格式：** 终端（按颜色分级的 A-F）、JSON（CI 管道）、Markdown、HTML。在关键发现时退出代码 2，用于构建门控。
 
-在 Claude Code 中使用 `/security-scan` 来运行它，或者通过 [GitHub Action](https://github.com/coreybowlby-os/SI-Claude-Plugin) 添加到 CI。
+在 Claude Code 中使用 `/security-scan` 来运行它，或者通过 [GitHub Action](https://github.com/affaan-m/agentshield) 添加到 CI。
 
-[npm](https://www.npmjs.com/package/ecc-agentshield)
+[GitHub](https://github.com/affaan-m/agentshield) | [npm](https://www.npmjs.com/package/ecc-agentshield)
 
 ### Plankton — 编写时代码质量强制执行
 
@@ -566,7 +627,7 @@ Claude Code v2.1+ **会自动加载** 任何已安装插件中的 `hooks/hooks.j
 重复的钩子文件检测到：./hooks/hooks.json 解析到已加载的文件
 ```
 
-**历史背景：** 这已导致此仓库中多次修复/还原循环（[#29](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/29), [#52](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/52), [#103](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/103)）。Claude Code 版本之间的行为发生了变化，导致了混淆。我们现在有一个回归测试来防止这种情况再次发生。
+**历史背景：** 这已导致此仓库中多次修复/还原循环（[#29](https://github.com/affaan-m/everything-claude-code/issues/29), [#52](https://github.com/affaan-m/everything-claude-code/issues/52), [#103](https://github.com/affaan-m/everything-claude-code/issues/103)）。Claude Code 版本之间的行为发生了变化，导致了混淆。我们现在有一个回归测试来防止这种情况再次发生。
 
 ***
 
@@ -578,7 +639,7 @@ Claude Code v2.1+ **会自动加载** 任何已安装插件中的 `hooks/hooks.j
 
 ```bash
 # Add this repo as a marketplace
-/plugin marketplace add https://github.com/coreybowlby-os/SI-Claude-Plugin
+/plugin marketplace add https://github.com/affaan-m/ECC
 
 # Install the plugin
 /plugin install ecc@ecc
@@ -592,7 +653,7 @@ Claude Code v2.1+ **会自动加载** 任何已安装插件中的 `hooks/hooks.j
     "ecc": {
       "source": {
         "source": "github",
-        "repo": "coreybowlby-os/SI-Claude-Plugin"
+        "repo": "affaan-m/everything-claude-code"
       }
     }
   },
@@ -608,20 +669,20 @@ Claude Code v2.1+ **会自动加载** 任何已安装插件中的 `hooks/hooks.j
 >
 > ```bash
 > # 首先克隆仓库
-> git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+> git clone https://github.com/affaan-m/everything-claude-code.git
 >
 > # 选项 A：用户级规则（适用于所有项目）
 > mkdir -p ~/.claude/rules
-> cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
-> cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # 选择您的技术栈
-> cp -r SI-Claude-Plugin/rules/python/* ~/.claude/rules/
-> cp -r SI-Claude-Plugin/rules/golang/* ~/.claude/rules/
-> cp -r SI-Claude-Plugin/rules/php/* ~/.claude/rules/
+> cp -r everything-claude-code/rules/common ~/.claude/rules/common
+> cp -r everything-claude-code/rules/typescript ~/.claude/rules/typescript   # 选择您的技术栈
+> cp -r everything-claude-code/rules/python ~/.claude/rules/python
+> cp -r everything-claude-code/rules/golang ~/.claude/rules/golang
+> cp -r everything-claude-code/rules/php ~/.claude/rules/php
 >
 > # 选项 B：项目级规则（仅适用于当前项目）
 > mkdir -p .claude/rules
-> cp -r SI-Claude-Plugin/rules/common/* .claude/rules/
-> cp -r SI-Claude-Plugin/rules/typescript/* .claude/rules/     # 选择您的技术栈
+> cp -r everything-claude-code/rules/common .claude/rules/common
+> cp -r everything-claude-code/rules/typescript .claude/rules/typescript     # 选择您的技术栈
 > ```
 
 ***
@@ -632,29 +693,32 @@ Claude Code v2.1+ **会自动加载** 任何已安装插件中的 `hooks/hooks.j
 
 ```bash
 # Clone the repo
-git clone https://github.com/coreybowlby-os/SI-Claude-Plugin.git
+git clone https://github.com/affaan-m/everything-claude-code.git
 
 # Copy agents to your Claude config
-cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
+cp everything-claude-code/agents/*.md ~/.claude/agents/
 
 # Copy rules (common + language-specific)
-cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
-cp -r SI-Claude-Plugin/rules/typescript/* ~/.claude/rules/   # pick your stack
-cp -r SI-Claude-Plugin/rules/python/* ~/.claude/rules/
-cp -r SI-Claude-Plugin/rules/golang/* ~/.claude/rules/
-cp -r SI-Claude-Plugin/rules/php/* ~/.claude/rules/
+cp -r everything-claude-code/rules/common ~/.claude/rules/common
+cp -r everything-claude-code/rules/typescript ~/.claude/rules/typescript   # pick your stack
+cp -r everything-claude-code/rules/python ~/.claude/rules/python
+cp -r everything-claude-code/rules/golang ~/.claude/rules/golang
+cp -r everything-claude-code/rules/php ~/.claude/rules/php
 
-# Copy commands
-cp SI-Claude-Plugin/commands/*.md ~/.claude/commands/
+# Copy maintained commands
+cp everything-claude-code/commands/*.md ~/.claude/commands/
+
+# Retired shims live in legacy-command-shims/commands/.
+# Copy individual files from there only if you still need old names such as /tdd.
 
 # Copy skills (core vs niche)
 # Recommended (new users): core/general skills only
-cp -r SI-Claude-Plugin/.agents/skills/* ~/.claude/skills/
-cp -r SI-Claude-Plugin/skills/search-first ~/.claude/skills/
+cp -r everything-claude-code/.agents/skills/* ~/.claude/skills/
+cp -r everything-claude-code/skills/search-first ~/.claude/skills/
 
 # Optional: add niche/framework-specific skills only when needed
-# for s in django-patterns django-tdd laravel-patterns springboot-patterns; do
-# cp -r SI-Claude-Plugin/skills/$s ~/.claude/skills/
+# for s in django-patterns django-tdd laravel-patterns springboot-patterns quarkus-patterns; do
+# cp -r everything-claude-code/skills/$s ~/.claude/skills/
 # done
 ```
 
@@ -736,16 +800,16 @@ rules/
 
 ## 我应该使用哪个代理？
 
-不确定从哪里开始？使用这个快速参考：
+不确定从哪里开始？使用这个快速参考。技能是规范工作流表面，维护中的斜杠命令保留给偏命令式工作流。
 
-| 我想要... | 使用此命令 | 使用的智能体 |
+| 我想要... | 使用此表面 | 使用的智能体 |
 |--------------|-----------------|------------|
 | 规划新功能 | `/ecc:plan "Add auth"` | planner |
 | 设计系统架构 | `/ecc:plan` + architect agent | architect |
-| 先写测试再写代码 | `/tdd` | tdd-guide |
+| 先写测试再写代码 | `tdd-workflow` 技能 | tdd-guide |
 | 评审我刚写的代码 | `/code-review` | code-reviewer |
 | 修复失败的构建 | `/build-fix` | build-error-resolver |
-| 运行端到端测试 | `/e2e` | e2e-runner |
+| 运行端到端测试 | `e2e-testing` 技能 | e2e-runner |
 | 查找安全漏洞 | `/security-scan` | security-reviewer |
 | 移除死代码 | `/refactor-clean` | refactor-cleaner |
 | 更新文档 | `/update-docs` | doc-updater |
@@ -761,14 +825,14 @@ rules/
 ```
 /ecc:plan "使用 OAuth 添加用户身份验证"
                                               → 规划器创建实现蓝图
-/tdd                                          → tdd-guide 强制执行先写测试
+tdd-workflow 技能                             → tdd-guide 强制执行先写测试
 /code-review                                  → 代码审查员检查你的工作
 ```
 
 **修复错误：**
 
 ```
-/tdd                                          → tdd-guide：编写一个能复现问题的失败测试
+tdd-workflow 技能                             → tdd-guide：编写一个能复现问题的失败测试
                                               → 实现修复，验证测试通过
 /code-review                                  → code-reviewer：捕捉回归问题
 ```
@@ -777,7 +841,7 @@ rules/
 
 ```
 /security-scan                                → security-reviewer: OWASP Top 10 审计
-/e2e                                          → e2e-runner: 关键用户流程测试
+e2e-testing 技能                              → e2e-runner: 关键用户流程测试
 /test-coverage                                → verify 80%+ 覆盖率
 ```
 
@@ -799,7 +863,7 @@ rules/
 <details>
 <summary><b>我的钩子不工作 / 我看到“重复钩子文件”错误</b></summary>
 
-这是最常见的问题。**不要在 `.claude-plugin/plugin.json` 中添加 `"hooks"` 字段。** Claude Code v2.1+ 会自动从已安装的插件加载 `hooks/hooks.json`。显式声明它会导致重复检测错误。参见 [#29](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/29), [#52](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/52), [#103](https://github.com/coreybowlby-os/SI-Claude-Plugin/issues/103)。
+这是最常见的问题。**不要在 `.claude-plugin/plugin.json` 中添加 `"hooks"` 字段。** Claude Code v2.1+ 会自动从已安装的插件加载 `hooks/hooks.json`。显式声明它会导致重复检测错误。参见 [#29](https://github.com/affaan-m/everything-claude-code/issues/29), [#52](https://github.com/affaan-m/everything-claude-code/issues/52), [#103](https://github.com/affaan-m/everything-claude-code/issues/103)。
 
 </details>
 
@@ -854,10 +918,10 @@ claude
 
 ```bash
 # Just agents
-cp SI-Claude-Plugin/agents/*.md ~/.claude/agents/
+cp everything-claude-code/agents/*.md ~/.claude/agents/
 
 # Just rules
-cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
+cp -r everything-claude-code/rules/common ~/.claude/rules/common
 ```
 
 每个组件都是完全独立的。
@@ -871,8 +935,8 @@ cp -r SI-Claude-Plugin/rules/common/* ~/.claude/rules/
 
 * **Cursor**: 预翻译的配置位于 `.cursor/`。参见 [Cursor IDE 支持](#cursor-ide-支持)。
 * **OpenCode**: `.opencode/` 中的完整插件支持。参见 [OpenCode 支持](#opencode-支持)。
-* **Codex**: 对 macOS 应用和 CLI 的一流支持，带有适配器漂移防护和 SessionStart 回退。参见 PR [#257](https://github.com/coreybowlby-os/SI-Claude-Plugin/pull/257)。
-* **Antigravity**: 为工作流、技能和扁平化规则紧密集成的设置，位于 `.agent/`。参见 [Antigravity 指南](../ANTIGRAVITY-GUIDE.md)。
+* **Codex**: 对 macOS 应用和 CLI 的一流支持，带有适配器漂移防护和 SessionStart 回退。参见 PR [#257](https://github.com/affaan-m/everything-claude-code/pull/257)。
+* **Antigravity**: 为工作流、技能和扁平化规则紧密集成的设置，位于 `.agents/`。参见 [Antigravity 指南](../ANTIGRAVITY-GUIDE.md)。
 * **Claude Code**: 原生支持 — 这是主要目标。
 
 </details>
@@ -1019,7 +1083,7 @@ Codex macOS 应用：
 |-----------|-------|---------|
 | 配置 | 1 | `.codex/config.toml` —— 顶级 approvals/sandbox/web\_search, MCP 服务器，通知，配置文件 |
 | AGENTS.md | 2 | 根目录（通用）+ `.codex/AGENTS.md`（Codex 特定补充） |
-| 技能 | 16 | `.agents/skills/` —— SKILL.md + agents/openai.yaml 每个技能 |
+| 技能 | 32 | `.agents/skills/` —— SKILL.md + agents/openai.yaml 每个技能 |
 | MCP 服务器 | 4 | GitHub, Context7, Memory, Sequential Thinking（基于命令） |
 | 配置文件 | 2 | `strict`（只读沙箱）和 `yolo`（完全自动批准） |
 | 代理角色 | 3 | `.codex/agents/` —— explorer, reviewer, docs-researcher |
@@ -1028,24 +1092,42 @@ Codex macOS 应用：
 
 位于 `.agents/skills/` 的技能会被 Codex 自动加载：
 
+`claude-api`、`frontend-design` 和 `skill-creator` 等 Anthropic 官方技能不会在此重复打包。需要这些官方版本时，请从 [`anthropics/skills`](https://github.com/anthropics/skills) 安装。
+
 | 技能 | 描述 |
 |-------|-------------|
-| tdd-workflow | 测试驱动开发，覆盖率 80%+ |
-| security-review | 全面的安全检查清单 |
-| coding-standards | 通用编码标准 |
-| frontend-patterns | React/Next.js 模式 |
-| frontend-slides | HTML 演示文稿、PPTX 转换、视觉风格探索 |
+| agent-introspection-debugging | 调试智能体行为、路由和提示边界 |
+| agent-sort | 整理智能体目录和分配表面 |
+| api-design | REST API 设计模式 |
 | article-writing | 根据笔记和语音参考进行长文写作 |
-| content-engine | 平台原生的社交内容和再利用 |
-| market-research | 带来源归属的市场和竞争对手研究 |
-| investor-materials | 幻灯片、备忘录、模型和一页纸文档 |
-| investor-outreach | 个性化外联、跟进和介绍摘要 |
 | backend-patterns | API 设计、数据库、缓存 |
+| brand-voice | 从真实内容中提取来源驱动的写作风格 |
+| bun-runtime | Bun 运行时、包管理器、打包器和测试运行器 |
+| coding-standards | 通用编码标准 |
+| content-engine | 平台原生的社交内容和再利用 |
+| crosspost | X、LinkedIn、Threads 等多平台内容分发 |
+| deep-research | 多源研究、综合和来源归属 |
+| dmux-workflows | 使用 tmux pane manager 进行多智能体编排 |
+| documentation-lookup | 通过 Context7 MCP 获取最新库和框架文档 |
 | e2e-testing | Playwright 端到端测试 |
 | eval-harness | 评估驱动的开发 |
+| everything-claude-code | ECC 项目的开发约定和模式 |
+| exa-search | 通过 Exa MCP 进行网络、代码和公司研究 |
+| fal-ai-media | 图像、视频和音频的统一媒体生成 |
+| frontend-patterns | React/Next.js 模式 |
+| frontend-slides | HTML 演示文稿、PPTX 转换、视觉风格探索 |
+| investor-materials | 幻灯片、备忘录、模型和一页纸文档 |
+| investor-outreach | 个性化外联、跟进和介绍摘要 |
+| market-research | 带来源归属的市场和竞争对手研究 |
+| mcp-server-patterns | 使用 Node/TypeScript SDK 构建 MCP 服务器 |
+| nextjs-turbopack | Next.js 16+ 和 Turbopack 增量打包 |
+| product-capability | 将产品目标转化为有范围的能力图 |
+| security-review | 全面的安全检查清单 |
 | strategic-compact | 上下文管理 |
-| api-design | REST API 设计模式 |
+| tdd-workflow | 测试驱动开发，覆盖率 80%+ |
 | verification-loop | 构建、测试、代码检查、类型检查、安全 |
+| video-editing | 使用 FFmpeg 和 Remotion 的 AI 辅助视频编辑工作流 |
+| x-api | X/Twitter 发帖和分析 API 集成 |
 
 ### 关键限制
 
@@ -1088,15 +1170,15 @@ opencode
 
 ### 功能对等
 
-| 功能特性 | Claude Code | OpenCode | 状态 |
-|---------|-------------|----------|--------|
-| 智能体 | PASS: 47 个 | PASS: 12 个 | **Claude Code 领先** |
-| 命令 | PASS: 79 个 | PASS: 31 个 | **Claude Code 领先** |
-| 技能 | PASS: 195 项 | PASS: 37 项 | **Claude Code 领先** |
+| 功能特性 | Claude Code   | OpenCode | 状态 |
+|---------|---------------|----------|--------|
+| 智能体 | PASS: 68 个    | PASS: 12 个 | **Claude Code 领先** |
+| 命令 | PASS: 94 个    | PASS: 35 个 | **Claude Code 领先** |
+| 技能 | PASS: 300 项   | PASS: 37 项 | **Claude Code 领先** |
 | 钩子 | PASS: 8 种事件类型 | PASS: 11 种事件 | **OpenCode 更多！** |
-| 规则 | PASS: 29 条 | PASS: 13 条指令 | **Claude Code 领先** |
-| MCP 服务器 | PASS: 14 个 | PASS: 完整 | **完全对等** |
-| 自定义工具 | PASS: 通过钩子 | PASS: 6 个原生工具 | **OpenCode 更优** |
+| 规则 | PASS: 29 条    | PASS: 13 条指令 | **Claude Code 领先** |
+| MCP 服务器 | PASS: 14 个    | PASS: 完整 | **完全对等** |
+| 自定义工具 | PASS: 通过钩子    | PASS: 6 个原生工具 | **OpenCode 更优** |
 
 ### 通过插件实现的钩子支持
 
@@ -1112,21 +1194,17 @@ OpenCode 的插件系统比 Claude Code 更复杂，有 20 多种事件类型：
 
 **额外的 OpenCode 事件**：`file.edited`、`file.watcher.updated`、`message.updated`、`lsp.client.diagnostics`、`tui.toast.show` 等等。
 
-### 可用命令（31+）
+### 维护中的斜杠命令
 
 | 命令 | 描述 |
 |---------|-------------|
 | `/plan` | 创建实施计划 |
-| `/tdd` | 强制执行 TDD 工作流 |
 | `/code-review` | 审查代码变更 |
 | `/build-fix` | 修复构建错误 |
-| `/e2e` | 生成端到端测试 |
 | `/refactor-clean` | 移除死代码 |
-| `/orchestrate` | 多智能体工作流 |
 | `/learn` | 从会话中提取模式 |
 | `/checkpoint` | 保存验证状态 |
-| `/verify` | 运行验证循环 |
-| `/eval` | 根据标准进行评估 |
+| `/quality-gate` | 运行维护中的验证门禁 |
 | `/update-docs` | 更新文档 |
 | `/update-codemaps` | 更新代码地图 |
 | `/test-coverage` | 分析覆盖率 |
@@ -1161,7 +1239,7 @@ OpenCode 的插件系统比 Claude Code 更复杂，有 20 多种事件类型：
 **选项 1：直接使用**
 
 ```bash
-cd SI-Claude-Plugin
+cd everything-claude-code
 opencode
 ```
 
@@ -1175,7 +1253,7 @@ npm install si-claude-plugin
 
 ```json
 {
-  "plugin": ["si-claude-plugin"]
+  "plugin": ["ecc-universal"]
 }
 ```
 
@@ -1200,33 +1278,34 @@ npm install si-claude-plugin
 
 ECC 是**第一个最大化利用每个主要 AI 编码工具的插件**。以下是每个平台的比较：
 
-| 功能特性 | Claude Code | Cursor IDE | Codex CLI | OpenCode |
-|---------|------------|------------|-----------|----------|
-| **智能体** | 47 | 共享 (AGENTS.md) | 共享 (AGENTS.md) | 12 |
-| **命令** | 79 | 共享 | 基于指令 | 31 |
-| **技能** | 195 | 共享 | 10 (原生格式) | 37 |
-| **钩子事件** | 8 种类型 | 15 种类型 | 暂无 | 11 种类型 |
-| **钩子脚本** | 20+ 个脚本 | 16 个脚本 (DRY 适配器) | N/A | 插件钩子 |
-| **规则** | 34 (通用 + 语言) | 34 (YAML 前页) | 基于指令 | 13 条指令 |
-| **自定义工具** | 通过钩子 | 通过钩子 | N/A | 6 个原生工具 |
-| **MCP 服务器** | 14 | 共享 (mcp.json) | 4 (基于命令) | 完整 |
-| **配置格式** | settings.json | hooks.json + rules/ | config.toml | opencode.json |
+| 功能特性 | Claude Code           | Cursor IDE | Codex CLI | OpenCode |
+|---------|-----------------------|------------|-----------|----------|
+| **智能体** | 68                    | 共享 (AGENTS.md) | 共享 (AGENTS.md) | 12 |
+| **命令** | 94                    | 共享 | 基于指令 | 35 |
+| **技能** | 300                   | 共享 | 10 (原生格式) | 37 |
+| **钩子事件** | 8 种类型                 | 15 种类型 | SessionStart（1 种类型） | 11 种类型 |
+| **钩子脚本** | 20+ 个脚本               | 16 个脚本 (DRY 适配器) | 1 个 SessionStart 引导脚本 | 插件钩子 |
+| **规则** | 34 (通用 + 语言)          | 34 (YAML 前页) | 基于指令 | 13 条指令 |
+| **自定义工具** | 通过钩子                  | 通过钩子 | N/A | 6 个原生工具 |
+| **MCP 服务器** | 14                    | 共享 (mcp.json) | 4 (基于命令) | 完整 |
+| **配置格式** | settings.json         | hooks.json + rules/ | config.toml | opencode.json |
 | **上下文文件** | CLAUDE.md + AGENTS.md | AGENTS.md | AGENTS.md | AGENTS.md |
-| **秘密检测** | 基于钩子 | beforeSubmitPrompt 钩子 | 基于沙箱 | 基于钩子 |
-| **自动格式化** | PostToolUse 钩子 | afterFileEdit 钩子 | N/A | file.edited 钩子 |
-| **版本** | 插件 | 插件 | 参考配置 | 1.10.0 |
+| **秘密检测** | 基于钩子                  | beforeSubmitPrompt 钩子 | 基于沙箱 | 基于钩子 |
+| **自动格式化** | PostToolUse 钩子        | afterFileEdit 钩子 | N/A | file.edited 钩子 |
+| **版本** | 插件 | 插件 | 参考配置 | 2.2.1 |
 
 **关键架构决策：**
 
 * **AGENTS.md** 在根目录是通用的跨工具文件（所有 4 个工具都能读取）
 * **DRY 适配器模式** 让 Cursor 可以重用 Claude Code 的钩子脚本而无需重复
 * **技能格式**（带有 YAML 前言的 SKILL.md）在 Claude Code、Codex 和 OpenCode 中都能工作
-* Codex 缺少钩子功能，通过 `AGENTS.md`、可选的 `model_instructions_file` 覆盖以及沙箱权限来弥补
+* Codex 通过原生 `SessionStart` 引导钩子初始化 ECC；其余行为由 `AGENTS.md`、可选的 `model_instructions_file` 覆盖以及沙箱权限提供
 
 ***
 
 ## 背景
 
+我从实验性推出以来就一直在使用 Claude Code。在 2025 年 9 月，与 [@DRodriguezFX](https://x.com/DRodriguezFX) 一起使用 Claude Code 构建 [zenith.chat](https://zenith.chat)，赢得了 Anthropic x Forum Ventures 黑客马拉松。
 
 这些配置已在多个生产应用程序中经过实战测试。
 
@@ -1339,9 +1418,17 @@ ECC 是**第一个最大化利用每个主要 AI 编码工具的插件**。以�
 
 ***
 
+## 赞助商
+
+这个项目是免费和开源的。赞助商帮助保持其维护和发展。
+
+[**成为赞助商**](https://github.com/sponsors/affaan-m) | [赞助层级](SPONSORS.md) | [赞助计划](SPONSORING.md)
+
+***
+
 ## Star 历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=coreybowlby-os/SI-Claude-Plugin\&type=Date)](https://star-history.com/#coreybowlby-os/SI-Claude-Plugin\&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code\&type=Date)](https://star-history.com/#affaan-m/everything-claude-code\&Date)
 
 ***
 
@@ -1349,7 +1436,8 @@ ECC 是**第一个最大化利用每个主要 AI 编码工具的插件**。以�
 
 * **速查指南（从这里开始）：** [Claude Code 速查指南](https://x.com/affaanmustafa/status/2012378465664745795)
 * **详细指南（进阶）：** [Claude Code 详细指南](https://x.com/affaanmustafa/status/2014040193557471352)
-* **关注：** [SI-Claude-Plugin](https://github.com/coreybowlby-os/SI-Claude-Plugin)
+* **关注：** [@affaanmustafa](https://x.com/affaanmustafa)
+* **zenith.chat：** [zenith.chat](https://zenith.chat)
 * **技能目录：** awesome-agent-skills（社区维护的智能体技能目录）
 
 ***

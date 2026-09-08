@@ -1,12 +1,12 @@
 ---
 name: database-migration
-description: Workflow command scaffold for database-migration in SI-Claude-Plugin.
-allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
+description: Workflow command scaffold for database-migration in everything-claude-code.
+allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 
 # /database-migration
 
-Use this workflow when working on **database-migration** in `SI-Claude-Plugin`.
+Use this workflow when working on **database-migration** in `everything-claude-code`.
 
 ## Goal
 

@@ -1,6 +1,6 @@
 ---
 description: Extract patterns and learnings from current session
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Learn Command

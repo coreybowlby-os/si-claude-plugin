@@ -52,7 +52,7 @@ metadata:
    * `go.mod` → Go
    * `pyproject.toml` / `requirements.txt` → Python
    * `Cargo.toml` → Rust
-   * `build.gradle` / `pom.xml` → Java / Kotlin / Spring Boot
+   * `build.gradle` / `pom.xml` → Java / Kotlin（然后检查构建文件中的`quarkus` → Quarkus，或`spring-boot` → Spring Boot）
    * `Package.swift` → Swift
    * `Gemfile` → Ruby
    * `composer.json` → PHP
@@ -116,7 +116,8 @@ metadata:
 |------------|--------------|-------|
 | Python / Django | django-patterns, django-tdd, django-security, django-verification, python-patterns, python-testing | python-reviewer |
 | Go | golang-patterns, golang-testing | go-reviewer, go-build-resolver |
-| Spring Boot / Java | springboot-patterns, springboot-tdd, springboot-security, springboot-verification, java-coding-standards, jpa-patterns | code-reviewer |
+| Spring Boot / Java | springboot-patterns, springboot-tdd, springboot-security, springboot-verification, java-coding-standards, jpa-patterns | java-reviewer |
+| Quarkus / Java | quarkus-patterns, quarkus-tdd, quarkus-security, quarkus-verification, java-coding-standards, jpa-patterns | java-reviewer |
 | Kotlin / Android | kotlin-coroutines-flows, compose-multiplatform-patterns, android-clean-architecture | kotlin-reviewer |
 | TypeScript / React | frontend-patterns, backend-patterns, coding-standards | code-reviewer |
 | Swift / iOS | swiftui-patterns, swift-concurrency-6-2, swift-actor-persistence, swift-protocol-di-testing | code-reviewer |
@@ -157,10 +158,10 @@ Research → Plan → Implement (TDD) → Review → Verify → Commit
 
 | 范围 | 推荐模型 | 理由 |
 |-------|------------------|-----------|
-| 微小-低 | Sonnet 4.6 | 快速、成本效益高，适合简单任务 |
-| 中 | Sonnet 4.6 | 标准工作的最佳编码模型 |
-| 高 | Sonnet 4.6 (主) + Opus 4.6 (规划) | Opus 用于架构，Sonnet 用于实现 |
-| 史诗级 | Opus 4.6 (蓝图) + Sonnet 4.6 (执行) | 深度推理用于多会话规划 |
+| 微小-低 | Sonnet 5 | 快速、成本效益高，适合简单任务 |
+| 中 | Sonnet 5 | 标准工作的最佳编码模型 |
+| 高 | Sonnet 5 (主) + Opus 5 (规划) | Opus 用于架构，Sonnet 用于实现 |
+| 史诗级 | Opus 5 (蓝图) + Sonnet 5 (执行) | 深度推理用于多会话规划 |
 
 **多提示拆分**（针对高/史诗级范围）：
 
@@ -196,7 +197,7 @@ Research → Plan → Implement (TDD) → Review → Verify → Commit
 | 命令 | /plan | 编码前规划架构 |
 | 技能 | tdd-workflow | TDD 方法指导 |
 | 代理 | code-reviewer | 实施后审查 |
-| 模型 | Sonnet 4.6 | 针对此范围的推荐模型 |
+| 模型 | Sonnet 5 | 针对此范围的推荐模型 |
 
 ### 第 3 部分：优化提示 —— 完整版本
 
@@ -362,7 +363,7 @@ Research → Plan → Implement (TDD) → Review → Verify → Commit
 阶段之间使用 /save-session。使用 /resume-session 继续。
 在依赖关系允许时，使用 git worktrees 进行并行服务提取。
 
-推荐：使用 Opus 4.6 进行蓝图规划，使用 Sonnet 4.6 执行各阶段。
+推荐：使用 Opus 5 进行蓝图规划，使用 Sonnet 5 执行各阶段。
 ```
 
 ***

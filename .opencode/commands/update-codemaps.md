@@ -1,6 +1,6 @@
 ---
 description: Update codemaps for codebase navigation
-agent: SI-Claude-Plugin:doc-updater
+agent: doc-updater
 subtask: true
 ---
 

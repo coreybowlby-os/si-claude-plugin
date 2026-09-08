@@ -1,6 +1,6 @@
 ---
 description: List registered projects and instinct counts
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Projects Command

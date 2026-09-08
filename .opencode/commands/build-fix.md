@@ -1,6 +1,6 @@
 ---
 description: Fix build and TypeScript errors with minimal changes
-agent: SI-Claude-Plugin:build-error-resolver
+agent: build-error-resolver
 subtask: true
 ---
 

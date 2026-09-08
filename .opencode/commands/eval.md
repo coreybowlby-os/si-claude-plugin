@@ -1,6 +1,6 @@
 ---
 description: Run evaluation against acceptance criteria
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Eval Command

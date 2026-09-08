@@ -1,6 +1,6 @@
 ---
 description: Import instincts from external sources
-agent: SI-Claude-Plugin:build
+agent: build
 ---
 
 # Instinct Import Command

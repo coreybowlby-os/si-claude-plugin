@@ -65,14 +65,14 @@ const PM_EXEC_PARTS = PM_EXEC.split(/\s+/); // ["pnpm", "dlx"] or ["npx"] or ["b
 // ECC-recommended MCP servers
 // ---------------------------------------------------------------------------
 
-// GitHub bootstrap uses bash for token forwarding — this is intentionally
-// shell-based regardless of package manager, since Codex runs on macOS/Linux.
-const GH_BOOTSTRAP = `token=$(gh auth token 2>/dev/null || true); if [ -n "$token" ]; then export GITHUB_PERSONAL_ACCESS_TOKEN="$token"; fi; exec ${PM_EXEC} @modelcontextprotocol/server-github`;
-
 /**
  * Build a server spec with the detected package manager.
  * Returns { fields, toml } where fields is for drift detection and
  * toml is the raw text appended to the file.
+ *
+ * Codex's [mcp_servers.*] TOML schema is stdio-only (command/args) —
+ * never emit a `url` key here. The http/url form is valid only for
+ * Claude Code's .mcp.json (#2224).
  */
 function dlxServer(name, pkg, extraFields, extraToml) {
   const args = [...PM_EXEC_PARTS.slice(1), pkg];
@@ -87,31 +87,29 @@ function dlxServer(name, pkg, extraFields, extraToml) {
 const DEFAULT_MCP_STARTUP_TIMEOUT_SEC = 30;
 const DEFAULT_MCP_STARTUP_TIMEOUT_TOML = `startup_timeout_sec = ${DEFAULT_MCP_STARTUP_TIMEOUT_SEC}`;
 
+// Current default connector set (docs/MCP-CONNECTOR-POLICY.md): exactly one
+// connector. The former defaults (supabase, playwright, context7, exa,
+// github, memory, sequential-thinking) were retired in the June 2026 audit
+// and must not be re-emitted; they remain opt-in via
+// mcp-configs/mcp-servers.json. Existing user-managed entries are never
+// touched by the merge (add-only), except the known-invalid repair below.
 const ECC_SERVERS = {
-  supabase: dlxServer('supabase', '@supabase/mcp-server-supabase@latest', { startup_timeout_sec: 20.0, tool_timeout_sec: 120.0 }, 'startup_timeout_sec = 20.0\ntool_timeout_sec = 120.0'),
-  playwright: dlxServer('playwright', '@playwright/mcp@latest', { startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC }, DEFAULT_MCP_STARTUP_TIMEOUT_TOML),
-  context7: dlxServer('context7', '@upstash/context7-mcp@latest', { startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC }, DEFAULT_MCP_STARTUP_TIMEOUT_TOML),
-  exa: {
-    fields: { url: 'https://mcp.exa.ai/mcp' },
-    toml: `[mcp_servers.exa]\nurl = "https://mcp.exa.ai/mcp"`
-  },
-  github: {
-    fields: { command: 'bash', args: ['-lc', GH_BOOTSTRAP], startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC },
-    toml: `[mcp_servers.github]\ncommand = "bash"\nargs = ["-lc", ${JSON.stringify(GH_BOOTSTRAP)}]\n${DEFAULT_MCP_STARTUP_TIMEOUT_TOML}`
-  },
-  memory: dlxServer('memory', '@modelcontextprotocol/server-memory', { startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC }, DEFAULT_MCP_STARTUP_TIMEOUT_TOML),
-  'sequential-thinking': dlxServer('sequential-thinking', '@modelcontextprotocol/server-sequential-thinking', { startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC }, DEFAULT_MCP_STARTUP_TIMEOUT_TOML)
+  'chrome-devtools': dlxServer('chrome-devtools', 'chrome-devtools-mcp@latest', { startup_timeout_sec: DEFAULT_MCP_STARTUP_TIMEOUT_SEC }, DEFAULT_MCP_STARTUP_TIMEOUT_TOML)
 };
 
-// Append --features arg for supabase after dlxServer builds the base
-ECC_SERVERS.supabase.fields.args.push('--features=account,docs,database,debugging,development,functions,storage,branching');
-ECC_SERVERS.supabase.toml = ECC_SERVERS.supabase.toml.replace(/^(args = \[.*)\]$/m, '$1, "--features=account,docs,database,debugging,development,functions,storage,branching"]');
+// ECC <= 2.0.0 emitted [mcp_servers.exa] with a `url` key. Codex rejects
+// `url` for stdio servers, which makes the *entire* config.toml fail to
+// load (#2224). Repair exactly that ECC-emitted form on every merge so
+// re-running the installer fixes broken configs instead of preserving
+// them. A user-managed stdio exa entry (command/args) is left untouched.
+const RETIRED_INVALID_URL_SERVERS = {
+  exa: 'https://mcp.exa.ai/mcp'
+};
 
 // Legacy section names that should be treated as an existing ECC server.
-// e.g. older configs shipped [mcp_servers.context7-mcp] instead of [mcp_servers.context7].
-const LEGACY_ALIASES = {
-  context7: ['context7-mcp']
-};
+// e.g. older configs shipped [mcp_servers.context7-mcp] instead of
+// [mcp_servers.context7]. Empty since the June 2026 default-set reduction.
+const LEGACY_ALIASES = {};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -203,28 +201,32 @@ function removeServerFromText(raw, serverName, existing) {
 }
 
 // ---------------------------------------------------------------------------
-// Main — extracted phases
+// Main
 // ---------------------------------------------------------------------------
 
-function parseCliArgs() {
+function main() {
   const args = process.argv.slice(2);
   const configPath = args.find(a => !a.startsWith('-'));
   const dryRun = args.includes('--dry-run');
   const updateMcp = args.includes('--update-mcp');
   const disabledServers = new Set(parseDisabledMcpServers(process.env.ECC_DISABLED_MCPS));
+
   if (!configPath) {
     console.error('Usage: merge-mcp-config.js <config.toml> [--dry-run] [--update-mcp]');
     process.exit(1);
   }
+
   if (!fs.existsSync(configPath)) {
     console.error(`[ecc-mcp] Config file not found: ${configPath}`);
     process.exit(1);
   }
-  return { configPath, dryRun, updateMcp, disabledServers };
-}
 
-function loadToml(configPath) {
-  const raw = fs.readFileSync(configPath, 'utf8');
+  log(`Package manager: ${PM_NAME} (exec: ${PM_EXEC})`);
+  if (disabledServers.size > 0) {
+    log(`Disabled via ECC_DISABLED_MCPS: ${[...disabledServers].join(', ')}`);
+  }
+
+  let raw = fs.readFileSync(configPath, 'utf8');
   let parsed;
   try {
     parsed = TOML.parse(raw);
@@ -232,83 +234,105 @@ function loadToml(configPath) {
     console.error(`[ecc-mcp] Failed to parse ${configPath}: ${err.message}`);
     process.exit(1);
   }
-  return { raw, existing: parsed.mcp_servers || {} };
-}
 
-function resolveExistingEntry(name, existing) {
-  const entry = existing[name];
-  const aliases = LEGACY_ALIASES[name] || [];
-  const legacyName = aliases.find(a => existing[a] && typeof existing[a].command === 'string');
-  const hasCanonical = entry && typeof entry.command === 'string';
-  const resolvedEntry = hasCanonical ? entry : legacyName ? existing[legacyName] : null;
-  // For URL-based servers (exa), check for url field instead of command
-  const urlEntry = !resolvedEntry && entry && typeof entry.url === 'string' ? entry : null;
-  return {
-    finalEntry:    resolvedEntry || urlEntry,
-    resolvedLabel: hasCanonical ? name : legacyName || name,
-    legacyName,
-    hasCanonical,
-  };
-}
+  const existing = parsed.mcp_servers || {};
+  const toAppend = [];
+  const toRemoveLog = [];
 
-function processDisabledServer(name, resolved, state) {
-  if (resolved.finalEntry) {
-    state.toRemoveLog.push(`mcp_servers.${resolved.resolvedLabel} (disabled)`);
-    state.raw = removeServerFromText(state.raw, resolved.resolvedLabel, state.existing);
-    if (resolved.resolvedLabel !== name) state.raw = removeServerFromText(state.raw, name, state.existing);
+  // Repair schema-invalid entries emitted by earlier ECC versions (#2224).
+  for (const [name, invalidUrl] of Object.entries(RETIRED_INVALID_URL_SERVERS)) {
+    const entry = existing[name];
+    const isBrokenEccForm =
+      entry &&
+      typeof entry.url === 'string' &&
+      entry.url === invalidUrl &&
+      typeof entry.command !== 'string';
+    if (isBrokenEccForm) {
+      toRemoveLog.push(`mcp_servers.${name} (invalid url entry from earlier ECC versions)`);
+      raw = removeServerFromText(raw, name, existing);
+      log(`  [repair] mcp_servers.${name} — url is not valid for Codex stdio servers, removing`);
+    }
   }
-  log(`  [skip] mcp_servers.${name} (disabled)`);
-}
 
-function processUpdateMode(name, spec, resolved, state) {
-  // --update-mcp: remove existing section (and legacy alias), will re-add below
-  state.toRemoveLog.push(`mcp_servers.${resolved.resolvedLabel}`);
-  state.raw = removeServerFromText(state.raw, resolved.resolvedLabel, state.existing);
-  if (resolved.resolvedLabel !== name) state.raw = removeServerFromText(state.raw, name, state.existing);
-  if (resolved.legacyName && resolved.hasCanonical) {
-    state.toRemoveLog.push(`mcp_servers.${resolved.legacyName}`);
-    state.raw = removeServerFromText(state.raw, resolved.legacyName, state.existing);
+  for (const [name, spec] of Object.entries(ECC_SERVERS)) {
+    const entry = existing[name];
+    const aliases = LEGACY_ALIASES[name] || [];
+    const legacyName = aliases.find(a => existing[a] && typeof existing[a].command === 'string');
+
+    // Prefer canonical entry over legacy alias
+    const hasCanonical = entry && typeof entry.command === 'string';
+    const resolvedEntry = hasCanonical ? entry : legacyName ? existing[legacyName] : null;
+    // Recognize url-form entries as existing so they are never duplicated.
+    // (Codex itself rejects url-form stdio servers; ECC only ever emits
+    // command/args, but a user-managed entry must still count as present.)
+    const urlEntry = !resolvedEntry && entry && typeof entry.url === 'string' ? entry : null;
+    const finalEntry = resolvedEntry || urlEntry;
+    const resolvedLabel = hasCanonical ? name : legacyName || name;
+
+    if (disabledServers.has(name)) {
+      if (finalEntry) {
+        toRemoveLog.push(`mcp_servers.${resolvedLabel} (disabled)`);
+        raw = removeServerFromText(raw, resolvedLabel, existing);
+        if (resolvedLabel !== name) {
+          raw = removeServerFromText(raw, name, existing);
+        }
+      }
+      log(`  [skip] mcp_servers.${name} (disabled)`);
+      continue;
+    }
+
+    if (finalEntry) {
+      if (updateMcp) {
+        // --update-mcp: remove existing section (and legacy alias), will re-add below
+        toRemoveLog.push(`mcp_servers.${resolvedLabel}`);
+        raw = removeServerFromText(raw, resolvedLabel, existing);
+        if (resolvedLabel !== name) {
+          raw = removeServerFromText(raw, name, existing);
+        }
+        if (legacyName && hasCanonical) {
+          toRemoveLog.push(`mcp_servers.${legacyName}`);
+          raw = removeServerFromText(raw, legacyName, existing);
+        }
+        toAppend.push(spec.toml);
+      } else {
+        // Add-only mode: skip, but warn about drift
+        if (legacyName && !hasCanonical) {
+          warn(`mcp_servers.${legacyName} is a legacy name for ${name} (run with --update-mcp to migrate)`);
+        } else if (configDiffers(finalEntry, spec.fields)) {
+          warn(`mcp_servers.${name} differs from ECC recommendation (run with --update-mcp to refresh)`);
+        } else {
+          log(`  [ok] mcp_servers.${name}`);
+        }
+      }
+    } else {
+      log(`  [add] mcp_servers.${name}`);
+      toAppend.push(spec.toml);
+    }
   }
-  state.toAppend.push(spec.toml);
-}
 
-function processAddOnlyMode(name, spec, resolved) {
-  // Add-only mode: skip existing, but warn about drift
-  if (resolved.legacyName && !resolved.hasCanonical) {
-    warn(`mcp_servers.${resolved.legacyName} is a legacy name for ${name} (run with --update-mcp to migrate)`);
-  } else if (configDiffers(resolved.finalEntry, spec.fields)) {
-    warn(`mcp_servers.${name} differs from ECC recommendation (run with --update-mcp to refresh)`);
-  } else {
-    log(`  [ok] mcp_servers.${name}`);
-  }
-}
-
-function processServer(name, spec, resolved, state, { updateMcp, disabledServers }) {
-  if (disabledServers.has(name)) { processDisabledServer(name, resolved, state); return; }
-  if (!resolved.finalEntry)      { log(`  [add] mcp_servers.${name}`); state.toAppend.push(spec.toml); return; }
-  if (updateMcp) { processUpdateMode(name, spec, resolved, state); }
-  else           { processAddOnlyMode(name, spec, resolved); }
-}
-
-function writeChanges(configPath, state, { dryRun, updateMcp }) {
-  const { raw, toAppend, toRemoveLog } = state;
   const hasRemovals = toRemoveLog.length > 0;
+
   if (toAppend.length === 0 && !hasRemovals) {
     log('All ECC MCP servers already present. Nothing to do.');
     return;
   }
+
   const appendText = '\n' + toAppend.join('\n\n') + '\n';
+
   if (dryRun) {
     if (toRemoveLog.length > 0) {
-      log('Dry run — would remove and re-add:');
+      log('Dry run — would remove:');
       for (const label of toRemoveLog) log(`  [remove] ${label}`);
     }
-    log('Dry run — would append:');
-    console.log(appendText);
+    if (toAppend.length > 0) {
+      log('Dry run — would append:');
+      console.log(appendText);
+    }
     return;
   }
+
   // Write: for add-only, append to preserve existing content byte-for-byte.
-  // For --update-mcp, we modified `raw` in processServer, so write full file + appended sections.
+  // For --update-mcp, we modified `raw` above, so write the full file + appended sections.
   if (updateMcp || hasRemovals) {
     for (const label of toRemoveLog) log(`  [update] ${label}`);
     const cleaned = raw.replace(/\n+$/, '\n');
@@ -316,27 +340,13 @@ function writeChanges(configPath, state, { dryRun, updateMcp }) {
   } else {
     fs.appendFileSync(configPath, appendText, 'utf8');
   }
+
   if (hasRemovals && toAppend.length === 0) {
-    log(`Done. Removed ${toRemoveLog.length} disabled server(s).`);
+    log(`Done. Removed ${toRemoveLog.length} server section(s).`);
     return;
   }
+
   log(`Done. ${toAppend.length} server(s) ${updateMcp ? 'updated' : 'added'}.`);
-}
-
-function main() {
-  const { configPath, dryRun, updateMcp, disabledServers } = parseCliArgs();
-  const { raw: initialRaw, existing } = loadToml(configPath);
-
-  log(`Package manager: ${PM_NAME} (exec: ${PM_EXEC})`);
-  if (disabledServers.size > 0) log(`Disabled via ECC_DISABLED_MCPS: ${[...disabledServers].join(', ')}`);
-
-  const state = { raw: initialRaw, existing, toAppend: [], toRemoveLog: [] };
-
-  for (const [name, spec] of Object.entries(ECC_SERVERS)) {
-    processServer(name, spec, resolveExistingEntry(name, existing), state, { updateMcp, disabledServers });
-  }
-
-  writeChanges(configPath, state, { dryRun, updateMcp });
 }
 
 main();
