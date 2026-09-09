@@ -158,25 +158,27 @@ function main() {
       assert.deepStrictEqual(sponsorMark, { width: 1797, height: 1097 });
       assert.deepStrictEqual(sponsorMarkLight, sponsorMark);
     }],
-    ['README keeps the three primary choices and all three guides inline', () => {
+    ['README keeps the primary choices and all three guides inline', () => {
       const readme = read('README.md');
-      const primaryLinks = extractNamedTable(readme, 'ECC primary links');
+      const primaryLinks = extractNamedTable(readme, 'SI Claude Plugin primary links');
       const guides = extractNamedTable(readme, 'ECC guides');
       const centeredPrimaryLinks = readme.match(
-        /<div align="center">\s*<table[^>]*aria-label="ECC primary links"[^>]*>[\s\S]*?<\/table>\s*<\/div>/
+        /<div align="center">\s*<table[^>]*aria-label="SI Claude Plugin primary links"[^>]*>[\s\S]*?<\/table>\s*<\/div>/
       );
 
-      assert.ok(centeredPrimaryLinks, 'The three primary-link cards should be centered as one group');
-      assert.strictEqual((primaryLinks.match(/<td\b/g) || []).length, 3);
-      assert.ok(primaryLinks.includes('assets/images/community/ecc-tools-mark.svg'));
-      assertExactHref(primaryLinks, 'https://github.com/apps/ecc-tools');
-      assertExactHref(primaryLinks, 'https://ecc.tools/pricing');
-      assertExactHref(primaryLinks, 'https://github.com/sponsors/affaan-m');
-      assert.ok(primaryLinks.includes('assets/images/community/heart.svg'));
-      assert.match(primaryLinks, /Fund the open-source project/);
-      assert.doesNotMatch(primaryLinks, /From \$5\/mo/);
-      assertExactHref(primaryLinks, 'https://discord.gg/36yGMHGFbR');
+      assert.ok(centeredPrimaryLinks, 'The primary-link cards should be centered as one group');
+      assert.strictEqual((primaryLinks.match(/<td\b/g) || []).length, 2);
+      assertExactHref(primaryLinks, 'https://github.com/coreybowlby-os/si-claude-plugin/issues');
       assert.ok(primaryLinks.includes('assets/images/community/discord.svg'));
+      assert.ok(primaryLinks.includes('assets/images/community/heart.svg'));
+
+      // We ship no commercial tier and do not route users to upstream's channels.
+      assert.doesNotMatch(primaryLinks, /ecc\.tools|apps\/ecc-tools|discord\.gg|\$\d+\/seat/);
+      assert.doesNotMatch(readme, /ECC Pro|\$19\/seat/);
+
+      // The sponsor card is attribution to the upstream author, kept deliberately.
+      assertExactHref(primaryLinks, 'https://github.com/sponsors/affaan-m');
+      assert.match(primaryLinks, /Fund the upstream project this builds on/);
 
       for (const iconPath of [
         'assets/images/community/heart.svg',

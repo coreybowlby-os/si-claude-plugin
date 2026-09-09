@@ -39,10 +39,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/affaan-m/ECC/stargazers"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.ecc.tools%2Fbadge%2Fstars&style=flat" alt="Stars" /></a>
-  <a href="https://github.com/affaan-m/ECC/network/members"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.ecc.tools%2Fbadge%2Fforks&style=flat" alt="Forks" /></a>
-  <a href="https://github.com/affaan-m/ECC/graphs/contributors"><img src="https://img.shields.io/github/contributors/affaan-m/ECC?style=flat" alt="Contributors" /></a>
-  <a href="https://github.com/marketplace/ecc-tools"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.ecc.tools%2Fbadge%2Finstalls&logo=github" alt="GitHub App installs" /></a>
+  <a href="https://github.com/coreybowlby-os/si-claude-plugin/stargazers"><img src="https://img.shields.io/github/stars/coreybowlby-os/si-claude-plugin?style=flat" alt="Stars" /></a>
+  <a href="https://github.com/coreybowlby-os/si-claude-plugin/network/members"><img src="https://img.shields.io/github/forks/coreybowlby-os/si-claude-plugin?style=flat" alt="Forks" /></a>
+  <a href="https://github.com/coreybowlby-os/si-claude-plugin/graphs/contributors"><img src="https://img.shields.io/github/contributors/coreybowlby-os/si-claude-plugin?style=flat" alt="Contributors" /></a>
 </p>
 
 <p align="center">
@@ -97,35 +96,28 @@ The native path installs ECC's skills, agents, commands, and plugin-managed hook
 
 <div align="center">
 
-<table aria-label="ECC primary links">
+<table aria-label="SI Claude Plugin primary links">
 <tr>
-<td width="33%" align="center">
-  <a href="https://ecc.tools/pricing">
-    <img src="assets/images/community/ecc-tools-mark.svg" height="42" alt="ECC Tools" /><br />
-    <strong>ECC Pro + GitHub App</strong>
+<td width="50%" align="center">
+  <a href="https://github.com/coreybowlby-os/si-claude-plugin/issues">
+    <img src="assets/images/community/discord.svg" height="42" alt="" /><br />
+    <strong>Issues &amp; Discussion</strong>
   </a><br />
-  <sub><a href="https://github.com/apps/ecc-tools">Install free</a> · <a href="https://ecc.tools/pricing">Private repos from $19/seat/mo</a></sub>
+  <sub>Report a bug · Ask a question</sub>
 </td>
-<td width="33%" align="center">
+<td width="50%" align="center">
   <a href="https://github.com/sponsors/affaan-m">
     <img src="assets/images/community/heart.svg" height="42" alt="" /><br />
     <strong>Sponsor ECC</strong>
   </a><br />
-  <sub>Fund the open-source project</sub>
-</td>
-<td width="33%" align="center">
-  <a href="https://discord.gg/36yGMHGFbR">
-    <img src="assets/images/community/discord.svg" height="42" alt="Discord" /><br />
-    <strong>Community</strong>
-  </a><br />
-  <sub>Discord · Q&amp;A · Show and Tell</sub>
+  <sub>Fund the upstream project this builds on</sub>
 </td>
 </tr>
 </table>
 
 </div>
 
-<sub>**OSS stays free.** This repo is MIT-licensed forever. ECC Pro is the hosted GitHub App for private repos. <a href="https://github.com/sponsors/affaan-m">Sponsors</a> and <a href="https://ecc.tools/pricing">Pro subscribers</a> fund the work. That's why a single maintainer ships weekly across 7 harnesses.</sub>
+<sub>**Free and MIT-licensed.** This is a fork of [ECC](https://github.com/affaan-m/ECC), maintained independently. It is not affiliated with ECC and offers no commercial tier — if it is useful to you, the upstream author's work is what made it possible.</sub>
 
 <div align="center">
 
@@ -1338,9 +1330,9 @@ Use the `/skill-create` command for local analysis without external services:
 
 This analyzes your git history locally and generates SKILL.md files.
 
-### Option B: GitHub App (Advanced)
+### Option B: ECC Tools GitHub App (Advanced)
 
-For advanced features (10k+ commits, auto-PRs, team sharing):
+For advanced features (10k+ commits, auto-PRs, team sharing), ECC offers a hosted GitHub App. It is **upstream's** service, not part of this fork, and it operates on ECC's terms:
 
 [Install ECC Tools GitHub App](https://github.com/apps/ecc-tools) | [ecc.tools](https://ecc.tools)
 
@@ -2001,13 +1993,13 @@ Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded fil
 
 ## Security
 
-Install ECC only from official sources:
+Install SI Claude Plugin only from official sources:
 
-- GitHub repository: <https://github.com/affaan-m/ECC>
-- Claude Code plugin: `ecc@ecc`
-- npm packages: [`ecc-universal`](https://www.npmjs.com/package/si-claude-plugin) and [`ecc-agentshield`](https://www.npmjs.com/package/ecc-agentshield)
-- GitHub App: <https://github.com/apps/ecc-tools>
-- Website: <https://ecc.tools>
+- GitHub repository: <https://github.com/coreybowlby-os/si-claude-plugin>
+- Claude Code plugin: `SI-Claude-Plugin@SI-Claude-Plugin`
+- npm package: [`si-claude-plugin`](https://www.npmjs.com/package/si-claude-plugin)
+
+ECC's own repository, npm packages, GitHub App and website are not sources for this package.
 
 Scan a project with AgentShield:
 
@@ -2145,22 +2137,18 @@ These configs are battle-tested across multiple production applications.
 ## Community and Project
 
 <details>
-<summary><strong>Sponsors and ECC Pro</strong></summary>
+<summary><strong>Support and sponsorship</strong></summary>
 
-SI Claude Plugin is MIT-licensed and free. It is a fork of [ECC](https://github.com/affaan-m/ECC) — if you find it useful, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m), whose work this builds on.
+SI Claude Plugin is MIT-licensed and free. There is no paid tier and no hosted service — this is a community fork maintained independently of ECC.
 
-ECC Pro adds private-repo analysis, PR-triggered audits, AgentShield-backed scanning, automatic push and PR checks, pooled team usage, and priority support through the hosted GitHub App.
+It is a fork of [ECC](https://github.com/affaan-m/ECC). If you find it useful, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m), whose work this builds on.
 
 <table>
 <tr>
-<td width="25%" align="center"><a href="https://ecc.tools/pricing"><strong>ECC Pro</strong><br /><sub>Hosted GitHub App for private repos</sub></a></td>
-<td width="25%" align="center"><a href="https://github.com/sponsors/affaan-m"><strong>Sponsor ECC</strong><br /><sub>Fund the OSS work</sub></a></td>
-<td width="25%" align="center"><a href="https://github.com/affaan-m/ECC/discussions"><strong>Community</strong><br /><sub>Q&amp;A, ideas, and Show and Tell</sub></a></td>
-<td width="25%" align="center"><a href="https://github.com/apps/ecc-tools"><strong>GitHub App</strong><br /><sub>PR audits and hosted workflows</sub></a></td>
+<td width="50%" align="center"><a href="https://github.com/coreybowlby-os/si-claude-plugin/issues"><strong>Issues</strong><br /><sub>Bugs, questions, and ideas</sub></a></td>
+<td width="50%" align="center"><a href="https://github.com/sponsors/affaan-m"><strong>Sponsor ECC</strong><br /><sub>Fund the upstream project</sub></a></td>
 </tr>
 </table>
-
-[Become a sponsor](https://github.com/sponsors/affaan-m)
 </details>
 
 <details>
