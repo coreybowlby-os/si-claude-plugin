@@ -112,13 +112,17 @@ function operationOverlapsPlugin(operation, expectedRoot) {
 
 function findManagedClaudeInstalls(options = {}) {
   const { configDir, projectRoot } = resolveClaudePaths(options);
+  // Must match where the Claude install targets actually write install-state:
+  // claude-home.js / claude-project.js build it from CLAUDE_ECC_NAMESPACE, which is
+  // our plugin slug. Hardcoding 'ecc' here meant overlap detection looked in a
+  // directory nothing writes to, so a real managed overlap was never detected.
   const candidates = [
     {
-      statePath: path.join(configDir, 'ecc', 'install-state.json'),
+      statePath: path.join(configDir, CURRENT_PLUGIN_SLUG, 'install-state.json'),
       expectedRoot: configDir,
     },
     {
-      statePath: path.join(projectRoot, '.claude', 'ecc', 'install-state.json'),
+      statePath: path.join(projectRoot, '.claude', CURRENT_PLUGIN_SLUG, 'install-state.json'),
       expectedRoot: path.join(projectRoot, '.claude'),
     },
   ];

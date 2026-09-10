@@ -264,7 +264,12 @@ function migrateClaudePluginScope(options = {}, dependencies = {}) {
     { cwd: paths.projectRoot },
     { spawnSync: dependencies.spawnSync }
   );
-  const providerRun = dependencies.runClaude || runClaude;
+  const baseRun = dependencies.runClaude || runClaude;
+  // See the matching note in claude-plugin-setup.js: call sites pass only
+  // { cwd, phase }, so options.command must be re-attached here or it is dropped.
+  const providerRun = options.command
+    ? (args, runOptions = {}) => baseRun(args, { command: options.command, ...runOptions })
+    : baseRun;
   const run = options.dryRun
     ? createDryRunClaudeRunner(providerRun, paths, options)
     : providerRun;

@@ -598,7 +598,16 @@ function setupClaudePlugin(options = {}, dependencies = {}) {
     { spawnSync: dependencies.spawnSync }
   );
 
-  const providerRun = dependencies.runClaude || runClaude;
+  const baseRun = dependencies.runClaude || runClaude;
+  // Carry an explicit executable through to every provider call. Call sites pass
+  // only { cwd, phase }, so without this `options.command` is silently dropped and
+  // runClaude falls back to resolving "claude" on PATH. Tests rely on this to point
+  // at their fake CLI by absolute path: prepending a shim directory to PATH does not
+  // work on Windows, where Node resolves claude.exe from a later PATH entry ahead of
+  // an earlier claude.cmd.
+  const providerRun = options.command
+    ? (args, runOptions = {}) => baseRun(args, { command: options.command, ...runOptions })
+    : baseRun;
   const run = options.dryRun
     ? createDryRunClaudeRunner(providerRun, paths, options)
     : providerRun;
