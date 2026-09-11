@@ -632,6 +632,7 @@ test('managed overlap detection resolves symlink aliases before classifying path
   if (process.platform === 'win32') return;
 
   withFixture({}, fixture => {
+    fixture.expectNoProviderCalls = true; // overlap is rejected during preflight
     const aliasPath = path.join(fixture.configDir, 'alias');
     fs.symlinkSync(fixture.configDir, aliasPath, 'dir');
     writeManagedState(fixture, ['rules-core'], [{
