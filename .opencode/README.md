@@ -52,8 +52,8 @@ npx ecc-universal install typescript
 Clone and run OpenCode in the repository:
 
 ```bash
-git clone https://github.com/affaan-m/ECC
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin
+cd si-claude-plugin
 opencode
 ```
 

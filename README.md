@@ -222,8 +222,8 @@ After ECC is installed, `/ecc:configure-ecc` is the namespaced in-Claude reconfi
 Claude Code plugins cannot distribute `rules`, so add only the rule packs you actually want:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 mkdir -p ~/.claude/rules/ecc
 cp -R rules/common ~/.claude/rules/ecc/
 cp -R rules/typescript ~/.claude/rules/ecc/  # replace with your stack
@@ -287,8 +287,8 @@ Both add commands are idempotent. To refresh later, run `codex plugin marketplac
 The older `scripts/sync-ecc-to-codex.sh` path is a deprecated compatibility option for users who intentionally need copied and merged configuration in `~/.codex`; it is not required for the native plugin. New sync runs write an ownership manifest so cleanup can preserve modified user files. Run Codex once first so `~/.codex/config.toml` exists, then:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 npm install
 bash scripts/sync-ecc-to-codex.sh
 ```
@@ -314,8 +314,9 @@ For repo navigation, surface ownership, and PR diff packet guidance, read the [C
 Clone ECC once, then choose the target that matches your harness:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
+npm install
 ```
 
 | Harness | Install or setup | Notes |
@@ -521,16 +522,18 @@ Rules are always-loaded context, so begin with `common` and one pack for the sta
 Use this only when you are intentionally skipping the plugin path:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
+npm install
 ./install.sh --profile full
 ```
 
 Windows:
 
 ```powershell
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
+npm install
 .\install.ps1 --profile full
 ```
 
@@ -1803,7 +1806,7 @@ OpenCode's plugin system has 20+ event types:
 
 **Option 1: Use directly**
 ```bash
-cd ECC
+cd si-claude-plugin
 opencode
 ```
 

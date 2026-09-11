@@ -297,8 +297,8 @@ Esto es intencional. Las instalaciones del marketplace/plugin de Anthropic se id
 
 ```bash
 # Clonar el repo primero
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 
 # Instalar dependencias (elige tu gestor de paquetes)
 npm install        # o: pnpm install | yarn install | bun install
@@ -717,8 +717,8 @@ Esto te da acceso instantáneo a todos los comandos, agentes, skills y hooks.
 >
 > ```bash
 > # Clonar el repo primero
-> git clone https://github.com/affaan-m/ECC.git
-> cd ECC
+> git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+> cd si-claude-plugin
 >
 > # Opción A: Reglas a nivel de usuario (se aplican a todos los proyectos)
 > mkdir -p ~/.claude/rules/ecc
@@ -742,8 +742,8 @@ Si prefieres control manual sobre lo que se instala:
 
 ```bash
 # Clonar el repo
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 
 # Copiar agentes a tu configuración de Claude
 cp agents/*.md ~/.claude/agents/

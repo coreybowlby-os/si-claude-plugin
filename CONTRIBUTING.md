@@ -53,7 +53,7 @@ Slash commands that invoke useful workflows:
 ```bash
 # 1. Fork and clone
 gh repo fork affaan-m/ECC --clone
-cd ECC
+cd si-claude-plugin
 
 # 2. Create a branch
 git checkout -b feat/my-contribution

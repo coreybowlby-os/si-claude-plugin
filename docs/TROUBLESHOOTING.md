@@ -79,7 +79,7 @@ exit 2
   - macOS (Homebrew): `brew install python-tk`
   - Windows: re-run the python.org installer and enable "tcl/tk and IDLE"
 - Or use the browser dashboard, which only needs Node: `npm run dashboard:web`, then open the printed localhost URL.
-- Both commands must be run from a full clone of the ECC repo (`git clone https://github.com/affaan-m/ECC`), not from inside the Claude Code plugin directory — plugin installs do not ship `package.json` scripts.
+- Both commands must be run from a full clone of the ECC repo (`git clone https://github.com/coreybowlby-os/si-claude-plugin`), not from inside the Claude Code plugin directory — plugin installs do not ship `package.json` scripts.
 
 ## Anthropic Cyber Safeguards Block Security Audits Of Your Own Code
 

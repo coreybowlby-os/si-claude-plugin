@@ -118,8 +118,8 @@ ECC v2.0.0-rc.1 اس قابل استعمال پرت پر عوامی Hermes آپ�
 
 ```bash
 # ریپو کلون کریں
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 
 # ECC-owned نیم اسپیس میں rules کاپی کریں
 mkdir -p ~/.claude/rules/ecc

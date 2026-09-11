@@ -295,8 +295,8 @@ Das ist beabsichtigt. Anthropic-Marketplace-/Plugin-Installationen werden über 
 
 ```bash
 # Zuerst das Repo klonen
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 
 # Abhängigkeiten installieren (wähle deinen Paketmanager)
 npm install        # oder: pnpm install | yarn install | bun install
@@ -854,8 +854,8 @@ Dies gibt dir sofortigen Zugriff auf alle Commands, Agents, Skills und Hooks.
 >
 > ```bash
 > # Zuerst das Repo klonen
-> git clone https://github.com/affaan-m/ECC.git
-> cd ECC
+> git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+> cd si-claude-plugin
 >
 > # Option A: Rules auf Benutzerebene (gilt für alle Projekte)
 > mkdir -p ~/.claude/rules/ecc
@@ -879,8 +879,8 @@ Falls du manuelle Kontrolle darüber bevorzugst, was installiert wird:
 
 ```bash
 # Das Repo klonen
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 
 # Agents in deine Claude-Konfiguration kopieren
 cp agents/*.md ~/.claude/agents/
@@ -1492,7 +1492,7 @@ Das Plugin-System von OpenCode ist AUSGEFEILTER als das von Claude Code mit 20+ 
 
 **Option 1: Direkt verwenden**
 ```bash
-cd ECC
+cd si-claude-plugin
 opencode
 ```
 

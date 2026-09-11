@@ -172,8 +172,8 @@ Claude Code володіє цими вбудованими командами, �
 Плагіни Claude Code не можуть розповсюджувати `rules`, тому додавайте лише ті пакети правил, які вам справді потрібні:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 mkdir -p ~/.claude/rules/ecc
 cp -R rules/common ~/.claude/rules/ecc/
 cp -R rules/typescript ~/.claude/rules/ecc/  # замініть на ваш стек
@@ -237,8 +237,8 @@ node scripts/codex/check-plugin-cache.js
 Старіший шлях `scripts/sync-ecc-to-codex.sh` залишається окремим варіантом сумісності для користувачів, які навмисно хочуть скопійовану та злиту конфігурацію в `~/.codex`; він не потрібен для нативного плагіна. Спочатку запустіть Codex один раз, щоб `~/.codex/config.toml` існував, потім:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 npm install
 bash scripts/sync-ecc-to-codex.sh
 ```
@@ -255,8 +255,8 @@ bash scripts/sync-ecc-to-codex.sh
 Клонуйте ECC один раз, потім оберіть ціль, що відповідає вашій оболонці:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
 ```
 
 | Оболонка | Встановлення чи налаштування | Примітки |
@@ -386,16 +386,18 @@ cp -R /path/to/ECC/rules/typescript .claude/rules/ecc/
 Використовуйте це лише коли ви навмисно пропускаєте шлях плагіна:
 
 ```bash
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
+npm install
 ./install.sh --profile full
 ```
 
 Windows:
 
 ```powershell
-git clone https://github.com/affaan-m/ECC.git
-cd ECC
+git clone https://github.com/coreybowlby-os/si-claude-plugin.git
+cd si-claude-plugin
+npm install
 .\install.ps1 --profile full
 ```
 
@@ -1503,7 +1505,7 @@ opencode
 
 **Варіант 1: Використовувати напряму**
 ```bash
-cd ECC
+cd si-claude-plugin
 opencode
 ```
 
