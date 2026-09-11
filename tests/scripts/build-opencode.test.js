@@ -113,7 +113,6 @@ function main() {
       const result = spawnSync(process.execPath, ["-e", check, distEntry], {
         cwd: repoRoot,
         encoding: "utf8",
-        shell: true,
       })
       assert.strictEqual(result.status, 0, result.stderr)
     }],

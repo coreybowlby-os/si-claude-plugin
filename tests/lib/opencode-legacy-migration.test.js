@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const { sameDevice } = require('../../scripts/lib/file-identity');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -360,9 +361,13 @@ test('legacy cleanup never overwrites a file created during quarantine recovery'
     const userStat = fs.fstatSync(userDescriptor, { bigint: true });
     const retainedStat = fs.lstatSync(quarantinePath, { bigint: true });
     const managedStat = fs.fstatSync(originalDescriptor, { bigint: true });
-    assert.strictEqual(destinationStat.dev, userStat.dev);
+    // `ino` is the identity that holds across both stat flavours. `dev` is not
+    // comparable between lstat and fstat on Windows — the former returns 0n, the
+    // latter the real volume serial — which is the same defect fixed in
+    // scripts/lib/file-identity.js. Compare it only where it is meaningful.
+    assert.ok(sameDevice(destinationStat, userStat));
     assert.strictEqual(destinationStat.ino, userStat.ino);
-    assert.strictEqual(retainedStat.dev, managedStat.dev);
+    assert.ok(sameDevice(retainedStat, managedStat));
     assert.strictEqual(retainedStat.ino, managedStat.ino);
     const userContent = Buffer.alloc(Buffer.byteLength('user-new\n'));
     const managedContent = Buffer.alloc(Buffer.byteLength('managed-old\n'));

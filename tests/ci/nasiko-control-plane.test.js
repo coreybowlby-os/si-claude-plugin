@@ -445,13 +445,13 @@ async function main() {
     ['ships a canonical opt-in skill without silently bundling Nasiko', () => {
       const skill = read('skills/nasiko-control-plane/SKILL.md');
       assert.match(skill, /^name: nasiko-control-plane$/m);
-      assert.match(skill, /ecc nasiko status/i);
+      assert.match(skill, /sicp nasiko status/i);
       assert.match(skill, /explicit.*consent|explicit.*--yes/i);
       assert.match(skill, /pinned.*v0\.1\.0/i);
       assert.match(skill, /telemetry.*opt-in/i);
       assert.match(skill, /never.*secrets|never.*credentials/i);
       assert.match(skill, /install.*does not prove/i);
-      assert.match(skill, /ecc nasiko uninstall/i);
+      assert.match(skill, /sicp nasiko uninstall/i);
       assert.doesNotMatch(skill, /curl[^\n]*\|[^\n]*bash|irm[^\n]*\|[^\n]*iex/i);
 
       const modules = readJson('manifests/install-modules.json').modules;

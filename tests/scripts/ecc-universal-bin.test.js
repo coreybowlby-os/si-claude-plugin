@@ -177,7 +177,7 @@ function prepareLocalPackedProject(packageManager) {
   fs.renameSync(extractedDirectory, packageDirectory);
   fs.mkdirSync(binDirectory, { recursive: true });
 
-  for (const executable of ['ecc', 'ecc-universal']) {
+  for (const executable of ['sicp', 'si-claude-plugin']) {
     const scriptPath = path.join(packageDirectory, packageJson.bin[executable]);
     fs.chmodSync(scriptPath, 0o755);
     if (process.platform === 'win32') {
@@ -309,8 +309,8 @@ test('Windows package shims use one safely quoted command line', () => {
 });
 
 test('published package exposes ecc and ecc-universal through scripts/ecc.js', () => {
-  assert.strictEqual(packageJson.bin.ecc, 'scripts/ecc.js');
-  assert.strictEqual(packageJson.bin['ecc-universal'], 'scripts/ecc.js');
+  assert.strictEqual(packageJson.bin.sicp, 'scripts/ecc.js');
+  assert.strictEqual(packageJson.bin['si-claude-plugin'], 'scripts/ecc.js');
   assert.deepStrictEqual(packageLock.packages[''].bin, packageJson.bin);
 
   const fixture = getPackedFixture();
@@ -320,14 +320,14 @@ test('published package exposes ecc and ecc-universal through scripts/ecc.js', (
   );
 });
 
-test('packed ecc-universal launches the guided Claude setup help', () => {
-  const result = launchPackedBinary('ecc-universal', ['setup', '--help']);
+test('packed si-claude-plugin launches the guided Claude setup help', () => {
+  const result = launchPackedBinary('si-claude-plugin', ['setup', '--help']);
   assert.match(result.stdout, /ECC guided setup/);
 });
 
-test('packed ecc-universal launches the guided multi-harness help', () => {
+test('packed si-claude-plugin launches the guided multi-harness help', () => {
   const result = launchPackedBinary(
-    'ecc-universal',
+    'si-claude-plugin',
     ['install', '--guided', '--help']
   );
   assert.match(result.stdout, /ECC guided multi-harness install/);
@@ -336,8 +336,8 @@ test('packed ecc-universal launches the guided multi-harness help', () => {
   assert.match(result.stdout, /Kimi/);
 });
 
-test('packed ecc alias launches the primary dispatcher', () => {
-  const result = launchPackedBinary('ecc', ['--help']);
+test('packed sicp alias launches the primary dispatcher', () => {
+  const result = launchPackedBinary('sicp', ['--help']);
   assert.match(result.stdout, /ECC selective-install CLI/);
   assert.match(result.stdout, /ecc install --guided/);
 });

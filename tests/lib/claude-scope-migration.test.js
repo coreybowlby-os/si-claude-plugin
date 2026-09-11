@@ -81,6 +81,11 @@ function createFixture(initialState = {}) {
     binDir,
     statePath,
     callsPath,
+    // Absolute path to the fake CLI, passed as `command` by migrationOptions().
+    // Prepending binDir to PATH is not enough on Windows: Node resolves claude.exe
+    // from a later PATH entry ahead of this claude.cmd, so a machine with Claude
+    // Code installed silently runs the real binary against the real ~/.claude.
+    launcher,
     settingsPath: path.join(configDir, 'settings.json'),
   };
 }
@@ -122,6 +127,7 @@ function migrationOptions(fixture, scope, overrides = {}) {
     configDir: fixture.configDir,
     projectRoot: fixture.projectRoot,
     scope,
+    command: fixture.launcher,
     ...overrides,
   };
 }
@@ -520,7 +526,7 @@ test('source uninstall failure reports both scopes and exact forward recovery', 
     assert.strictEqual(error.phase, 'source-uninstall');
     assert.deepStrictEqual([...error.observedScopes].sort(), ['project', 'user']);
     assert.deepStrictEqual(error.recovery, [
-      'claude plugin uninstall ecc@ecc --scope user --keep-data',
+      'claude plugin uninstall SI-Claude-Plugin@SI-Claude-Plugin --scope user --keep-data',
       'sicp setup --mode claude-plugin --scope project --move-scope --yes',
     ]);
     assert.ok(!readCalls(fixture).flat().includes('--prune'));

@@ -16,6 +16,7 @@ const {
   createMultiHarnessPlan,
   normalizeGuidedInstallRequest,
 } = require('./lib/multi-harness-setup');
+const { CURRENT_PLUGIN_ID } = require('./lib/install/inventory');
 const { formatHookCapabilityDisclosure } = require('./lib/install/hook-consent');
 const { startTerminalSpinner } = require('./lib/terminal-spinner');
 const { showTerminalWelcome } = require('./lib/terminal-welcome');
@@ -160,7 +161,7 @@ async function collectInteractiveOptions(options, dependencies = {}) {
   const includesClaude = normalizedHarnesses.includes('claude');
   const includesKimi = normalizedHarnesses.includes('kimi');
   const claudeScope = includesClaude && !options.claudeScope
-    ? await askChoice(terminal, output, 'Where should Claude enable ecc@ecc?', [...VALID_CLAUDE_SCOPES], 'user')
+    ? await askChoice(terminal, output, `Where should Claude enable ${CURRENT_PLUGIN_ID}?`, [...VALID_CLAUDE_SCOPES], 'user')
     : options.claudeScope;
   const claudeHooks = includesClaude && !options.claudeHooks
     ? await askChoice(terminal, output, 'How should ECC hooks run in Claude?', [...VALID_CLAUDE_HOOKS], 'standard')

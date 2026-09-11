@@ -47,13 +47,31 @@ function findBin(...candidates) {
     if (!c) continue;
     if (path.isAbsolute(c)) {
       if (fs.existsSync(c)) return c;
-    } else {
-      const r = spawnSync(
-        process.platform === 'win32' ? 'where' : 'which',
-        [c],
-        { encoding: 'utf8', timeout: 3000 },
-      );
-      if (r.status === 0 && r.stdout.trim()) return c;
+      continue;
+    }
+
+    // Node is already running; its own path needs no PATH search. This is both
+    // faster and immune to the timeout below.
+    if (c === 'node' || c === 'node.exe') return c;
+
+    // Resolve via PATH ourselves rather than shelling out. `where`/`which` under
+    // a 3s budget is the whole failure mode this replaces: on a loaded CI runner
+    // the lookup exceeded it, spawnSync returned status null, and a timeout was
+    // indistinguishable from "binary not installed" — so a present tool was
+    // reported missing. Locally the same call takes ~77ms, which is why it only
+    // ever failed in CI.
+    const exts = process.platform === 'win32'
+      ? (process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD').split(';').filter(Boolean)
+      : [''];
+    const dirs = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
+    for (const dir of dirs) {
+      for (const ext of exts) {
+        try {
+          if (fs.existsSync(path.join(dir, c + ext))) return c;
+        } catch {
+          // An unreadable PATH entry is not a reason to stop searching.
+        }
+      }
     }
   }
   return null;

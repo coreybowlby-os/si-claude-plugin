@@ -15,7 +15,7 @@ const {
 const {
   migrateClaudePluginScope,
 } = require('./lib/claude-scope-migration');
-const { resolveClaudePaths } = require('./lib/install/inventory');
+const { CURRENT_PLUGIN_ID, resolveClaudePaths } = require('./lib/install/inventory');
 const { startTerminalSpinner } = require('./lib/terminal-spinner');
 const { showTerminalWelcome } = require('./lib/terminal-welcome');
 
@@ -53,7 +53,7 @@ Options:
   --json                  Emit machine-readable JSON.
   --help, -h              Show this help.
 
-Re-running setup updates an existing ecc@ecc installation at its detected scope.
+Re-running setup updates an existing SI-Claude-Plugin@SI-Claude-Plugin installation at its detected scope.
 Choosing another scope automatically migrates the existing installation.
 Migration installs and verifies the destination before removing the source scope.
 `);
@@ -229,7 +229,7 @@ async function collectInteractiveOptions(options, defaults = {}, providedTermina
       : detectedScopeDefault;
     const scope = options.scope || await askChoice(
       terminal,
-      'Where should Claude enable ecc@ecc?',
+      `Where should Claude enable ${CURRENT_PLUGIN_ID}?`,
       scopeChoices,
       scopeDefaultIndex
     );
@@ -457,7 +457,7 @@ async function main(argv = process.argv.slice(2)) {
         printResult({
           action: 'cancelled',
           hooks: options.hooks || 'standard',
-          pluginId: 'ecc@ecc',
+          pluginId: CURRENT_PLUGIN_ID,
           scope: options.scope || 'detected',
         }, options.json);
         return;

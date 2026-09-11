@@ -1,5 +1,6 @@
 'use strict';
 
+const { sameDevice } = require('./file-identity');
 const fs = require('fs');
 const crypto = require('crypto');
 const os = require('os');
@@ -65,7 +66,10 @@ function pathsMatch(left, right) {
 }
 
 function sameFileIdentity(left, right) {
-  return left.dev === right.dev
+  // See scripts/lib/file-identity.js: Windows reports dev 0 from path-based stat
+  // and the real volume serial from fstat, so a strict comparison marks every
+  // file as changed. A zero on either side means "unknown", not "mismatch".
+  return sameDevice(left, right)
     && left.ino === right.ino
     && left.size === right.size
     && left.mtimeMs === right.mtimeMs

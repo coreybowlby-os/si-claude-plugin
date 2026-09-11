@@ -316,7 +316,7 @@ async function runTests() {
     const homeDir = createTempDir('ecc-state-home-');
 
     try {
-      const expectedPath = path.join(homeDir, '.claude', 'SI-Claude-Plugin', 'state.db');
+      const expectedPath = path.join(homeDir, '.claude', 'ecc', 'state.db');
       assert.strictEqual(resolveStateStorePath({ homeDir }), expectedPath);
 
       const firstStore = await createStateStore({ homeDir });

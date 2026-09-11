@@ -1,5 +1,6 @@
 'use strict';
 
+const { sameDevice } = require('../file-identity');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -372,7 +373,7 @@ function cleanupLegacyAntigravityInstall(plan) {
       if (
         currentStat.isSymbolicLink()
         || !currentStat.isFile()
-        || currentStat.dev !== fileStat.dev
+        || !sameDevice(currentStat, fileStat)
         || currentStat.ino !== fileStat.ino
       ) {
         continue;

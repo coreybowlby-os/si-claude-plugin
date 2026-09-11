@@ -52,6 +52,7 @@ function createFixture(state = {}) {
     configDir,
     projectRoot,
     binDir,
+    launcher,
     statePath,
     callsPath,
   };
@@ -63,6 +64,7 @@ function runSetup(fixture, args, options = {}) {
     USERPROFILE: fixture.homeDir,
     CLAUDE_CONFIG_DIR: fixture.configDir,
     PATH: options.path || `${fixture.binDir}${path.delimiter}${process.env.PATH || ''}`,
+    ECC_CLAUDE_EXECUTABLE: fixture.launcher,
     ECC_TEST_CLAUDE_STATE: fixture.statePath,
     ECC_TEST_CLAUDE_CALLS: fixture.callsPath,
     ...options.env,
@@ -118,7 +120,8 @@ function runInteractiveEccSetup(fixture, options = {}) {
       USERPROFILE: fixture.homeDir,
       CLAUDE_CONFIG_DIR: fixture.configDir,
       PATH: `${fixture.binDir}${path.delimiter}${process.env.PATH || ''}`,
-      ECC_TEST_CLAUDE_STATE: fixture.statePath,
+      ECC_CLAUDE_EXECUTABLE: fixture.launcher,
+    ECC_TEST_CLAUDE_STATE: fixture.statePath,
       ECC_TEST_CLAUDE_CALLS: fixture.callsPath,
     },
     encoding: 'utf8',
@@ -193,11 +196,11 @@ test('fresh non-interactive plugin setup requires an explicit scope', () => {
 
 test('an existing install without --scope updates its detected scope', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'project', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'project', enabled: true, version: '1.9.0' }],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'project',
     }],
   }, fixture => {
@@ -214,7 +217,7 @@ test('an existing install without --scope updates its detected scope', () => {
     assertNoSetupSpinner(`${result.stdout}${result.stderr}`);
     assert.ok(readCalls(fixture).some(argv => (
       JSON.stringify(argv) === JSON.stringify([
-        'plugin', 'update', 'ecc@ecc', '--scope', 'project',
+        'plugin', 'update', 'SI-Claude-Plugin@SI-Claude-Plugin', '--scope', 'project',
       ])
     )));
   });
@@ -306,7 +309,7 @@ test('dry-run isolates pre-existing Claude backups and symlinked project setting
     fs.mkdirSync(projectConfigDir, { recursive: true });
     fs.writeFileSync(backupPath, 'original-backup\n');
     fs.writeFileSync(statePath, '{"original":true}\n');
-    fs.writeFileSync(settingsTarget, '{"enabledPlugins":{"ecc@ecc":true}}\n');
+    fs.writeFileSync(settingsTarget, '{"enabledPlugins":{"SI-Claude-Plugin@SI-Claude-Plugin":true}}\n');
     fs.symlinkSync(settingsTarget, settingsPath, 'file');
 
     const result = runSetup(fixture, [
@@ -329,7 +332,7 @@ test('dry-run isolates pre-existing Claude backups and symlinked project setting
     assert.strictEqual(fs.readFileSync(statePath, 'utf8'), '{"original":true}\n');
     assert.strictEqual(
       fs.readFileSync(settingsTarget, 'utf8'),
-      '{"enabledPlugins":{"ecc@ecc":true}}\n'
+      '{"enabledPlugins":{"SI-Claude-Plugin@SI-Claude-Plugin":true}}\n'
     );
     assert.strictEqual(fs.lstatSync(settingsPath).isSymbolicLink(), true);
     assert.strictEqual(
@@ -362,11 +365,11 @@ test('missing Git fails with an actionable prerequisite during dry-run', () => {
 
 test('setup automatically migrates an existing install to the selected scope and hooks', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'local', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'local', enabled: true, version: '1.9.0' }],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'local',
     }],
   }, fixture => {
@@ -385,16 +388,16 @@ test('setup automatically migrates an existing install to the selected scope and
     assert.strictEqual(payload.hooks, 'minimal');
     const calls = readCalls(fixture);
     assert.ok(calls.some(argv => (
-      argv.join(' ') === 'plugin install ecc@ecc --scope user'
+      argv.join(' ') === 'plugin install SI-Claude-Plugin@SI-Claude-Plugin --scope user'
         + ' --config hooks_enabled=true --config hook_profile=minimal'
     )));
     assert.ok(calls.some(argv => (
-      argv.join(' ') === 'plugin uninstall ecc@ecc --scope local --keep-data'
+      argv.join(' ') === 'plugin uninstall SI-Claude-Plugin@SI-Claude-Plugin --scope local --keep-data'
     )));
     assert.ok(!calls.flat().includes('--prune'));
     const state = JSON.parse(fs.readFileSync(fixture.statePath, 'utf8'));
     assert.deepStrictEqual(state.plugins, [{
-      id: 'ecc@ecc',
+      id: 'SI-Claude-Plugin@SI-Claude-Plugin',
       scope: 'user',
       enabled: true,
       version: '2.0.0',
@@ -402,21 +405,21 @@ test('setup automatically migrates an existing install to the selected scope and
     const settings = JSON.parse(
       fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
     );
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hooks_enabled, true);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'minimal');
+    assert.strictEqual(settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options.hooks_enabled, true);
+    assert.strictEqual(settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options.hook_profile, 'minimal');
   });
 });
 
 test('setup resumes a safe two-scope migration without requiring --move-scope', () => {
   withFixture({
     plugins: [
-      { id: 'ecc@ecc', scope: 'local', enabled: true, version: '1.9.0' },
-      { id: 'ecc@ecc', scope: 'user', enabled: true, version: '2.0.0' },
+      { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'local', enabled: true, version: '1.9.0' },
+      { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', enabled: true, version: '2.0.0' },
     ],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'user',
     }],
   }, fixture => {
@@ -433,7 +436,7 @@ test('setup resumes a safe two-scope migration without requiring --move-scope', 
     assert.strictEqual(payload.sourceScope, 'local');
     assert.strictEqual(payload.scope, 'user');
     assert.ok(readCalls(fixture).some(argv => (
-      argv.join(' ') === 'plugin uninstall ecc@ecc --scope local --keep-data'
+      argv.join(' ') === 'plugin uninstall SI-Claude-Plugin@SI-Claude-Plugin --scope local --keep-data'
     )));
   });
 });
@@ -446,13 +449,13 @@ test('all interrupted migration and hook combinations resume without reinstallin
       for (const hookMode of hooks) {
         withFixture({
           plugins: [
-            { id: 'ecc@ecc', scope: sourceScope, enabled: true, version: '1.9.0' },
-            { id: 'ecc@ecc', scope: destinationScope, enabled: true, version: '2.0.0' },
+            { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: sourceScope, enabled: true, version: '1.9.0' },
+            { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: destinationScope, enabled: true, version: '2.0.0' },
           ],
           marketplaces: [{
             name: 'ecc',
             source: 'github',
-            repo: 'affaan-m/ECC',
+            repo: 'coreybowlby-os/si-claude-plugin',
             scope: destinationScope,
           }],
         }, fixture => {
@@ -473,11 +476,11 @@ test('all interrupted migration and hook combinations resume without reinstallin
           const calls = readCalls(fixture);
           assert.ok(!calls.some(argv => argv[1] === 'install'));
           assert.ok(calls.some(argv => (
-            argv.join(' ') === `plugin uninstall ecc@ecc --scope ${sourceScope} --keep-data`
+            argv.join(' ') === `plugin uninstall SI-Claude-Plugin@SI-Claude-Plugin --scope ${sourceScope} --keep-data`
           )));
           const state = JSON.parse(fs.readFileSync(fixture.statePath, 'utf8'));
           assert.deepStrictEqual(state.plugins, [{
-            id: 'ecc@ecc',
+            id: 'SI-Claude-Plugin@SI-Claude-Plugin',
             scope: destinationScope,
             enabled: true,
             version: '2.0.0',
@@ -485,7 +488,7 @@ test('all interrupted migration and hook combinations resume without reinstallin
           const settings = JSON.parse(
             fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
           );
-          const stored = settings.pluginConfigs['ecc@ecc'].options;
+          const stored = settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options;
           assert.strictEqual(stored.hooks_enabled, hookMode !== 'off');
           assert.strictEqual(
             stored.hook_profile,
@@ -499,7 +502,7 @@ test('all interrupted migration and hook combinations resume without reinstallin
 
 test('--move-scope remains explicit about its destination', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'user', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', enabled: true, version: '1.9.0' }],
   }, fixture => {
     const result = runSetup(fixture, [
       '--mode', 'claude-plugin',
@@ -515,7 +518,7 @@ test('--move-scope remains explicit about its destination', () => {
 
 test('destination-only --move-scope is an idempotent first call', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'local', enabled: true, version: '2.0.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'local', enabled: true, version: '2.0.0' }],
   }, fixture => {
     const result = runSetup(fixture, [
       '--mode', 'claude-plugin',
@@ -534,7 +537,7 @@ test('destination-only --move-scope is an idempotent first call', () => {
 
 test('destination-only --move-scope applies explicit hook preferences', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'local', enabled: true, version: '2.0.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'local', enabled: true, version: '2.0.0' }],
   }, fixture => {
     const result = runSetup(fixture, [
       '--mode', 'claude-plugin',
@@ -551,18 +554,18 @@ test('destination-only --move-scope applies explicit hook preferences', () => {
     const settings = JSON.parse(
       fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
     );
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hooks_enabled, true);
-    assert.strictEqual(settings.pluginConfigs['ecc@ecc'].options.hook_profile, 'strict');
+    assert.strictEqual(settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options.hooks_enabled, true);
+    assert.strictEqual(settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options.hook_profile, 'strict');
   });
 });
 
 test('migration dry-run JSON exposes ordered actions without mutation', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'user', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', enabled: true, version: '1.9.0' }],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'user',
     }],
   }, fixture => {
@@ -579,7 +582,7 @@ test('migration dry-run JSON exposes ordered actions without mutation', () => {
     assert.deepStrictEqual(payload.plannedActions.slice(-4), [
       ['plugin', 'list', '--json'],
       ['plugin', 'list', '--json'],
-      ['plugin', 'uninstall', 'ecc@ecc', '--scope', 'user', '--keep-data'],
+      ['plugin', 'uninstall', 'SI-Claude-Plugin@SI-Claude-Plugin', '--scope', 'user', '--keep-data'],
       ['plugin', 'list', '--json'],
     ]);
     assert.strictEqual(hasMutation(fixture), false);
@@ -588,15 +591,15 @@ test('migration dry-run JSON exposes ordered actions without mutation', () => {
 
 test('migration JSON failures retain phase, scopes, and exact recovery', () => {
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'user', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', enabled: true, version: '1.9.0' }],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'user',
     }],
     failures: [{
-      argv: ['plugin', 'uninstall', 'ecc@ecc', '--scope', 'user', '--keep-data'],
+      argv: ['plugin', 'uninstall', 'SI-Claude-Plugin@SI-Claude-Plugin', '--scope', 'user', '--keep-data'],
       status: 9,
       stderr: 'uninstall failed',
       times: 1,
@@ -615,7 +618,7 @@ test('migration JSON failures retain phase, scopes, and exact recovery', () => {
     assert.strictEqual(payload.error.phase, 'source-uninstall');
     assert.deepStrictEqual([...payload.error.observedScopes].sort(), ['project', 'user']);
     assert.deepStrictEqual(payload.error.recovery, [
-      'claude plugin uninstall ecc@ecc --scope user --keep-data',
+      'claude plugin uninstall SI-Claude-Plugin@SI-Claude-Plugin --scope user --keep-data',
       'sicp setup --mode claude-plugin --scope project --move-scope --yes',
     ]);
   });
@@ -652,7 +655,7 @@ test('sicp setup preserves a real terminal for the interactive wizard', () => {
     const result = runInteractiveEccSetup(fixture);
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
     assert.ifError(result.error);
-    assert.match(result.stdout, /Where should Claude enable ecc@ecc\?/);
+    assert.match(result.stdout, /Where should Claude enable SI-Claude-Plugin@SI-Claude-Plugin\?/);
     assert.match(result.stdout, /How should ECC hooks run\?/);
     assert.doesNotMatch(result.stdout, /Interactive setup requires a terminal/);
     assertNoSetupSpinner(`${result.stdout}${result.stderr}`);
@@ -671,7 +674,7 @@ test('confirmed interactive apply starts immediately and clears the spinner on s
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
     assertSetupSpinnerLifecycle(
       `${result.stdout}${result.stderr}`,
-      /ECC installed ecc@ecc at project scope/
+      /ECC installed SI-Claude-Plugin@SI-Claude-Plugin at project scope/
     );
   });
 });
@@ -683,7 +686,7 @@ test('confirmed interactive apply clears and stops the spinner when apply throws
     failures: [{
       argv: [
         'plugin', 'marketplace', 'add',
-        'https://github.com/affaan-m/ECC',
+        'https://github.com/coreybowlby-os/si-claude-plugin',
         '--scope', 'user',
       ],
       status: 8,
@@ -718,12 +721,12 @@ test('all interactive scope and hook choices install and persist the selected co
         });
         assert.ifError(result.error);
         assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
-        assert.match(result.stdout, new RegExp(`ECC installed ecc@ecc at ${scope} scope`));
+        assert.match(result.stdout, new RegExp(`ECC installed SI-Claude-Plugin@SI-Claude-Plugin at ${scope} scope`));
         assert.match(result.stdout, new RegExp(`Hook preference: ${hookMode}`));
 
         const state = JSON.parse(fs.readFileSync(fixture.statePath, 'utf8'));
         assert.deepStrictEqual(state.plugins, [{
-          id: 'ecc@ecc',
+          id: 'SI-Claude-Plugin@SI-Claude-Plugin',
           scope,
           enabled: true,
           version: '2.0.0',
@@ -731,7 +734,7 @@ test('all interactive scope and hook choices install and persist the selected co
         const settings = JSON.parse(
           fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
         );
-        const stored = settings.pluginConfigs['ecc@ecc'].options;
+        const stored = settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options;
         assert.strictEqual(stored.hooks_enabled, hookMode !== 'off');
         assert.strictEqual(stored.hook_profile, hookMode === 'off' ? 'standard' : hookMode);
       });
@@ -748,11 +751,11 @@ test('all interactive choices from an existing install update or migrate to the 
     for (const [selectedIndex, selectedScope] of scopes.entries()) {
       for (const [hookIndex, hookMode] of hooks.entries()) {
         withFixture({
-          plugins: [{ id: 'ecc@ecc', scope: sourceScope, enabled: true, version: '1.9.0' }],
+          plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: sourceScope, enabled: true, version: '1.9.0' }],
           marketplaces: [{
             name: 'ecc',
             source: 'github',
-            repo: 'affaan-m/ECC',
+            repo: 'coreybowlby-os/si-claude-plugin',
             scope: sourceScope,
           }],
         }, fixture => {
@@ -771,13 +774,13 @@ test('all interactive choices from an existing install update or migrate to the 
           );
           assert.match(
             result.stdout,
-            new RegExp(`ECC ${expectedAction} ecc@ecc at ${selectedScope} scope`)
+            new RegExp(`ECC ${expectedAction} SI-Claude-Plugin@SI-Claude-Plugin at ${selectedScope} scope`)
           );
           assert.match(result.stdout, new RegExp(`Hook preference: ${hookMode}`));
 
           const state = JSON.parse(fs.readFileSync(fixture.statePath, 'utf8'));
           assert.deepStrictEqual(state.plugins, [{
-            id: 'ecc@ecc',
+            id: 'SI-Claude-Plugin@SI-Claude-Plugin',
             scope: selectedScope,
             enabled: true,
             version: '2.0.0',
@@ -785,7 +788,7 @@ test('all interactive choices from an existing install update or migrate to the 
           const settings = JSON.parse(
             fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
           );
-          const stored = settings.pluginConfigs['ecc@ecc'].options;
+          const stored = settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options;
           assert.strictEqual(stored.hooks_enabled, hookMode !== 'off');
           assert.strictEqual(stored.hook_profile, hookMode === 'off' ? 'standard' : hookMode);
         });
@@ -804,12 +807,12 @@ test('interactive named choices install and persist the selected configuration',
     });
     assert.ifError(result.error);
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
-    assert.match(result.stdout, /ECC installed ecc@ecc at project scope/);
+    assert.match(result.stdout, /ECC installed SI-Claude-Plugin@SI-Claude-Plugin at project scope/);
     assert.match(result.stdout, /Hook preference: strict/);
 
     const state = JSON.parse(fs.readFileSync(fixture.statePath, 'utf8'));
     assert.deepStrictEqual(state.plugins, [{
-      id: 'ecc@ecc',
+      id: 'SI-Claude-Plugin@SI-Claude-Plugin',
       scope: 'project',
       enabled: true,
       version: '2.0.0',
@@ -817,7 +820,7 @@ test('interactive named choices install and persist the selected configuration',
     const settings = JSON.parse(
       fs.readFileSync(path.join(fixture.configDir, 'settings.json'), 'utf8')
     );
-    const stored = settings.pluginConfigs['ecc@ecc'].options;
+    const stored = settings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options;
     assert.strictEqual(stored.hooks_enabled, true);
     assert.strictEqual(stored.hook_profile, 'strict');
   });
@@ -835,7 +838,7 @@ test('invalid interactive choices explain the problem and allow a retry', () => 
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
     assert.match(result.stdout, /Please choose 1, 2, or 3/);
     assert.match(result.stdout, /Please choose 1, 2, 3, or 4/);
-    assert.match(result.stdout, /ECC would-install ecc@ecc at project scope/);
+    assert.match(result.stdout, /ECC would-install SI-Claude-Plugin@SI-Claude-Plugin at project scope/);
     assert.match(result.stdout, /Hook preference: minimal/);
     assert.strictEqual(hasMutation(fixture), false);
   });
@@ -851,7 +854,7 @@ test('interactive cancellation after non-default choices performs no mutation', 
     });
     assert.ifError(result.error);
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
-    assert.match(result.stdout, /ECC cancelled ecc@ecc at project scope/);
+    assert.match(result.stdout, /ECC cancelled SI-Claude-Plugin@SI-Claude-Plugin at project scope/);
     assertNoSetupSpinner(`${result.stdout}${result.stderr}`);
     assert.strictEqual(hasMutation(fixture), false);
     assert.ok(!fs.existsSync(path.join(fixture.configDir, 'settings.json')));
@@ -885,9 +888,9 @@ test('interactive mode flag still prompts for missing scope and hook choices', (
     });
     assert.ifError(result.error);
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
-    assert.match(result.stdout, /Where should Claude enable ecc@ecc\?/);
+    assert.match(result.stdout, /Where should Claude enable SI-Claude-Plugin@SI-Claude-Plugin\?/);
     assert.match(result.stdout, /How should ECC hooks run\?/);
-    assert.match(result.stdout, /ECC would-install ecc@ecc at local scope/);
+    assert.match(result.stdout, /ECC would-install SI-Claude-Plugin@SI-Claude-Plugin at local scope/);
     assert.match(result.stdout, /Hook preference: strict/);
   });
 });
@@ -896,17 +899,17 @@ test('interactive defaults preserve an existing install scope and hook preferenc
   if (process.platform === 'win32') return;
 
   withFixture({
-    plugins: [{ id: 'ecc@ecc', scope: 'local', enabled: true, version: '1.9.0' }],
+    plugins: [{ id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'local', enabled: true, version: '1.9.0' }],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'local',
     }],
   }, fixture => {
     fs.writeFileSync(path.join(fixture.configDir, 'settings.json'), JSON.stringify({
       pluginConfigs: {
-        'ecc@ecc': {
+        'SI-Claude-Plugin@SI-Claude-Plugin': {
           options: { hooks_enabled: true, hook_profile: 'minimal' },
         },
       },
@@ -919,7 +922,7 @@ test('interactive defaults preserve an existing install scope and hook preferenc
     assert.strictEqual(result.status, 0, `${result.stdout}\n${result.stderr}`);
     assert.match(result.stdout, /Choose \[3\]:/);
     assert.match(result.stdout, /Choose \[2\]:/);
-    assert.match(result.stdout, /ECC would-update ecc@ecc at local scope/);
+    assert.match(result.stdout, /ECC would-update SI-Claude-Plugin@SI-Claude-Plugin at local scope/);
     assert.match(result.stdout, /Hook preference: minimal/);
     assert.strictEqual(hasMutation(fixture), false);
   });
@@ -930,19 +933,19 @@ test('partial migration requires an explicit destination and preserves stored ho
 
   withFixture({
     plugins: [
-      { id: 'ecc@ecc', scope: 'user', enabled: true, version: '1.9.0' },
-      { id: 'ecc@ecc', scope: 'project', enabled: true, version: '2.0.0' },
+      { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', enabled: true, version: '1.9.0' },
+      { id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'project', enabled: true, version: '2.0.0' },
     ],
     marketplaces: [{
       name: 'ecc',
       source: 'github',
-      repo: 'affaan-m/ECC',
+      repo: 'coreybowlby-os/si-claude-plugin',
       scope: 'user',
     }],
   }, fixture => {
     fs.writeFileSync(path.join(fixture.configDir, 'settings.json'), JSON.stringify({
       pluginConfigs: {
-        'ecc@ecc': {
+        'SI-Claude-Plugin@SI-Claude-Plugin': {
           options: { hooks_enabled: true, hook_profile: 'minimal' },
         },
       },
@@ -956,7 +959,7 @@ test('partial migration requires an explicit destination and preserves stored ho
     assert.match(result.stdout, /Choose: /);
     assert.match(result.stdout, /Please choose 1, 2, or 3/);
     assert.match(result.stdout, /Choose \[2\]:/);
-    assert.match(result.stdout, /ECC would-resume ecc@ecc at project scope/);
+    assert.match(result.stdout, /ECC would-resume SI-Claude-Plugin@SI-Claude-Plugin at project scope/);
     assert.match(result.stdout, /Previous scope: user/);
     assert.match(result.stdout, /Hook preference: minimal/);
     assert.strictEqual(hasMutation(fixture), false);

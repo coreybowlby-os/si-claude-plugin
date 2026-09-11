@@ -221,10 +221,10 @@ else
   warn "ecc-sync-codex is not in PATH"
 fi
 
-if command -v vcp-install-git-hooks >/dev/null 2>&1; then
-  ok "vcp-install-git-hooks command is in PATH"
+if command -v sicp-install-git-hooks >/dev/null 2>&1; then
+  ok "sicp-install-git-hooks command is in PATH"
 else
-  warn "vcp-install-git-hooks is not in PATH"
+  warn "sicp-install-git-hooks is not in PATH"
 fi
 
 if command -v ecc-check-codex >/dev/null 2>&1; then

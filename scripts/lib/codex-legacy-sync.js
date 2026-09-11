@@ -53,7 +53,11 @@ function openRegularFileNoFollow(filePath, writable = false) {
     !descriptorStat.isFile()
     || !finalPathStat.isFile()
     || finalPathStat.isSymbolicLink()
-    || descriptorStat.dev !== finalPathStat.dev
+    // Excluded on Windows: lstat reports dev 0 while fstat reports the real volume
+    // serial, so this comparison rejects every pre-existing file. `ino` below still
+    // ties the descriptor to the path. (O_NOFOLLOW is undefined on Windows anyway,
+    // so this check is a backstop for protection the platform does not provide.)
+    || (process.platform !== 'win32' && descriptorStat.dev !== finalPathStat.dev)
     || descriptorStat.ino !== finalPathStat.ino
     || descriptorStat.nlink !== 1n
     || finalPathStat.nlink !== 1n
@@ -112,7 +116,10 @@ function removeOpenedRegularFile(filePath, opened) {
   fs.closeSync(quarantined.descriptor);
   fs.closeSync(opened.descriptor);
   opened.descriptor = null;
-  if (quarantinedStat.dev !== openedStat.dev || quarantinedStat.ino !== openedStat.ino) {
+  // Same Windows dev caveat as above; ino is the reliable identity here.
+  const sameFile = quarantinedStat.ino === openedStat.ino
+    && (process.platform === 'win32' || quarantinedStat.dev === openedStat.dev);
+  if (!sameFile) {
     try {
       fs.linkSync(quarantinePath, filePath);
       fs.unlinkSync(quarantinePath);

@@ -200,8 +200,12 @@ function readBoundedRegularFile(filePath, maximumBytes) {
     if (!stats.isFile() || stats.size <= 0 || stats.size > maximumBytes) return null;
     if (!noFollow) {
       const pathStats = fs.lstatSync(filePath);
+      // `dev` is deliberately excluded on Windows: lstat reports 0 while fstat
+      // reports the real volume serial, so comparing them rejects every ordinary
+      // file. `ino` and `birthtimeMs` still pin the descriptor to the path, which
+      // is what this TOCTOU check exists for.
       if (pathStats.isSymbolicLink()
-        || pathStats.dev !== stats.dev
+        || (process.platform !== 'win32' && pathStats.dev !== stats.dev)
         || pathStats.ino !== stats.ino
         || pathStats.birthtimeMs !== stats.birthtimeMs) {
         const error = new Error('Nasiko managed files must not be symbolic links or reparse points.');

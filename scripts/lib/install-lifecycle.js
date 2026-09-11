@@ -426,7 +426,12 @@ function getContainedExistingPath(
 }
 
 function hasSameFileIdentity(leftStat, rightStat) {
-  return leftStat.dev === rightStat.dev && leftStat.ino === rightStat.ino;
+  // `dev` is excluded on Windows: fstat returns the real volume serial while
+  // path-based lstat/stat returns 0, so comparing them reports every file as
+  // "changed during the write" and aborts repair and uninstall on a healthy
+  // install. `ino` is stable across both calls and is the identity that matters.
+  const sameDevice = process.platform === 'win32' || leftStat.dev === rightStat.dev;
+  return sameDevice && leftStat.ino === rightStat.ino;
 }
 
 function createChangedDestinationError(action) {

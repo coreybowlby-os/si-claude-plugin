@@ -685,7 +685,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const managedFile = path.join(targetRoot, 'rules', 'common', 'coding-style.md');
       const sourceContent = fs.readFileSync(path.join(REPO_ROOT, 'rules', 'common', 'coding-style.md'), 'utf8');
       fs.mkdirSync(path.dirname(managedFile), { recursive: true });
@@ -832,7 +832,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const installStatePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const installStatePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const flatSkillPath = path.join(targetRoot, 'skills', 'tdd-workflow', 'SKILL.md');
       const legacySkillPath = path.join(
         targetRoot,
@@ -930,7 +930,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const adapterStatePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const adapterStatePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const recordedStatePath = path.join(outsideRoot, 'recorded-state.json');
       const flatSkillPath = path.join(targetRoot, 'skills', 'tdd-workflow', 'SKILL.md');
       const legacySkillPath = path.join(
@@ -1913,7 +1913,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(homeDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const destinationPath = path.join(targetRoot, 'plugin.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, '{"drifted":true}\n');
@@ -2464,7 +2464,7 @@ function runTests() {
 
     try {
       const targetRoot = path.join(tempDir, '.claude');
-      const statePath = path.join(targetRoot, 'ecc', 'install-state.json');
+      const statePath = path.join(targetRoot, 'SI-Claude-Plugin', 'install-state.json');
       const destinationPath = path.join(targetRoot, 'plugin.json');
       fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
       fs.writeFileSync(destinationPath, '{"generated":true}\n');

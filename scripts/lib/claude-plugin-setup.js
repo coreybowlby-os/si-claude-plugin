@@ -212,7 +212,13 @@ function assertGitAvailable(options = {}, dependencies = {}) {
 }
 
 function runClaude(args, options = {}, dependencies = {}) {
-  const command = options.command || 'claude';
+  // ECC_CLAUDE_EXECUTABLE lets a caller that cannot pass `options.command` — a test
+  // that spawns this CLI as a subprocess, for instance — still point at a specific
+  // binary. Without it such a test resolves `claude` from PATH and, on a machine
+  // with Claude Code installed, drives the user's real CLI against their real
+  // ~/.claude instead of its fixture.
+  const envCommand = (options.env || process.env).ECC_CLAUDE_EXECUTABLE;
+  const command = options.command || (envCommand && envCommand.trim()) || 'claude';
   const spawn = dependencies.spawnSync || spawnSync;
   const timeoutMs = options.timeoutMs ?? PROVIDER_COMMAND_TIMEOUT_MS;
   const spawnOptions = {

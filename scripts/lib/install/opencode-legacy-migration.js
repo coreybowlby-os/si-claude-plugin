@@ -1,5 +1,6 @@
 'use strict';
 
+const { sameDevice } = require('../file-identity');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -109,12 +110,12 @@ function hashFileNoFollow(filePath) {
     const content = fs.readFileSync(descriptor);
     const after = fs.fstatSync(descriptor, { bigint: true });
     const finalPathStat = fs.lstatSync(filePath, { bigint: true });
-    const unchanged = before.dev === after.dev
+    const unchanged = sameDevice(before, after)
       && before.ino === after.ino
       && before.size === after.size
       && before.mtimeMs === after.mtimeMs
       && before.ctimeMs === after.ctimeMs
-      && after.dev === finalPathStat.dev
+      && sameDevice(after, finalPathStat)
       && after.ino === finalPathStat.ino
       && after.size === finalPathStat.size
       && after.mtimeMs === finalPathStat.mtimeMs
@@ -248,7 +249,7 @@ function removeVerifiedLegacyFile(entry, location, fileSystem = fs) {
     const quarantinedStat = fileSystem.lstatSync(quarantinePath, { bigint: true });
     const identityMatches = !quarantinedStat.isSymbolicLink()
       && quarantinedStat.isFile()
-      && quarantinedStat.dev === entry.stat.dev
+      && sameDevice(quarantinedStat, entry.stat)
       && quarantinedStat.ino === entry.stat.ino;
     if (!identityMatches) {
       const identityError = new Error(

@@ -253,7 +253,13 @@ async function main() {
       ECC_HOOK_INPUT_MAX_BYTES: String(MAX_STDIN)
     },
     cwd: process.cwd(),
-    timeout: 30000
+    // Deliberately below the 30s budget our callers in hooks.json give this
+    // process. When both were 30000 the two could expire together: the caller
+    // SIGKILLed this runner before it could report why, and spawnSync surfaced a
+    // bare `status: null` that reads as "the hook failed" rather than "the hook
+    // ran out of time". Finishing first lets the branch below emit the real
+    // reason. Any nested budget must stay strictly smaller than its parent's.
+    timeout: 25000
   });
 
   const legacyStdout = sanitizeEcho(resolveLegacySpawnStdout(raw, result));
