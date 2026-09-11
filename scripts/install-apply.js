@@ -172,6 +172,19 @@ async function main() {
       claudeRulesDir: process.env.CLAUDE_RULES_DIR || null,
     });
 
+    if (!options.dryRun) {
+      const { checkProjectInstallTarget } = require('./lib/install/target-safety');
+      const verdict = checkProjectInstallTarget(rawPlan && rawPlan.targetRoot, process.cwd());
+      if (verdict.kind === 'self-repo') {
+        process.stderr.write(`Error: ${verdict.message}\n`);
+        process.exit(1);
+      }
+      if (verdict.kind === 'untracked-git' && !options.allowUntracked) {
+        process.stderr.write(`Error: ${verdict.message}\n`);
+        process.exit(1);
+      }
+    }
+
     if (options.dryRun) {
       const plan = previewInstallPlan(rawPlan);
       if (options.json) {

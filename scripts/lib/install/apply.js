@@ -373,6 +373,19 @@ function applyInstallPlan(plan, dependencies = {}) {
   const linkIndex = buildLinkIndexForPlan(appliedPlan);
   const hasLegacyMigration = migration.legacyOperationsToRemove.length > 0;
 
+  // Capture the prior install-state before anything overwrites it. The bridge-state
+  // write below replaces the file, so a later read would see the bridge, not the
+  // previous install. Needed to carry `commitAttribution` across reruns.
+  let priorCommitAttribution = null;
+  try {
+    const prior = JSON.parse(fs.readFileSync(plan.installStatePath, 'utf8'));
+    if (prior && prior.commitAttribution) {
+      priorCommitAttribution = prior.commitAttribution;
+    }
+  } catch (error) {
+    if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error;
+  }
+
   if (migration.requiresBridgeState) {
     // Own every operation that may be written during a flat-skill migration
     // before the first copy. A later failure is retryable and uninstall can
@@ -470,11 +483,31 @@ function applyInstallPlan(plan, dependencies = {}) {
       removeLegacyClaudeSkillFiles(migration, plan.targetRoot);
     }
 
+    // Record this side effect in install-state. It is written outside the operations
+    // list, so without a record the uninstaller has no knowledge of it and leaves the
+    // file behind — an install that cannot be fully reversed. `created` distinguishes
+    // "we made this file" (uninstall may delete it) from "we added a key to the user's
+    // existing file" (uninstall must only remove the key).
+    let commitAttribution = null;
     if (shouldSetClaudeCommitAttributionPreference(appliedPlan)) {
-      writeClaudeCommitAttributionPreference(path.join(plan.targetRoot, 'settings.json'));
+      const settingsPath = path.join(plan.targetRoot, 'settings.json');
+      const existedBefore = fs.existsSync(settingsPath);
+      if (writeClaudeCommitAttributionPreference(settingsPath)) {
+        commitAttribution = { settingsPath, created: !existedBefore };
+      } else if (priorCommitAttribution) {
+        // The writer returns false when the preference is already set — the normal
+        // case on a rerun, since our own previous install set it. Carry the prior
+        // record forward: our responsibility for that file has not changed, and
+        // dropping it would make install-state differ between identical runs and
+        // strand the file on uninstall.
+        commitAttribution = priorCommitAttribution;
+      }
     }
 
     finalState = stateWithContentDigests(migration.finalState, appliedPlan);
+    if (commitAttribution) {
+      finalState = { ...finalState, commitAttribution };
+    }
     if (typeof beforeInstallStateWrite === 'function') {
       beforeInstallStateWrite({ plan: appliedPlan, state: finalState });
     }

@@ -2115,6 +2115,45 @@ function uninstallInstalledStates(options = {}) {
         retainedPaths.push(...(outcome.retainedPaths || []));
       }
 
+      // Reverse the commit-attribution side effect recorded by apply.js. Without this
+      // the installer leaves settings.json behind and the uninstall is incomplete.
+      // Only delete a file we created; if the user already had one, strip our key and
+      // leave everything else of theirs intact.
+      const attribution = state && state.commitAttribution;
+      if (attribution && attribution.settingsPath) {
+        try {
+          if (attribution.created) {
+            const removed = removeContainedPath(
+              attribution.settingsPath,
+              record.targetRoot,
+              'uninstall',
+              { force: true }
+            );
+            if (removed) {
+              removedPaths.push(attribution.settingsPath);
+              cleanupTargets.push(removed);
+            }
+          } else {
+            const current = JSON.parse(fs.readFileSync(attribution.settingsPath, 'utf8'));
+            if (current && typeof current === 'object' && !Array.isArray(current)) {
+              delete current.includeCoAuthoredBy;
+              fs.writeFileSync(
+                attribution.settingsPath,
+                `${JSON.stringify(current, null, 2)}\n`,
+                'utf8'
+              );
+              removedPaths.push(`${attribution.settingsPath} (includeCoAuthoredBy)`);
+            }
+          }
+        } catch (error) {
+          if (error.code !== 'ENOENT') {
+            // Settings belong to the user; a malformed or unreadable file is left alone
+            // rather than risking their content.
+            retainedPaths.push(attribution.settingsPath);
+          }
+        }
+      }
+
       if (retainedPaths.length === 0) {
         const removedStatePath = removeContainedPath(
           record.installStatePath,

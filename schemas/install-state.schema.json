@@ -216,6 +216,24 @@
           }
         }
       }
+    },
+    "commitAttribution": {
+      "description": "Records the settings.json commit-attribution side effect so uninstall can reverse it. Written outside the operations list; without this record the file is orphaned on uninstall.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "settingsPath",
+        "created"
+      ],
+      "properties": {
+        "settingsPath": {
+          "type": "string"
+        },
+        "created": {
+          "type": "boolean",
+          "description": "true when the installer created settings.json (uninstall may delete it); false when it added a key to a pre-existing file (uninstall removes only that key)."
+        }
+      }
     }
   }
 }

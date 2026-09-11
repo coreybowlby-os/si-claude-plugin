@@ -75,6 +75,10 @@ function parseInstallArgs(argv) {
       parsed.enableHooks = true;
     } else if (arg === '--no-hooks') {
       parsed.noHooks = true;
+    } else if (arg === '--allow-untracked') {
+      // Proceed with a project install into a git repo whose .gitignore does not
+      // cover .claude/. See scripts/lib/install/target-safety.js.
+      parsed.allowUntracked = true;
     } else if (arg === '--dry-run') {
       parsed.dryRun = true;
     } else if (arg === '--json') {

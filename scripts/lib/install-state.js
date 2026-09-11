@@ -85,8 +85,25 @@ function createFallbackValidator() {
     validateNoAdditionalProperties(
       state,
       '',
-      ['schemaVersion', 'installedAt', 'lastValidatedAt', 'target', 'request', 'resolution', 'source', 'operations']
+      ['schemaVersion', 'installedAt', 'lastValidatedAt', 'target', 'request', 'resolution', 'source', 'operations', 'commitAttribution']
     );
+
+    // Optional. Records the settings.json side effect written outside `operations`,
+    // so uninstall can reverse it instead of orphaning the file.
+    if (state.commitAttribution !== undefined) {
+      const attribution = state.commitAttribution;
+      if (!attribution || typeof attribution !== 'object' || Array.isArray(attribution)) {
+        pushError('/commitAttribution', 'must be object');
+      } else {
+        validateNoAdditionalProperties(attribution, '/commitAttribution', ['settingsPath', 'created']);
+        if (!isNonEmptyString(attribution.settingsPath)) {
+          pushError('/commitAttribution/settingsPath', 'must be non-empty string');
+        }
+        if (typeof attribution.created !== 'boolean') {
+          pushError('/commitAttribution/created', 'must be boolean');
+        }
+      }
+    }
 
     if (state.schemaVersion !== 'ecc.install.v1') {
       pushError('/schemaVersion', 'must equal ecc.install.v1');
