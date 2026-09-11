@@ -65,6 +65,10 @@ function createPlan(createManifestInstallPlan, homeDir) {
     target: 'antigravity',
     moduleIds: ['agents-core'],
     homeDir,
+    // This suite asserts the module-loading boundary and the plan contract, not the
+    // install location. antigravity's project root resolves inside the source repo
+    // when planning from here, which the self-install guard rejects.
+    exemptValidationCodes: ['target-root-inside-repo-root'],
   });
 }
 

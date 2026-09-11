@@ -3,20 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// A project-scope install copies hundreds of files into ./.claude/. The installer
-// derives that location from process.cwd() and previously validated nothing about it,
-// so two harmful targets were both reachable in practice.
-
-const SELF_PACKAGE_NAME = 'si-claude-plugin';
-
-function readJsonIfPresent(filePath) {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    if (error.code === 'ENOENT' || error instanceof SyntaxError) return null;
-    throw error;
-  }
-}
+// Self-install protection is NOT here. `install-targets/registry.js` rejects any
+// target root inside the source repo, for every adapter, via path containment —
+// broader and better placed than a check at one entrypoint. This module covers only
+// the case that guard does not: a project install into somebody else's git repo.
 
 function readTextIfPresent(filePath) {
   try {
@@ -25,16 +15,6 @@ function readTextIfPresent(filePath) {
     if (error.code === 'ENOENT') return '';
     throw error;
   }
-}
-
-/**
- * True when cwd is this plugin's own checkout. Installing there would place a second
- * copy of every skill, agent and command under .claude/, beside the originals they
- * were copied from, making it easy to edit the shadowed copy by mistake.
- */
-function isPluginOwnRepository(cwd) {
-  const pkg = readJsonIfPresent(path.join(cwd, 'package.json'));
-  return Boolean(pkg && pkg.name === SELF_PACKAGE_NAME);
 }
 
 /** True when .gitignore excludes the whole .claude directory. */
@@ -46,36 +26,20 @@ function gitignoreCoversClaudeDir(cwd) {
 }
 
 /**
- * Classify a project-scope install target.
+ * A project install writes hundreds of files into ./.claude/. In a git repo whose
+ * .gitignore does not cover that directory they all land untracked in the working
+ * tree, where they are easy to commit by accident — this plugin's own repo produced
+ * 167 such entries before the check existed.
  *
- * Returns one of:
- *   { kind: 'ok' }
- *   { kind: 'self-repo', message }      — never permitted
- *   { kind: 'untracked-git', message }  — permitted with allowUntracked
+ * Returns { kind: 'ok' } or { kind: 'untracked-git', message }.
  */
 function checkProjectInstallTarget(targetRoot, cwd) {
   if (!targetRoot || !String(targetRoot).includes(`${path.sep}.claude`)) {
     return { kind: 'ok' };
   }
-
-  if (isPluginOwnRepository(cwd)) {
-    return {
-      kind: 'self-repo',
-      message: [
-        'Refusing to install into this plugin\'s own repository.',
-        `  ${cwd}`,
-        '  The source already lives in skills/, agents/ and commands/. Installing here',
-        '  would create a duplicate set under .claude/ that shadows it.',
-        '  Install into the project you want to use the plugin in, or use',
-        '  --target claude for a user-scope install.',
-      ].join('\n'),
-    };
-  }
-
   if (!fs.existsSync(path.join(cwd, '.git')) || gitignoreCoversClaudeDir(cwd)) {
     return { kind: 'ok' };
   }
-
   return {
     kind: 'untracked-git',
     message: [
@@ -90,6 +54,5 @@ function checkProjectInstallTarget(targetRoot, cwd) {
 
 module.exports = {
   checkProjectInstallTarget,
-  isPluginOwnRepository,
   gitignoreCoversClaudeDir,
 };

@@ -3,17 +3,25 @@
  */
 
 const assert = require('assert');
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
 const SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'install-plan.js');
+
+// Planning from the source repo makes project-scoped adapters resolve their target
+// root inside it, which the self-install guard rejects. Real users run the CLI from
+// their own project, so default to a scratch directory outside the repo rather than
+// exempting the guard — that keeps these tests exercising the normal path.
+const DEFAULT_CWD = fs.mkdtempSync(path.join(os.tmpdir(), 'install-plan-cwd-'));
 
 function run(args = [], options = {}) {
   try {
     const stdout = execFileSync('node', [SCRIPT, ...args], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      cwd: options.cwd,
+      cwd: options.cwd || DEFAULT_CWD,
       timeout: 10000,
     });
     return { code: 0, stdout, stderr: '' };
@@ -151,7 +159,10 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('auto-detects planning intent from project ecc-install.json', () => {
-    const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-autodetect');
+    // Outside the source repo: a fixture under tests/fixtures/ would make the
+    // project adapter resolve its target root inside the repo, which the
+    // self-install guard rejects.
+    const configDir = fs.mkdtempSync(path.join(os.tmpdir(), 'install-plan-autodetect-'));
     const configPath = path.join(configDir, 'ecc-install.json');
 
     try {

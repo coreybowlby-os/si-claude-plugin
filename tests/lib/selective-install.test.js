@@ -416,6 +416,10 @@ function runTests() {
     const plan = resolveInstallPlan({
       includeComponentIds: ['capability:orchestration'],
       target: 'cursor',
+      // This case is about module compatibility filtering, not install location.
+      // Run from the source repo, cursor's project root resolves inside it, which
+      // the self-install guard rejects; exempt it the way the guard's own tests do.
+      exemptValidationCodes: ['target-root-inside-repo-root'],
     });
     // orchestration module only supports claude, codex, opencode
     assert.ok(!plan.selectedModuleIds.includes('orchestration'),

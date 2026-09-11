@@ -260,6 +260,12 @@ function main() {
       includeComponentIds: request.includeComponentIds,
       excludeComponentIds: request.excludeComponentIds,
       target: request.target,
+      // install-apply.js passes this; install-plan.js did not, so project-scoped
+      // adapters resolved their target root against the source repo instead of the
+      // user's directory. Plan and apply therefore reported different destinations
+      // for the same arguments. The self-install guard surfaced it by rejecting every
+      // project-scoped plan.
+      projectRoot: process.cwd(),
     });
 
     if (options.json) {

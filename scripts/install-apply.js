@@ -173,12 +173,10 @@ async function main() {
     });
 
     if (!options.dryRun) {
+      // Self-install is rejected earlier, in install-targets/registry.js, for every
+      // adapter. This only covers the untracked-git case that guard does not.
       const { checkProjectInstallTarget } = require('./lib/install/target-safety');
       const verdict = checkProjectInstallTarget(rawPlan && rawPlan.targetRoot, process.cwd());
-      if (verdict.kind === 'self-repo') {
-        process.stderr.write(`Error: ${verdict.message}\n`);
-        process.exit(1);
-      }
       if (verdict.kind === 'untracked-git' && !options.allowUntracked) {
         process.stderr.write(`Error: ${verdict.message}\n`);
         process.exit(1);
