@@ -148,7 +148,12 @@ function prepareLocalPackedProject(packageManager) {
   const projectDirectory = path.join(fixture.directory, 'local-project');
   const modulesDirectory = path.join(projectDirectory, 'node_modules');
   const extractedDirectory = path.join(modulesDirectory, 'package');
-  const packageDirectory = path.join(modulesDirectory, 'ecc-universal');
+  // npm exec resolves --package=<path> to the manifest's name and then looks
+  // for node_modules/<name>. If the directory does not match the package name
+  // npm decides the package is not installed and tries to install it, which
+  // fails under --offline. Derive the directory from the manifest so a package
+  // rename can never silently reintroduce that mismatch.
+  const packageDirectory = path.join(modulesDirectory, packageJson.name);
   const binDirectory = path.join(modulesDirectory, '.bin');
 
   fs.mkdirSync(projectDirectory, { recursive: true });
@@ -185,11 +190,11 @@ function prepareLocalPackedProject(packageManager) {
       const target = packageJson.bin[executable].replace(/\//g, '\\');
       fs.writeFileSync(
         cmdPath,
-        `@ECHO off\r\nnode "%~dp0\\..\\ecc-universal\\${target}" %*\r\n`
+        `@ECHO off\r\nnode "%~dp0\\..\\${packageJson.name}\\${target}" %*\r\n`
       );
     } else {
       fs.symlinkSync(
-        path.join('..', 'ecc-universal', packageJson.bin[executable]),
+        path.join('..', packageJson.name, packageJson.bin[executable]),
         path.join(binDirectory, executable)
       );
     }
@@ -214,7 +219,7 @@ function getRunnerInvocation(packageManager, executable, args) {
           args: [
             'exec',
             '--offline',
-            '--package=./node_modules/ecc-universal',
+            `--package=./node_modules/${packageJson.name}`,
             '--',
             executable,
             ...args,
@@ -339,7 +344,7 @@ test('packed si-claude-plugin launches the guided multi-harness help', () => {
 test('packed sicp alias launches the primary dispatcher', () => {
   const result = launchPackedBinary('sicp', ['--help']);
   assert.match(result.stdout, /ECC selective-install CLI/);
-  assert.match(result.stdout, /ecc install --guided/);
+  assert.match(result.stdout, /sicp install --guided/);
 });
 
 if (packedFixture) {

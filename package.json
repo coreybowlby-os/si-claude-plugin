@@ -128,6 +128,7 @@
     "scripts/orchestration-status.js",
     "scripts/plan-canvas.js",
     "scripts/platform-audit.js",
+    "scripts/post-install.js",
     "scripts/preview-pack-smoke.js",
     "scripts/release-approval-gate.js",
     "scripts/release-video-suite.js",

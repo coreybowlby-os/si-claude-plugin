@@ -58,6 +58,11 @@ function buildExpectedPublishPaths(repoRoot) {
     "scripts/install-apply.js",
     "scripts/install-guided.js",
     "scripts/install-plan.js",
+    // package.json declares `postinstall: node scripts/post-install.js`. npm
+    // runs it on every consumer install, but nothing requires it, so the module
+    // graph cannot discover it. Omitting it from the tarball makes `npm install`
+    // of the published package fail with MODULE_NOT_FOUND.
+    "scripts/post-install.js",
     "scripts/ito.js",
     "scripts/list-installed.js",
     "scripts/loop-status.js",
@@ -210,6 +215,22 @@ function main() {
           packagedPaths.has(requiredPath),
           `npm pack should include ${requiredPath}`
         )
+      }
+
+      // Derived rather than listed: npm runs these on the consumer's machine at
+      // install time, so a target missing from the tarball breaks `npm install`
+      // of the published package outright. A hand-maintained list is what let
+      // scripts/post-install.js ship unpacked, so compute the set instead.
+      for (const lifecycle of ["preinstall", "install", "postinstall", "prepare"]) {
+        const command = packageJson.scripts?.[lifecycle]
+        if (!command) continue
+        for (const match of command.matchAll(/(?:scripts|bin)\/[\w./-]+\.(?:js|mjs|cjs|sh)/g)) {
+          assert.ok(
+            packagedPaths.has(match[0]),
+            `package.json "${lifecycle}" runs ${match[0]}, but npm pack excludes it — ` +
+              `every consumer install would fail with MODULE_NOT_FOUND`
+          )
+        }
       }
 
       for (const excludedPath of [

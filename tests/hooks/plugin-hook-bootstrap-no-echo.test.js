@@ -61,6 +61,15 @@ function test(name, fn) {
   }
 }
 
+// spawnSync reports a timeout, a signal kill and a failed spawn all as
+// `status: null`, so a bare "null !== 0" says nothing about which occurred.
+// Surface error.code and signal in the assertion message instead.
+function describeSpawn(result) {
+  if (result.status === 0) return '';
+  return ` [status=${result.status} signal=${result.signal || 'none'}` +
+    ` error=${(result.error && result.error.code) || 'none'}]`;
+}
+
 function runBootstrap(args, input, env) {
   return spawnSync('node', [bootstrap, ...args], {
     input,
@@ -116,7 +125,7 @@ if (
     const result = runBootstrap([], payload, {
       CLAUDE_PLUGIN_ROOT: repoRoot
     });
-    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
     assert.strictEqual(result.stdout, '', 'missing-args path must NOT echo raw input (was ' + result.stdout.length + ' bytes)');
   })
 )
@@ -130,7 +139,7 @@ if (
     const result = runBootstrap(['bogus-mode', path.join(FIXTURE_DIR, 'noop-hook-fixture.js')], payload, {
       CLAUDE_PLUGIN_ROOT: repoRoot
     });
-    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
     assert.strictEqual(result.stdout, '', 'unknown-mode path must NOT echo raw input (was ' + result.stdout.length + ' bytes)');
     assert.match(result.stderr, /unknown bootstrap mode/);
   })
@@ -153,7 +162,7 @@ if (
       const result = runBootstrap(['node', path.basename(noopHookPath)], payload, {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0);
+      assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
       assert.strictEqual(result.stdout, '', 'silent hook must NOT echo raw input (was ' + result.stdout.length + ' bytes)');
     } finally {
       fs.unlinkSync(noopHookPath);
@@ -177,7 +186,7 @@ if (
     const result = runBootstrap([], payload, {
       CLAUDE_PLUGIN_ROOT: repoRoot
     });
-    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
     assert.ok(!result.stdout.includes(marker), 'tool_response contents must not appear in stdout');
   })
 )
@@ -200,7 +209,7 @@ if (
       const result = runBootstrap(['node', path.basename(fixturePath)], payload, {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0);
+      assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
       assert.ok(result.stdout.length > 0, 'hook that produced output should have non-empty stdout');
       // Must not contain the raw input — only the hook's own output
       assert.ok(!result.stdout.includes('tool_response'), 'when hook outputs its own stdout, raw input must not also be echoed');
@@ -230,7 +239,7 @@ if (
       const result = runBootstrap(['node', path.basename(fixturePath)], payload, {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0);
+      assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
       assert.strictEqual(result.stdout, '', 'hook that returned raw input as stdout must be suppressed (was ' + result.stdout.length + ' bytes)');
       assert.match(result.stderr, /returned raw input as stdout/, 'stderr should explain the suppression');
     } finally {
@@ -393,7 +402,7 @@ if (
       const result = runBootstrap(['node', path.basename(fixturePath)], payload, {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0);
+      assert.strictEqual(result.status, 0, 'bootstrap should exit 0' + describeSpawn(result));
       // Should contain the hook's own output, not the raw input
       assert.ok(result.stdout.includes('additionalContext'), 'hook own output must be preserved');
       assert.ok(!result.stdout.includes('tool_response'), 'raw input must NOT be echoed when hook has its own output');
