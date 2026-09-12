@@ -1,8 +1,6 @@
 # The Shorthand Guide to SI Claude Plugin
 
-
 ---
-
 
 Here's my complete setup after 10 months of daily use: skills, hooks, subagents, MCPs, plugins, and what actually works.
 
@@ -425,4 +423,3 @@ dev:~ ctx:65% Opus 4.5 19:52
 **Note:** This is a subset of detail. See the [Longform Guide](./the-longform-guide.md) for advanced patterns.
 
 ---
-

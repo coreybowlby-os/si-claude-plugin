@@ -9,9 +9,13 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { spawnSync } = require('child_process');
 
-const PACKAGE_NAME = 'ecc-universal';
+const PACKAGE_NAME = require('../../package.json').name;
 const HASH_PATTERN = /^[a-f0-9]{64}$/i;
-const PACKAGE_PATH_PATTERN = /^release-artifacts\/ecc-universal-[0-9A-Za-z.+-]+\.tgz$/;
+// Derived from the manifest so renaming the package cannot leave this matcher
+// pointing at the old tarball name.
+const PACKAGE_PATH_PATTERN = new RegExp(
+  `^release-artifacts/${PACKAGE_NAME.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-[0-9A-Za-z.+-]+\\.tgz$`
+);
 
 function parseEnvironment(environment = process.env, cwd = process.cwd()) {
   const packageValue = environment.ECC_RELEASE_PACKAGE;
@@ -233,8 +237,8 @@ function fakeClaudeProviderMain() {
     writeState({
       ...state,
       marketplaces: [{
-        name: 'ecc',
-        repo: 'affaan-m/ECC',
+        name: 'SI-Claude-Plugin',
+        repo: 'coreybowlby-os/si-claude-plugin',
         scope: 'user',
         source: 'github',
       }],
@@ -244,18 +248,18 @@ function fakeClaudeProviderMain() {
   if (joined === 'plugin marketplace update ecc') {
     return;
   }
-  if (joined.startsWith('plugin install ecc@ecc ')) {
+  if (joined.startsWith('plugin install SI-Claude-Plugin@SI-Claude-Plugin ')) {
     writeState({
       ...state,
-      plugins: [{ enabled: true, id: 'ecc@ecc', scope: 'user', version: '2.2.0' }],
+      plugins: [{ enabled: true, id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', version: '2.2.0' }],
     });
     return;
   }
-  if (joined.startsWith('plugin update ecc@ecc ')) {
+  if (joined.startsWith('plugin update SI-Claude-Plugin@SI-Claude-Plugin ')) {
     writeState({
       ...state,
       plugins: (state.plugins || []).map(plugin => (
-        plugin.id === 'ecc@ecc' && plugin.scope === 'user'
+        plugin.id === 'SI-Claude-Plugin@SI-Claude-Plugin' && plugin.scope === 'user'
           ? { ...plugin, enabled: true, version: '2.2.0' }
           : plugin
       )),
@@ -450,13 +454,13 @@ function runLifecycle(options) {
       });
     };
     const runCli = (args, commandOptions = {}) => runPublicCli(
-      ['ecc', ...args],
+      ['sicp', ...args],
       commandOptions
     );
 
-    const setupHelp = runPublicCli(['ecc-universal', 'setup', '--help']);
+    const setupHelp = runPublicCli(['si-claude-plugin', 'setup', '--help']);
     assert.match(setupHelp.stdout, /ECC guided setup/);
-    assert.match(setupHelp.stdout, /ecc setup --mode claude-plugin/);
+    assert.match(setupHelp.stdout, /sicp setup --mode claude-plugin/);
 
     for (const credentialName of [
       'ANTHROPIC_API_KEY',
@@ -494,7 +498,7 @@ function runLifecycle(options) {
       Path: `${fakeClaudeBinDir}${path.delimiter}${environment.Path || environment.PATH || ''}`,
     };
     const claudeSetupArgs = [
-      'ecc-universal', 'setup',
+      'si-claude-plugin', 'setup',
       '--mode', 'claude-plugin',
       '--scope', 'user',
     ];
@@ -554,10 +558,10 @@ function runLifecycle(options) {
 
     const fakeClaudeState = JSON.parse(fs.readFileSync(fakeClaudeStatePath, 'utf8'));
     assert.deepStrictEqual(fakeClaudeState.plugins, [
-      { enabled: true, id: 'ecc@ecc', scope: 'user', version: '2.2.0' },
+      { enabled: true, id: 'SI-Claude-Plugin@SI-Claude-Plugin', scope: 'user', version: '2.2.0' },
     ]);
     assert.deepStrictEqual(fakeClaudeState.marketplaces, [
-      { name: 'ecc', repo: 'affaan-m/ECC', scope: 'user', source: 'github' },
+      { name: 'SI-Claude-Plugin', repo: 'coreybowlby-os/si-claude-plugin', scope: 'user', source: 'github' },
     ]);
     const fakeClaudeCalls = readJsonLines(fakeClaudeCallsPath).map(args => args.join(' '));
     assert.ok(
@@ -569,18 +573,18 @@ function runLifecycle(options) {
       'repeat packed Claude setup must update the official marketplace'
     );
     assert.ok(
-      fakeClaudeCalls.some(call => call.startsWith('plugin install ecc@ecc ')),
-      'initial packed Claude setup must install ecc@ecc'
+      fakeClaudeCalls.some(call => call.startsWith('plugin install SI-Claude-Plugin@SI-Claude-Plugin ')),
+      'initial packed Claude setup must install SI-Claude-Plugin@SI-Claude-Plugin'
     );
     assert.ok(
-      fakeClaudeCalls.includes('plugin update ecc@ecc --scope user'),
-      'repeat packed Claude setup must update ecc@ecc'
+      fakeClaudeCalls.includes('plugin update SI-Claude-Plugin@SI-Claude-Plugin --scope user'),
+      'repeat packed Claude setup must update SI-Claude-Plugin@SI-Claude-Plugin'
     );
     const claudeSettings = JSON.parse(
       fs.readFileSync(path.join(claudeConfigDir, 'settings.json'), 'utf8')
     );
     assert.strictEqual(
-      claudeSettings.pluginConfigs['ecc@ecc'].options.hook_profile,
+      claudeSettings.pluginConfigs['SI-Claude-Plugin@SI-Claude-Plugin'].options.hook_profile,
       'strict'
     );
     assert.strictEqual(
@@ -602,7 +606,7 @@ function runLifecycle(options) {
     fs.writeFileSync(guidedKimiSentinel, 'keep this Kimi user file\n', 'utf8');
     const guidedKimiBeforeDryRun = fs.readdirSync(guidedKimiRoot).sort();
     const guidedKimiInstallArgs = [
-      'ecc-universal', 'install', '--guided',
+      'si-claude-plugin', 'install', '--guided',
       '--harness', 'kimi',
       '--profile', 'core',
     ];
@@ -662,14 +666,14 @@ function runLifecycle(options) {
     );
 
     const guidedKimiDoctor = parseJsonOutput(
-      runPublicCli(['ecc', 'doctor', '--target', 'kimi', '--json']),
+      runPublicCli(['sicp', 'doctor', '--target', 'kimi', '--json']),
       'guided Kimi doctor'
     );
     assert.strictEqual(guidedKimiDoctor.summary.errorCount, 0);
     assert.strictEqual(guidedKimiDoctor.summary.warningCount, 0);
 
     const guidedKimiUninstall = parseJsonOutput(
-      runPublicCli(['ecc', 'uninstall', '--target', 'kimi', '--json']),
+      runPublicCli(['sicp', 'uninstall', '--target', 'kimi', '--json']),
       'guided Kimi uninstall'
     );
     assert.strictEqual(guidedKimiUninstall.summary.errorCount, 0);

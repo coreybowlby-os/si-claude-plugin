@@ -15,6 +15,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # This job only reads history and comments through the API token that
+          # actions/github-script supplies, so the checkout never needs git
+          # credentials left on disk.
+          persist-credentials: false
 
       - name: Detect material and README changes
         id: detect

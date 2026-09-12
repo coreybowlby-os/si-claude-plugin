@@ -24,7 +24,6 @@ E.g., my agent is connected via a gateway layer to WhatsApp. An adversary knows 
 
 Even this Good Rudi jailbreak clips people laugh at (its funny ngl) point at the same class of problem: repeated attempts, eventually a sensitive reveal, humorous on the surface but the underlying failure is serious - I mean the thing is meant for kids after all, extrapolate a bit from this and you'll quickly come to the conclusion on why this could be catastrophic. The same pattern goes a lot further when the model is attached to real tools and real permissions.
 
-
 WhatsApp is just one example. Email attachments are a massive vector. An attacker sends a PDF with an embedded prompt; your agent reads the attachment as part of the job, and now text that should have stayed helpful data has become malicious instruction. Screenshots and scans are just as bad if you are doing OCR on them. Anthropic's own prompt injection work explicitly calls out hidden text and manipulated images as real attack material.
 
 GitHub PR reviews are another target. Malicious instructions can live in hidden diff comments, issue bodies, linked docs, tool output, even "helpful" review context. If you have upstream bots set up (code review agents, Greptile, Cubic, etc.) or use downstream local automated approaches (OpenClaw, Claude Code, Codex, Copilot coding agent, whatever it is); with low oversight and high autonomy in reviewing PRs, you are increasing your surface area risk of getting prompt injected AND affecting every user downstream of your repo with the exploit.

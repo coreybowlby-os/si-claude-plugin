@@ -1,8 +1,6 @@
 # Claude Code'un Her Şeyine Dair Kısa Kılavuz
 
-
 ---
-
 
 İşte 10 aylık günlük kullanım sonrası eksiksiz kurulumum: skill'ler, hook'lar, subagent'lar, MCP'ler, plugin'ler ve gerçekten işe yarayanlar.
 
@@ -425,4 +423,3 @@ dev:~ ctx:65% Opus 4.5 19:52
 **Not:** Bu bir detay alt kümesidir. Gelişmiş desenler için [Longform Kılavuzu](./the-longform-guide.md)'na bakın.
 
 ---
-

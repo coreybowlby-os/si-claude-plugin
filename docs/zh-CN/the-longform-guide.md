@@ -1,6 +1,5 @@
 # 关于 Claude Code 的完整长篇指南
 
-
 ***
 
 > **前提**：本指南建立在 [关于 Claude Code 的简明指南](the-shortform-guide.md) 之上。如果你还没有设置技能、钩子、子代理、MCP 和插件，请先阅读该指南。

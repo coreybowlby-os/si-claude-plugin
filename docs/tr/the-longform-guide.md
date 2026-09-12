@@ -1,6 +1,5 @@
 # Claude Code'un Her Şeyine Dair Uzun Kılavuz
 
-
 ---
 
 > **Ön Koşul**: Bu kılavuz [Claude Code'un Her Şeyine Dair Kısa Kılavuz](./the-shortform-guide.md) üzerine kuruludur. Skill'leri, hook'ları, subagent'ları, MCP'leri ve plugin'leri henüz kurmadıysanız önce onu okuyun.

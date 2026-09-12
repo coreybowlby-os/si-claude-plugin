@@ -1,6 +1,5 @@
 # The Longform Guide to SI Claude Plugin
 
-
 ---
 
 > **Prerequisite**: This guide builds on [The Shorthand Guide to SI Claude Plugin](./the-shortform-guide.md). Read that first if you haven't set up skills, hooks, subagents, MCPs, and plugins.
