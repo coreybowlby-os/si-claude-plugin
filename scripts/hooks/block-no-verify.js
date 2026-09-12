@@ -42,6 +42,29 @@ const VALID_BEFORE_GIT = ' \t\n\r;&|$`(<{!"\']/.~\\';
 // case-insensitive."
 const GIT_CONFIG_KEY_PREFIX = 'core.hookspath=';
 
+// Git global flags that consume the following token as their argument, so that
+// argument is not mistaken for the subcommand.
+const GIT_FLAGS_TAKING_ARG = new Set([
+  '-c', '-C', '--work-tree', '--git-dir', '--namespace', '--super-prefix',
+]);
+
+/**
+ * True when every token is a flag or a flag's argument — i.e. nothing between
+ * `git` and the candidate subcommand is itself a subcommand.
+ *
+ * @param {string[]} tokens
+ * @returns {boolean}
+ */
+function isOnlyFlagsAndArgs(tokens) {
+  let expectFlagArg = false;
+  for (const t of tokens) {
+    if (expectFlagArg) { expectFlagArg = false; continue; }
+    if (!t.startsWith('-')) return false;
+    if (GIT_FLAGS_TAKING_ARG.has(t)) expectFlagArg = true;
+  }
+  return true;
+}
+
 const COMMIT_OPTIONS_WITH_VALUE = new Set([
   '-m',
   '--message',
@@ -348,22 +371,7 @@ function detectGitCommand(input, start = 0) {
         const tokens = gap.trim().split(/\s+/).filter(Boolean);
         // Every token before the candidate must be a flag or a flag argument.
         // Git global flags like -c take a value argument (e.g. -c key=value).
-        let onlyFlagsAndArgs = true;
-        let expectFlagArg = false;
-        for (const t of tokens) {
-          if (expectFlagArg) { expectFlagArg = false; continue; }
-          if (t.startsWith('-')) {
-            // -c is a git global flag that takes the next token as its argument
-            if (t === '-c' || t === '-C' || t === '--work-tree' || t === '--git-dir' ||
-                t === '--namespace' || t === '--super-prefix') {
-              expectFlagArg = true;
-            }
-            continue;
-          }
-          onlyFlagsAndArgs = false;
-          break;
-        }
-        if (!onlyFlagsAndArgs) { searchPos = cmdIdx + 1; continue; }
+        if (!isOnlyFlagsAndArgs(tokens)) { searchPos = cmdIdx + 1; continue; }
 
         if (cmdIdx < bestIdx) {
           bestIdx = cmdIdx;

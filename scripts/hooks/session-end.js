@@ -25,6 +25,25 @@ const SESSION_SEPARATOR = '\n---\n';
  * - Tools used
  * - Files modified
  */
+/**
+ * Record one assistant content block into the running session tallies.
+ * Non-tool_use blocks are ignored.
+ *
+ * @param {object} block a Claude Code JSONL assistant content block
+ * @param {Set<string>} toolsUsed
+ * @param {Set<string>} filesModified
+ */
+function recordToolUse(block, toolsUsed, filesModified) {
+  if (block.type !== 'tool_use') return;
+  const toolName = block.name || '';
+  if (toolName) toolsUsed.add(toolName);
+
+  const filePath = block.input?.file_path || '';
+  if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
+    filesModified.add(filePath);
+  }
+}
+
 function extractSessionSummary(transcriptPath) {
   const content = readFile(transcriptPath);
   if (!content) return null;
@@ -71,15 +90,7 @@ function extractSessionSummary(transcriptPath) {
       // Extract tool uses from assistant message content blocks (Claude Code JSONL format)
       if (entry.type === 'assistant' && Array.isArray(entry.message?.content)) {
         for (const block of entry.message.content) {
-          if (block.type === 'tool_use') {
-            const toolName = block.name || '';
-            if (toolName) toolsUsed.add(toolName);
-
-            const filePath = block.input?.file_path || '';
-            if (filePath && (toolName === 'Edit' || toolName === 'Write')) {
-              filesModified.add(filePath);
-            }
-          }
+          recordToolUse(block, toolsUsed, filesModified);
         }
       }
     } catch {

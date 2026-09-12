@@ -203,14 +203,12 @@ function extractSubshellGroups(input) {
           bodyInSingle = !bodyInSingle;
         } else if (inner === '"' && !bodyInSingle && innerPrev !== '\\') {
           bodyInDouble = !bodyInDouble;
-        } else if (!bodyInSingle && !bodyInDouble) {
-          if (inner === '(') {
-            depth += 1;
-          } else if (inner === ')') {
-            depth -= 1;
-            if (depth === 0) {
-              break;
-            }
+        } else if (!bodyInSingle && !bodyInDouble && inner === '(') {
+          depth += 1;
+        } else if (!bodyInSingle && !bodyInDouble && inner === ')') {
+          depth -= 1;
+          if (depth === 0) {
+            break;
           }
         }
         body += inner;
@@ -247,6 +245,72 @@ function extractSubshellGroups(input) {
  * @param {string} input
  * @returns {string[]}
  */
+/**
+ * Consume a balanced `(...)` span, starting just past the opening paren.
+ *
+ * Quote state is tracked so a `)` inside quotes does not close the span, and a
+ * backslash escapes the next character outside single quotes. `$(...)` and a
+ * plain `(...)` subshell differ only in how many characters the caller has
+ * already consumed, so both share this scanner.
+ *
+ * @param {string} source
+ * @param {number} start index of the first character inside the parens
+ * @returns {{ text: string, next: number }} consumed text and the index past it
+ */
+/**
+ * Consume a backtick span, starting just past the opening backtick, through
+ * the closing backtick (or end of input if it is unterminated). A backslash
+ * escapes the next character so an escaped backtick does not close the span.
+ *
+ * @param {string} source
+ * @param {number} start index of the first character inside the backticks
+ * @returns {{ text: string, next: number }} consumed text and the index past it
+ */
+function scanBacktickSpan(source, start) {
+  let text = '';
+  let i = start;
+  while (i < source.length && source[i] !== '`') {
+    if (source[i] === '\\' && i + 1 < source.length) {
+      text += source[i] + source[i + 1];
+      i += 2;
+      continue;
+    }
+    text += source[i];
+    i += 1;
+  }
+  if (i < source.length) {
+    text += source[i];
+    i += 1;
+  }
+  return { text, next: i };
+}
+
+function scanBalancedParens(source, start) {
+  let depth = 1;
+  let inSingle = false;
+  let inDouble = false;
+  let text = '';
+  let i = start;
+  while (i < source.length && depth > 0) {
+    const c = source[i];
+    const p = source[i - 1];
+    text += c;
+    if (c === '\\' && !inSingle && i + 1 < source.length) {
+      text += source[i + 1];
+      i += 2;
+      continue;
+    }
+    if (c === "'" && !inDouble && p !== '\\') inSingle = !inSingle;
+    else if (c === '"' && !inSingle && p !== '\\') inDouble = !inDouble;
+    else if (!inSingle && !inDouble) {
+      if (c === '(') depth += 1;
+      else if (c === ')') depth -= 1;
+    }
+    i += 1;
+  }
+  return { text, next: i };
+}
+
 function extractBraceGroups(input) {
   const source = String(input || '');
   const groups = [];
@@ -385,72 +449,25 @@ function extractBraceGroups(input) {
         // substitution body must not close the enclosing brace group.
         if (inner === '$' && source[i + 1] === '(') {
           body += inner + source[i + 1];
-          let subDepth = 1;
-          let subInSingle = false;
-          let subInDouble = false;
-          i += 2;
-          while (i < source.length && subDepth > 0) {
-            const c = source[i];
-            const p = source[i - 1];
-            body += c;
-            if (c === '\\' && !subInSingle && i + 1 < source.length) {
-              body += source[i + 1];
-              i += 2;
-              continue;
-            }
-            if (c === "'" && !subInDouble && p !== '\\') subInSingle = !subInSingle;
-            else if (c === '"' && !subInSingle && p !== '\\') subInDouble = !subInDouble;
-            else if (!subInSingle && !subInDouble) {
-              if (c === '(') subDepth += 1;
-              else if (c === ')') subDepth -= 1;
-            }
-            i += 1;
-          }
+          const span = scanBalancedParens(source, i + 2);
+          body += span.text;
+          i = span.next;
           continue;
         }
         // Skip backtick spans for the same reason.
         if (inner === '`') {
           body += inner;
-          i += 1;
-          while (i < source.length && source[i] !== '`') {
-            if (source[i] === '\\' && i + 1 < source.length) {
-              body += source[i] + source[i + 1];
-              i += 2;
-              continue;
-            }
-            body += source[i];
-            i += 1;
-          }
-          if (i < source.length) {
-            body += source[i];
-            i += 1;
-          }
+          const span = scanBacktickSpan(source, i + 1);
+          body += span.text;
+          i = span.next;
           continue;
         }
         // Skip plain (...) subshell spans for the same reason.
         if (inner === '(') {
           body += inner;
-          let subDepth = 1;
-          let subInSingle = false;
-          let subInDouble = false;
-          i += 1;
-          while (i < source.length && subDepth > 0) {
-            const c = source[i];
-            const p = source[i - 1];
-            body += c;
-            if (c === '\\' && !subInSingle && i + 1 < source.length) {
-              body += source[i + 1];
-              i += 2;
-              continue;
-            }
-            if (c === "'" && !subInDouble && p !== '\\') subInSingle = !subInSingle;
-            else if (c === '"' && !subInSingle && p !== '\\') subInDouble = !subInDouble;
-            else if (!subInSingle && !subInDouble) {
-              if (c === '(') subDepth += 1;
-              else if (c === ')') subDepth -= 1;
-            }
-            i += 1;
-          }
+          const span = scanBalancedParens(source, i + 1);
+          body += span.text;
+          i = span.next;
           continue;
         }
         if (inner === '{' && /\s/.test(source[i + 1] || '')) {

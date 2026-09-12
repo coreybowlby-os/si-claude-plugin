@@ -47,6 +47,22 @@ function isNonEmptyStringArray(value) {
  * @param {string} label - Label for error messages (e.g., "PreToolUse[0].hooks[1]")
  * @returns {boolean} true if errors were found
  */
+/**
+ * Validate every hook entry in a matcher, reporting all failures rather than
+ * stopping at the first.
+ *
+ * @param {object[]} entries
+ * @param {string} label prefix for error messages, e.g. "PostToolUse[0].hooks"
+ * @returns {boolean} true when at least one entry failed
+ */
+function validateHookEntries(entries, label) {
+  let failed = false;
+  for (let j = 0; j < entries.length; j++) {
+    if (validateHookEntry(entries[j], `${label}[${j}]`)) failed = true;
+  }
+  return failed;
+}
+
 function validateHookEntry(hook, label) {
   let hasErrors = false;
 
@@ -189,13 +205,8 @@ function validateHooks() {
         if (!matcher.hooks || !Array.isArray(matcher.hooks)) {
           console.error(`ERROR: ${eventType}[${i}] missing 'hooks' array`);
           hasErrors = true;
-        } else {
-          // Validate each hook entry
-          for (let j = 0; j < matcher.hooks.length; j++) {
-            if (validateHookEntry(matcher.hooks[j], `${eventType}[${i}].hooks[${j}]`)) {
-              hasErrors = true;
-            }
-          }
+        } else if (validateHookEntries(matcher.hooks, `${eventType}[${i}].hooks`)) {
+          hasErrors = true;
         }
         totalMatchers++;
       }
