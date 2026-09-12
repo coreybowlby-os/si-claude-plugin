@@ -702,7 +702,7 @@ test('claude plugin.json advertised counts match the repository', () => {
   };
   for (const [noun, actual] of Object.entries(counts)) {
     const word = noun === 'commands' ? 'legacy command shims' : noun;
-    const m = claudePlugin.description.match(new RegExp('(\d+) ' + word));
+    const m = claudePlugin.description.match(new RegExp('(\\d+) ' + word));
     if (!m) continue;
     assert.strictEqual(Number(m[1]), actual,
       'plugin.json description claims ' + m[1] + ' ' + noun + ', repository has ' + actual);

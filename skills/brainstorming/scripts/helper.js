@@ -1,3 +1,6 @@
+/* global window, document */
+// Served to the browser by server.cjs, so the DOM globals are legitimately
+// present at runtime even though the repo lints as a Node project.
 (function() {
   const WS_URL = 'ws://' + window.location.host;
   let ws = null;
