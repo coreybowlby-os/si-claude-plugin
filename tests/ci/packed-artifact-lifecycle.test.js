@@ -8,6 +8,13 @@ const path = require('path');
 
 const lifecycle = require('./packed-artifact-lifecycle');
 
+// parseEnvironment matches the tarball name against the manifest, so these
+// fixtures must be derived the same way rather than hardcoding a package name
+// that a rename would silently invalidate.
+const PACKAGE_NAME = require('../../package.json').name;
+const PACKAGE_FILE = `${PACKAGE_NAME}-2.2.0.tgz`;
+const PACKAGE_REL = `release-artifacts/${PACKAGE_FILE}`;
+
 let passed = 0;
 let failed = 0;
 
@@ -27,13 +34,13 @@ console.log('\n=== Testing packed-artifact lifecycle runner ===\n');
 
 test('resolves package and hash from explicit environment variables', () => {
   const options = lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: 'release-artifacts/ecc-universal-2.2.0.tgz',
+    ECC_RELEASE_PACKAGE: PACKAGE_REL,
     ECC_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace');
 
   assert.strictEqual(
     options.packagePath,
-    path.resolve('/workspace', 'release-artifacts/ecc-universal-2.2.0.tgz')
+    path.resolve('/workspace', PACKAGE_REL)
   );
   assert.strictEqual(options.expectedSha256, 'a'.repeat(64));
 });
@@ -45,15 +52,15 @@ test('rejects missing, malformed, and non-tgz release inputs', () => {
     ECC_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /\.tgz/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: 'release-artifacts/ecc-universal-2.2.0.tgz',
+    ECC_RELEASE_PACKAGE: PACKAGE_REL,
     ECC_RELEASE_SHA256: 'not-a-hash',
   }, '/workspace'), /SHA-256/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: '../release-artifacts/ecc-universal-2.2.0.tgz',
+    ECC_RELEASE_PACKAGE: `../${PACKAGE_REL}`,
     ECC_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /release-artifacts/);
   assert.throws(() => lifecycle.parseEnvironment({
-    ECC_RELEASE_PACKAGE: '/tmp/ecc-universal-2.2.0.tgz',
+    ECC_RELEASE_PACKAGE: `/tmp/${PACKAGE_FILE}`,
     ECC_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /release-artifacts/);
 });

@@ -245,7 +245,7 @@ function fakeClaudeProviderMain() {
     });
     return;
   }
-  if (joined === 'plugin marketplace update ecc') {
+  if (joined === 'plugin marketplace update SI-Claude-Plugin') {
     return;
   }
   if (joined.startsWith('plugin install SI-Claude-Plugin@SI-Claude-Plugin ')) {
@@ -569,7 +569,7 @@ function runLifecycle(options) {
       'initial packed Claude setup must add the official marketplace'
     );
     assert.ok(
-      fakeClaudeCalls.includes('plugin marketplace update ecc'),
+      fakeClaudeCalls.includes('plugin marketplace update SI-Claude-Plugin'),
       'repeat packed Claude setup must update the official marketplace'
     );
     assert.ok(
