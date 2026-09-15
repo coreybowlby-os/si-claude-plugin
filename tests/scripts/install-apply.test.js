@@ -11,7 +11,13 @@ const yaml = require('js-yaml');
 const { applyInstallPlan } = require('../../scripts/lib/install/apply');
 
 const SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'install-apply.js');
-const DEFAULT_INSTALL_APPLY_TIMEOUT_MS = process.platform === 'win32' ? 30000 : 10000;
+// Each case spawns a full install-apply run. Locally on Windows the 40 cases
+// take ~136s, so roughly 3.4s per spawn, but a contended windows-latest runner
+// has exceeded the previous 30s ceiling and reported `spawnSync node ETIMEDOUT`
+// on one lane of twenty-five while the identical code passed on the other
+// twenty-four. Raising the Windows budget keeps a genuine hang failing — just
+// later — while removing a timeout that only ever tracked runner load.
+const DEFAULT_INSTALL_APPLY_TIMEOUT_MS = process.platform === 'win32' ? 60000 : 10000;
 
 function createTempDir(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
