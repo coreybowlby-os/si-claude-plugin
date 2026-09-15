@@ -35,19 +35,39 @@ jobs:
     runs-on: ubuntu-latest
 
     # Gate 1: CI must have passed
-    # Gate 2: Skip version-bump commits (prevents infinite loop when release.sh
+    # Gate 2: The triggering CI run must be a push to this repository. CI also
+    #         runs on pull_request, and the workflow_run `branches` filter above
+    #         matches the *head branch name*, so a fork PR from a branch named
+    #         `main` satisfies it. Without this gate that fork's CI run reaches
+    #         this job, which holds contents:write and runs scripts/release.sh
+    #         from the working tree.
+    # Gate 3: Skip version-bump commits (prevents infinite loop when release.sh
     #         pushes its own "chore: bump plugin version to X.Y.Z" commit)
     if: |
       github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
       !startsWith(github.event.workflow_run.head_commit.message, 'chore: bump plugin version')
 
     steps:
-      - name: Checkout at CI-verified SHA
+      - name: Checkout main
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          # Deliberately not workflow_run.head_sha. That ref is attacker
+          # controlled for a fork PR's CI run, and this job is privileged.
+          # main is the only trusted ref here; the CI-verified SHA is asserted
+          # against it below rather than checked out.
+          #
+          # Checking out main also keeps HEAD attached, which release.sh
+          # requires — it reads `git branch --show-current` and refuses to run
+          # unless that is exactly "main". A head_sha checkout is detached, so
+          # that read returns empty and the release aborts.
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+          # The token above authenticates the fetch but is not left in
+          # .git/config. The push is authorized per-invocation below instead.
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -59,11 +79,37 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      # release.sh ends with `git push origin main "v$VERSION"`. With
+      # persist-credentials disabled there is no stored credential for that
+      # push, so supply one through a helper instead. Only the helper stub is
+      # written to .git/config; the token itself stays in the environment and
+      # is read at push time, rather than sitting on disk as a base64
+      # http.extraheader for the rest of the job.
+      - name: Authorize pushes without persisting credentials
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local credential.helper \
+            '!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f'
+
       - name: Determine version bump
         id: version
         env:
           HEAD_MSG: ${{ github.event.workflow_run.head_commit.message }}
+          VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
+          # Release only the commit CI actually verified. Because main is
+          # checked out rather than the verified SHA, confirm the two still
+          # agree. If main has moved on, stop: that newer commit runs its own
+          # CI and triggers its own release, so nothing is lost by skipping,
+          # whereas releasing here would tag a commit CI never saw.
+          ACTUAL_SHA=$(git rev-parse HEAD)
+          if [ "$ACTUAL_SHA" != "$VERIFIED_SHA" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "main is at $ACTUAL_SHA but CI verified $VERIFIED_SHA — skipping."
+            exit 0
+          fi
+
           # Honour explicit skip
           if echo "$HEAD_MSG" | grep -qiF '[skip release]'; then
             echo "skip=true" >> $GITHUB_OUTPUT
