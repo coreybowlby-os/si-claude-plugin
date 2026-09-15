@@ -263,7 +263,7 @@ if (
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
       assert.strictEqual(Buffer.byteLength(payload.slice(0, 32768), 'utf8'), 64 * 1024);
-      assert.strictEqual(result.status, 0, result.stderr);
+      assert.strictEqual(result.status, 0, result.stderr + describeSpawn(result));
       assert.strictEqual(result.stdout, '', 'a UTF-8 byte prefix of raw input must be suppressed');
       assert.match(result.stderr, /returned raw input as stdout/);
     } finally {
@@ -326,7 +326,7 @@ if (
       const result = runBootstrap(['node', path.basename(fixturePath)], payload, {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0, result.stderr);
+      assert.strictEqual(result.status, 0, result.stderr + describeSpawn(result));
       assert.strictEqual(result.stdout, '', 'classification must occur before UTF-8 decoding');
       assert.match(result.stderr, /returned raw input as stdout/);
     } finally {
@@ -348,7 +348,7 @@ if (process.platform !== 'win32') {
           CLAUDE_PLUGIN_ROOT: FIXTURE_DIR,
           BASH: fs.existsSync('/bin/sh') ? '/bin/sh' : 'sh'
         });
-        assert.strictEqual(result.status, 0, result.stderr);
+        assert.strictEqual(result.status, 0, result.stderr + describeSpawn(result));
         assert.strictEqual(result.stdout, '', 'shell raw-input passthrough must be suppressed');
         assert.match(result.stderr, /returned raw input as stdout/);
       } finally {
@@ -370,7 +370,7 @@ if (
       const result = runHookEntry(['node', path.basename(fixturePath)], JSON.stringify(payload), {
         CLAUDE_PLUGIN_ROOT: FIXTURE_DIR
       });
-      assert.strictEqual(result.status, 0, result.stderr);
+      assert.strictEqual(result.status, 0, result.stderr + describeSpawn(result));
       assert.strictEqual(result.stdout, '', 'no-op hook entry must express no replacement result');
 
       // Claude's hook-entry contract treats empty stdout as no hook override;

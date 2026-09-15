@@ -30,6 +30,16 @@ const hooksConfig = JSON.parse(
 
 const MAX_STDIN = 1024 * 1024;
 
+// spawnSync reports a timeout, a signal kill and a failed spawn all as
+// `status: null`. The existing messages here print status and stderr, but both
+// are empty in that case, leaving a bare "null !== 0" that names no cause.
+// Append the fields that actually distinguish them.
+function describeSpawn(result) {
+  if (result.status === 0) return '';
+  return ` [status=${result.status} signal=${result.signal || 'none'}` +
+    ` error=${(result.error && result.error.code) || 'none'}]`;
+}
+
 const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-stdout-')); // non-git cwd
 const dataHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-stop-data-'));
 
@@ -114,7 +124,7 @@ function runRegisteredStopHook(entry, input, envOverrides = {}) {
 }
 
 function assertStdoutContract(result, label) {
-  assert.strictEqual(result.status, 0, `${label}: expected exit 0, got ${result.status}: ${result.stderr}`);
+  assert.strictEqual(result.status, 0, `${label}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`);
   if (result.stdout.length > 0) {
     try {
       JSON.parse(result.stdout);
@@ -165,7 +175,7 @@ for (const entry of hooksConfig.hooks.Stop) {
       assert.strictEqual(
         result.status,
         0,
-        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}`
+        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`
       );
       assert.ok(
         result.stdout === realisticPayload,
@@ -188,7 +198,7 @@ if (
       ECC_DISABLED_HOOKS: '',
       ECC_DRY_RUN: '1'
     });
-    assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}`);
+    assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`);
     assert.ok(
       result.stdout === realisticPayload,
       `dry-run wrapper must echo ${realisticPayload.length} characters uncut (got ${result.stdout.length})`
@@ -213,7 +223,7 @@ for (const entry of hooksConfig.hooks.Stop) {
       assert.strictEqual(
         result.status,
         0,
-        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}`
+        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`
       );
       assert.ok(
         result.stdout === multibytePayload,
@@ -248,7 +258,7 @@ if (
       ECC_DISABLED_HOOKS: '',
       ECC_DRY_RUN: '1'
     });
-    assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}`);
+    assert.strictEqual(result.status, 0, `expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`);
     assert.strictEqual(
       result.stdout.length,
       0,
@@ -266,7 +276,7 @@ for (const entry of hooksConfig.hooks.Stop) {
       assert.strictEqual(
         result.status,
         0,
-        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}`
+        `${entry.id}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`
       );
       assert.strictEqual(
         result.stdout.length,
@@ -283,7 +293,7 @@ for (const [hookId, script] of [...STOP_HOOKS, ['stop:desktop-notify', 'scripts/
   if (
     test(`${hookId} via runner fails open on a >1MB Stop payload`, () => {
       const result = runViaRunner(hookId, script, oversizedPayload);
-      assert.strictEqual(result.status, 0, `${hookId}: expected exit 0, got ${result.status}: ${result.stderr}`);
+      assert.strictEqual(result.status, 0, `${hookId}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`);
       assert.strictEqual(result.stdout, '', `${hookId}: oversized payloads must not be echoed`);
     })
   )
@@ -295,7 +305,7 @@ for (const script of ECHOING_STOP_HOOKS) {
   if (
     test(`${path.basename(script)} invoked directly never echoes truncated stdin`, () => {
       const result = runDirect(script, oversizedPayload);
-      assert.strictEqual(result.status, 0, `${script}: expected exit 0, got ${result.status}: ${result.stderr}`);
+      assert.strictEqual(result.status, 0, `${script}: expected exit 0, got ${result.status}: ${result.stderr}${describeSpawn(result)}`);
       assert.strictEqual(result.stdout, '', `${script}: truncated stdin must not be echoed`);
     })
   )
@@ -306,7 +316,7 @@ for (const script of ECHOING_STOP_HOOKS) {
 if (
   test('check-console-log invoked directly echoes a sub-cap >64KB payload uncut', () => {
     const result = runDirect('scripts/hooks/check-console-log.js', realisticPayload);
-    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.status, 0, describeSpawn(result));
     assert.strictEqual(result.stdout, realisticPayload, 'pass-through must not be cut at the pipe buffer');
     JSON.parse(result.stdout);
   })
@@ -317,7 +327,7 @@ else failed++;
 if (
   test('cost-tracker invoked directly echoes a sub-cap >64KB payload uncut', () => {
     const result = runDirect('scripts/hooks/cost-tracker.js', realisticPayload);
-    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.status, 0, describeSpawn(result));
     assert.strictEqual(result.stdout, realisticPayload, 'the old 64KB cap must not cut realistic Stop payloads');
     JSON.parse(result.stdout);
   })
