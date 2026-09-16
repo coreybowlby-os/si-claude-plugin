@@ -30,6 +30,21 @@ const hooksConfig = JSON.parse(
 
 const MAX_STDIN = 1024 * 1024;
 
+// Each spawn here is a shell -> node wrapper -> run-with-flags chain. Locally
+// the whole 40-case suite finishes in ~4.2s, so a single spawn costs roughly
+// 100ms, yet a macOS lane reported `status=null signal=SIGTERM error=ETIMEDOUT`
+// against the previous 60s ceiling while the same commit passed on the other
+// twenty-four lanes.
+//
+// Nothing inside the chain can account for that: runRegisteredStopHook sets
+// ECC_DISABLED_HOOKS to the hook's own id, and run-with-flags checks
+// isHookEnabled before spawning anything, so the hook short-circuits to a
+// pass-through and never reaches desktop-notify's osascript call. Every inner
+// budget is also well under this one (runner 30s, hook 25s, osascript 5s), so a
+// real hang still fails there with its own message. Only whole-process
+// starvation reaches this ceiling, which is what it is sized for.
+const SPAWN_TIMEOUT_MS = 120000;
+
 // spawnSync reports a timeout, a signal kill and a failed spawn all as
 // `status: null`. The existing messages here print status and stderr, but both
 // are empty in that case, leaving a bare "null !== 0" that names no cause.
@@ -85,7 +100,7 @@ function runViaRunner(hookId, script, input) {
     encoding: 'utf8',
     cwd: workDir,
     env: hookEnv(),
-    timeout: 60000,
+    timeout: SPAWN_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -97,7 +112,7 @@ function runDirect(script, input) {
     encoding: 'utf8',
     cwd: workDir,
     env: hookEnv(),
-    timeout: 60000,
+    timeout: SPAWN_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -117,7 +132,7 @@ function runRegisteredStopHook(entry, input, envOverrides = {}) {
     cwd: workDir,
     env,
     shell: true,
-    timeout: 60000,
+    timeout: SPAWN_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe']
   });

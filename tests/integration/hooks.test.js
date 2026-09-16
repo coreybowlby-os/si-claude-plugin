@@ -223,7 +223,14 @@ function createTestDir() {
 
 // Clean up test directory
 function cleanupTestDir(testDir) {
-  fs.rmSync(testDir, { recursive: true, force: true });
+  // These cases spawn real hooks, some of which write under
+  // .local/share/ecc-homunculus. On Windows a handle held by a hook that has
+  // not fully exited makes rmdir fail with ENOTEMPTY even though the tree is
+  // logically finished with, which failed a lane here. maxRetries/retryDelay
+  // is Node's built-in backoff for exactly that race, and is already the
+  // idiom used by tests/ci/packed-artifact-lifecycle.js. A directory that is
+  // genuinely stuck still throws after the retries rather than being ignored.
+  fs.rmSync(testDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
 }
 
 function getTestHomunculusEnv(testDir) {
