@@ -61,6 +61,16 @@ function test(name, fn) {
   }
 }
 
+// This suite makes 13 bootstrap spawns with payloads up to 100KB and finishes
+// in ~1.1s locally, about 88ms per spawn. A macOS lane still reported
+// `status=null signal=SIGTERM error=ETIMEDOUT` against the previous 30s ceiling
+// while the same commit passed on the other twenty-four lanes, so the time went
+// to process startup under load rather than to anything this suite asks for.
+// Raised deliberately rather than broadly: most hook suites here run happily on
+// 5-15s budgets, and only the ones spawning the full bootstrap chain with large
+// payloads have ever hit their ceiling.
+const SPAWN_TIMEOUT_MS = 120000;
+
 // spawnSync reports a timeout, a signal kill and a failed spawn all as
 // `status: null`, so a bare "null !== 0" says nothing about which occurred.
 // Surface error.code and signal in the assertion message instead.
@@ -76,7 +86,7 @@ function runBootstrap(args, input, env) {
     encoding: 'utf8',
     cwd: repoRoot,
     env: { ...process.env, ...(env || {}) },
-    timeout: 30000,
+    timeout: SPAWN_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -89,7 +99,7 @@ function runHookEntry(args, input, env) {
     encoding: 'utf8',
     cwd: repoRoot,
     env: { ...process.env, ...(env || {}) },
-    timeout: 30000,
+    timeout: SPAWN_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     stdio: ['pipe', 'pipe', 'pipe']
   });
