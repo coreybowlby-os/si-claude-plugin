@@ -3,6 +3,15 @@ name: Release
 on:
   push:
     tags: ['v*']
+  # auto-release.yml calls this workflow through the dispatches API, because a
+  # tag pushed with GITHUB_TOKEN does not trigger workflows. Without this
+  # trigger declared, that call is rejected and the release never runs.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, without the leading v (e.g. 2.2.1)'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -172,6 +181,12 @@ jobs:
     name: Publish Release
     runs-on: ubuntu-latest
     needs: [verify, lifecycle]
+    # This project is distributed from GitHub and has no npm release. Exposing
+    # the token at job level lets the npm-only steps below skip themselves when
+    # it is absent, so the GitHub Release is still cut. Setting NPM_TOKEN is all
+    # that is needed to turn npm publishing back on — no workflow edit.
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     permissions:
       contents: write
       id-token: write
@@ -195,7 +210,7 @@ jobs:
         run: node -e "const crypto = require('crypto'); const fs = require('fs'); const file = process.env.ECC_RELEASE_PACKAGE; const expected = process.env.ECC_RELEASE_SHA256; if (!/^si-claude-plugin-[0-9A-Za-z.+-]+\.tgz$/.test(file || '')) throw new Error('Unexpected packed filename'); if (!/^[a-f0-9]{64}$/.test(expected || '')) throw new Error('Invalid packed SHA-256'); const archives = fs.readdirSync('.').filter(name => name.endsWith('.tgz')); if (archives.length !== 1 || archives[0] !== file) throw new Error('Expected exactly one downloaded archive'); const actual = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'); if (actual !== expected) throw new Error('Downloaded publish artifact SHA-256 mismatch')"
 
       - name: Publish npm package
-        if: needs.verify.outputs.already_published != 'true'
+        if: env.NPM_TOKEN != '' && needs.verify.outputs.already_published != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           ECC_RELEASE_PACKAGE: ${{ needs.verify.outputs.package_file }}
@@ -203,6 +218,7 @@ jobs:
         run: npm publish "./${ECC_RELEASE_PACKAGE}" --access public --provenance --tag "${NPM_PUBLISH_TAG}"
 
       - name: Verify published npm artifact
+        if: env.NPM_TOKEN != ''
         env:
           ECC_RELEASE_PACKAGE: ${{ needs.verify.outputs.package_file }}
           PACKAGE_NAME: ${{ needs.verify.outputs.package_name }}
@@ -227,6 +243,7 @@ jobs:
           ECC_REGISTRY_INTEGRITY="$REGISTRY_INTEGRITY" node -e "const crypto = require('crypto'); const fs = require('fs'); const expected = process.env.ECC_REGISTRY_INTEGRITY; if (!/^sha512-[A-Za-z0-9+/]+={0,2}$/.test(expected || '')) throw new Error('Invalid published registry integrity'); const actual = 'sha512-' + crypto.createHash('sha512').update(fs.readFileSync(process.env.ECC_RELEASE_PACKAGE)).digest('base64'); if (actual !== expected) throw new Error('Published npm artifact does not match tested candidate')"
 
       - name: Promote verified npm version
+        if: env.NPM_TOKEN != ''
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           PACKAGE_NAME: ${{ needs.verify.outputs.package_name }}

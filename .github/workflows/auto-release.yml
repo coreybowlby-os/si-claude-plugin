@@ -170,6 +170,18 @@ jobs:
         # business executing it at all.
         run: npm ci --ignore-scripts
 
+      # npm keeps an existing yarn.lock in sync and writes it in Yarn Classic v1
+      # format. This repo's yarn.lock is Yarn Berry, because package.json pins
+      # packageManager yarn@4 and the yarn CI lanes install with --immutable,
+      # which refuses a v1 file. So the install step above rewrites 2171 lines
+      # down to 1463 and leaves the tree dirty, and release.sh refuses to run
+      # against a dirty tree. Restore the committed lockfile; nothing here
+      # intends to change it, and release.sh stages an explicit file list that
+      # excludes it.
+      - name: Restore the Berry lockfile npm rewrote
+        if: steps.version.outputs.skip != 'true'
+        run: git checkout -- yarn.lock
+
       - name: Run release script
         if: steps.version.outputs.skip != 'true'
         run: bash scripts/release.sh ${{ steps.version.outputs.next }} --ci
