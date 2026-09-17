@@ -70,7 +70,7 @@ jobs:
 
       - name: Post PR comment on failure
         if: failure() && steps.detect.outputs.has_material_changes == 'true' && steps.detect.outputs.readme_updated == 'false'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
