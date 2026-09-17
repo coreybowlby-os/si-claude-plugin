@@ -266,9 +266,16 @@ update_codex_marketplace_version() {
       console.error(`Error: ${file} does not contain a marketplace plugins array`);
       process.exit(1);
     }
-    const plugin = marketplace.plugins.find(entry => entry && entry.name === "ecc");
+    // Derived, not hardcoded: this entry is named after the Codex marketplace,
+    // which the rename moved from "ecc" to "si-claude-plugin". A literal here
+    // silently stops matching the moment that name changes, which is how this
+    // check failed the first release it ever ran in.
+    const { CODEX_MARKETPLACE_NAME } = require("./scripts/lib/resolve-ecc-root");
+    const plugin = marketplace.plugins.find(
+      entry => entry && entry.name === CODEX_MARKETPLACE_NAME
+    );
     if (!plugin || typeof plugin !== "object") {
-      console.error(`Error: could not find ecc plugin entry in ${file}`);
+      console.error(`Error: could not find ${CODEX_MARKETPLACE_NAME} plugin entry in ${file}`);
       process.exit(1);
     }
     plugin.version = version;
