@@ -69,29 +69,30 @@
 Run the canonical guided setup from your terminal:
 
 ```bash
-npx ecc-universal setup
+npx github:coreybowlby-os/si-claude-plugin setup
 ```
 
-If npm reports a version or cache error, confirm the registry version before retrying:
+There is no npm release to check against. If npx reports a cache or resolution
+error, confirm which version `main` currently carries before retrying:
 
 ```bash
-npm view ecc-universal version
+curl -fsSL https://raw.githubusercontent.com/coreybowlby-os/si-claude-plugin/main/VERSION
 ```
 
 This path requires Node.js 18 or newer, Git, and Claude Code 2.1 or newer on
-`PATH`. It safely installs, updates, or moves one `ecc@ecc` plugin scope and
+`PATH`. It safely installs, updates, or moves one `SI-Claude-Plugin@SI-Claude-Plugin` plugin scope and
 records the hook profile you choose.
 
 Alternatively, run Claude Code's native plugin commands inside Claude Code:
 
 ```text
-/plugin marketplace add https://github.com/affaan-m/ECC
-/plugin install ecc@ecc
+/plugin marketplace add coreybowlby-os/si-claude-plugin
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 The native path installs ECC's skills, agents, commands, and plugin-managed hooks. If you choose it, stop there. Do not also run a full manual install into Claude Code.
 
-> Both paths install the same `ecc@ecc` plugin. Choose one and do not stack
+> Both paths install the same `SI-Claude-Plugin@SI-Claude-Plugin` plugin. Choose one and do not stack
 > another manual Claude install on top.
 
 <div align="center">
@@ -186,13 +187,13 @@ Run the package command from your terminal. For Claude Code setup, updates,
 scope changes, and hook-profile changes:
 
 ```bash
-npx ecc-universal setup
+npx github:coreybowlby-os/si-claude-plugin setup
 ```
 
 To configure Claude Code, Codex, or Kimi Code in one reviewed flow:
 
 ```bash
-npx ecc-universal install --guided
+npx github:coreybowlby-os/si-claude-plugin install --guided
 ```
 
 ### Pick one path only (per harness)
@@ -247,7 +248,7 @@ Add directly to your `~/.claude/settings.json`:
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```
@@ -256,17 +257,25 @@ This gives you the same result as the two `/plugin` commands above.
 </details>
 
 <details>
-<summary><strong>Naming + migration note (ecc@ecc, affaan-m/ECC, ecc-universal)</strong></summary>
+<summary><strong>Naming + distribution note (SI-Claude-Plugin, coreybowlby-os/si-claude-plugin)</strong></summary>
 
-ECC has three public identifiers, and they are not interchangeable:
+This project has two public identifiers, and they are not interchangeable:
 
-- GitHub source repo: `affaan-m/ECC`
-- Claude marketplace/plugin identifier: `ecc@ecc`
-- npm package: `ecc-universal`
+- GitHub source repo: `coreybowlby-os/si-claude-plugin`
+- Claude marketplace/plugin identifier: `SI-Claude-Plugin@SI-Claude-Plugin`
 
-This is intentional. Anthropic marketplace/plugin installs are keyed by a canonical plugin identifier, so ECC uses `ecc@ecc` to keep tool names and slash-command namespaces short enough for strict Desktop/API validators. Older posts may still show the former long marketplace identifier; treat that as a legacy alias only. Separately, the npm package stayed on `ecc-universal`, so npm installs and marketplace installs intentionally use different names.
+Codex uses the lowercase marketplace name `si-claude-plugin` for the same source.
 
-npm releases are cut per version tag, not per commit, so `ecc-universal` tracks releases (2.1, 2.2, ...) rather than every push to `main`. Install from git if you want the bleeding edge.
+**This project is distributed from GitHub only. There is no npm package for it.**
+Install it with the Claude Code plugin commands above, or run the CLI straight from
+the repository with `npx github:coreybowlby-os/si-claude-plugin <command>`. Because
+there is no registry release, updates track the `main` branch and its tags rather
+than a published version.
+
+One consequence is worth stating plainly: `ecc-universal` on npm is **upstream ECC's**
+package, not this fork. Installing it gets you upstream's plugin under the `ecc@ecc`
+identifier — a different project with different maintainers. See the attribution
+notice at the top of this README.
 
 If your local Claude setup was wiped or reset, that does not mean you need to repurchase anything. Start with `node scripts/ecc.js list-installed`, then run `node scripts/ecc.js doctor` and `node scripts/ecc.js repair` before reinstalling. That usually restores ECC-managed files without rebuilding your setup.
 </details>
@@ -277,12 +286,12 @@ Current Codex releases can install ECC as a native repo-marketplace plugin. The 
 
 ```bash
 codex plugin marketplace add coreybowlby-os/si-claude-plugin
-codex plugin add ecc@ecc
+codex plugin add si-claude-plugin@si-claude-plugin
 codex plugin list --json
 node scripts/codex/check-plugin-cache.js
 ```
 
-Both add commands are idempotent. To refresh later, run `codex plugin marketplace upgrade ecc` followed by `codex plugin add ecc@ecc`. Codex stores one enabled plugin state in the active `CODEX_HOME`; it does not offer Claude's `user`, `project`, and `local` scopes. Its native hooks require an explicit trust decision and do not use Claude's four ECC hook profiles. Inside Codex, invoke `$configure-ecc` for the guided provider-aware flow.
+Both add commands are idempotent. To refresh later, run `codex plugin marketplace upgrade si-claude-plugin` followed by `codex plugin add si-claude-plugin@si-claude-plugin`. Codex stores one enabled plugin state in the active `CODEX_HOME`; it does not offer Claude's `user`, `project`, and `local` scopes. Its native hooks require an explicit trust decision and do not use Claude's four ECC hook profiles. Inside Codex, invoke `$configure-ecc` for the guided provider-aware flow.
 
 The older `scripts/sync-ecc-to-codex.sh` path is a deprecated compatibility option for users who intentionally need copied and merged configuration in `~/.codex`; it is not required for the native plugin. New sync runs write an ownership manifest so cleanup can preserve modified user files. Run Codex once first so `~/.codex/config.toml` exists, then:
 
@@ -418,7 +427,7 @@ The options stay here, directly under the main install paths, so you do not have
 Use this when you want ECC's rules, agents, commands, platform config, and core workflows without runtime hooks:
 
 ```bash
-npx ecc-universal install --profile minimal --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
 ```
 
 From a source checkout, the equivalent command is:
@@ -602,11 +611,11 @@ If you installed from the universal package, run these commands from the same
 project directory used for installation:
 
 ```bash
-npx ecc-universal list-installed
-npx ecc-universal doctor
-npx ecc-universal repair
-npx ecc-universal uninstall --dry-run
-npx ecc-universal uninstall
+npx github:coreybowlby-os/si-claude-plugin list-installed
+npx github:coreybowlby-os/si-claude-plugin doctor
+npx github:coreybowlby-os/si-claude-plugin repair
+npx github:coreybowlby-os/si-claude-plugin uninstall --dry-run
+npx github:coreybowlby-os/si-claude-plugin uninstall
 ```
 
 From a source checkout, inspect the managed state before reinstalling:
@@ -647,40 +656,40 @@ If you stacked methods, clean up in this order:
 For Claude Code plugin setup, updates, scope changes, and hook-profile changes:
 
 ```bash
-npx ecc-universal setup
+npx github:coreybowlby-os/si-claude-plugin setup
 ```
 
 ECC 2.2 supports the same guided setup through modern package runners:
 
 | Package runner | Guided setup command |
 |---|---|
-| npm / npx | `npx ecc-universal setup` |
-| pnpm | `pnpm dlx ecc-universal setup` |
-| Yarn 2+ | `yarn dlx ecc-universal setup` |
-| Bun | `bunx ecc-universal setup` |
+| npm / npx | `npx github:coreybowlby-os/si-claude-plugin setup` |
+| pnpm | `pnpm dlx github:coreybowlby-os/si-claude-plugin setup` |
+| Yarn 2+ | `yarn dlx github:coreybowlby-os/si-claude-plugin setup` |
+| Bun | `bunx github:coreybowlby-os/si-claude-plugin setup` |
 
 Yarn Classic 1 does not provide `yarn dlx`; use `npx`, install the package globally, or upgrade Yarn for a temporary one-shot run.
 
-The wizard inventories the official marketplace and every native Claude install scope before making changes, then installs, updates, or safely moves `ecc@ecc` to the scope you choose. Rerun the same command whenever you want to update ECC, change scope, or change its hook profile. This setup wizard currently configures the Claude Code plugin; use the multi-harness wizard below for Codex or Kimi Code.
+The wizard inventories the official marketplace and every native Claude install scope before making changes, then installs, updates, or safely moves `SI-Claude-Plugin@SI-Claude-Plugin` to the scope you choose. Rerun the same command whenever you want to update ECC, change scope, or change its hook profile. This setup wizard currently configures the Claude Code plugin; use the multi-harness wizard below for Codex or Kimi Code.
 
 To configure more than one coding agent in one reviewed flow, use the multi-harness wizard:
 
 ```bash
-npx ecc-universal install --guided
+npx github:coreybowlby-os/si-claude-plugin install --guided
 ```
 
 It lets you select any combination of Claude Code, Codex, and Kimi Code, shows each install channel and destination, preflights every selection before the first write, and asks for one final confirmation.
 
 | Harness | Guided install behavior |
 |---|---|
-| Claude Code | Native `ecc@ecc` plugin with one `user`, `project`, or `local` scope and an ECC hook profile |
+| Claude Code | Native `SI-Claude-Plugin@SI-Claude-Plugin` plugin with one `user`, `project`, or `local` scope and an ECC hook profile |
 | Codex | Native Codex marketplace/plugin lifecycle; hook review and trust remain Codex-owned |
 | Kimi Code | Managed project files under `./.kimi-code`; ECC hooks, model/provider settings, and authentication are not configured |
 
 For automation, make every provider-specific choice explicit:
 
 ```bash
-npx ecc-universal install --guided \
+npx github:coreybowlby-os/si-claude-plugin install --guided \
   --harness claude --harness codex --harness kimi \
   --claude-scope local --claude-hooks standard \
   --profile core --yes
@@ -689,16 +698,16 @@ npx ecc-universal install --guided \
 Verify the native guided Codex path and managed Kimi path without writing first:
 
 ```bash
-npx ecc-universal install --guided --harness codex --dry-run
-npx ecc-universal install --profile core --target kimi --dry-run
+npx github:coreybowlby-os/si-claude-plugin install --guided --harness codex --dry-run
+npx github:coreybowlby-os/si-claude-plugin install --profile core --target kimi --dry-run
 ```
 
 Additional package-name commands are also available through the 2.2 alias:
 
 ```bash
-npx ecc-universal consult "security reviews" --target claude
-npx ecc-universal install --profile minimal --target claude --with capability:machine-learning
-npx ecc-universal doctor --target kimi
+npx github:coreybowlby-os/si-claude-plugin consult "security reviews" --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude --with capability:machine-learning
+npx github:coreybowlby-os/si-claude-plugin doctor --target kimi
 ```
 
 Do not use `npx ecc-install --profile minimal --target claude`: `ecc-install` is a binary name inside `ecc-universal`, not a separately published npm package.
@@ -739,7 +748,7 @@ Manual installs may expose the shorter compatibility form:
 Skills are the primary workflow surface. Commands remain convenient entry points and compatibility shims. Check what is installed with:
 
 ```bash
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 </details>
 
@@ -1693,7 +1702,7 @@ ECC provides a supported native Codex marketplace plugin and repo-local configur
 ```bash
 # Recommended current install: add ECC's native plugin from the repo marketplace
 codex plugin marketplace add coreybowlby-os/si-claude-plugin
-codex plugin add ecc@ecc
+codex plugin add si-claude-plugin@si-claude-plugin
 codex plugin list --json
 
 # Or run Codex CLI in the repo: AGENTS.md and .codex/ are auto-detected
@@ -2064,7 +2073,7 @@ Run the cache check from an ECC checkout:
 node scripts/codex/check-plugin-cache.js
 ```
 
-If it reports unresolved parent references, refresh the native cache with `codex plugin marketplace upgrade ecc`, run `codex plugin add ecc@ecc` again, and restart Codex. Registration in `codex plugin list` confirms the marketplace entry, while the cache check verifies that the installed manifest can resolve its skills, MCP configuration, and assets. Use `bash scripts/sync-ecc-to-codex.sh` only when you intentionally need the legacy copied-configuration compatibility path.
+If it reports unresolved parent references, refresh the native cache with `codex plugin marketplace upgrade si-claude-plugin`, run `codex plugin add si-claude-plugin@si-claude-plugin` again, and restart Codex. Registration in `codex plugin list` confirms the marketplace entry, while the cache check verifies that the installed manifest can resolve its skills, MCP configuration, and assets. Use `bash scripts/sync-ecc-to-codex.sh` only when you intentionally need the legacy copied-configuration compatibility path.
 </details>
 
 <details>

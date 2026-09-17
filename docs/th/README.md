@@ -42,7 +42,7 @@ ECC ไม่ใช่แค่ชุดไฟล์คอนฟิก แต่
 
 - **แนะนำ:** ติดตั้งผ่าน Claude Code plugin จากนั้นค่อยคัดลอกเฉพาะโฟลเดอร์ `rules/` ที่ต้องการใช้จริงด้วยมือ
 - **ใช้ installer แบบ manual** หากต้องการควบคุมรายละเอียดมากขึ้น หรือต้องการเลี่ยง plugin หรือ Claude Code ของคุณไม่สามารถ resolve marketplace ที่ self-host ได้
-- **อย่าติดตั้งซ้อนกันหลายวิธี** ปัญหาที่พบบ่อยที่สุดคือการรัน `/plugin install` ก่อน แล้วตามด้วย `install.sh --profile full` หรือ `npx ecc-universal install --profile full`
+- **อย่าติดตั้งซ้อนกันหลายวิธี** ปัญหาที่พบบ่อยที่สุดคือการรัน `/plugin install` ก่อน แล้วตามด้วย `install.sh --profile full` หรือ `npx github:coreybowlby-os/si-claude-plugin install --profile full`
 
 หากคุณติดตั้งซ้อนกันไปแล้วและพบว่ามี skill/hook ซ้ำ ดู [Reset / ถอนการติดตั้ง ECC](#reset--ถอนการติดตั้ง-ecc)
 
@@ -50,19 +50,19 @@ ECC ไม่ใช่แค่ชุดไฟล์คอนฟิก แต่
 
 ```bash
 # เพิ่ม marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # ติดตั้ง plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ECC มีชื่อเรียกในระบบสาธารณะ 3 ชื่อที่ต่างกัน:
 
 - GitHub repo: `affaan-m/everything-claude-code`
-- Claude marketplace plugin: `ecc@ecc`
+- Claude marketplace plugin: `SI-Claude-Plugin@SI-Claude-Plugin`
 - npm package: `ecc-universal`
 
-ชื่อเหล่านี้ตั้งใจให้ต่างกัน Plugin บน Claude Code ใช้ `ecc@ecc` ส่วน npm ยังคงใช้ `ecc-universal`
+ชื่อเหล่านี้ตั้งใจให้ต่างกัน Plugin บน Claude Code ใช้ `SI-Claude-Plugin@SI-Claude-Plugin` ส่วน npm ยังคงใช้ `ecc-universal`
 
 ### คัดลอกไฟล์ rules เพิ่มเติม (ถ้าต้องการ)
 
@@ -101,7 +101,7 @@ npm install
 npm install
 .\install.ps1 --profile full
 # หรือ
-npx ecc-universal install --profile full
+npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 หากเลือกวิธี manual แล้ว ให้หยุดที่นี่ อย่ารัน `/plugin install` เพิ่ม
@@ -117,7 +117,7 @@ npx ecc-universal install --profile full
 ```powershell
 .\install.ps1 --profile minimal --target claude
 # หรือ
-npx ecc-universal install --profile minimal --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
 ```
 
 Profile นี้จงใจไม่ติดตั้ง `hooks-runtime`
@@ -197,7 +197,7 @@ ECC จะลบเฉพาะไฟล์ที่อยู่ใน install-s
 # /plan "เพิ่มระบบยืนยันตัวตนผู้ใช้"
 
 # ดู plugin ที่ติดตั้งอยู่
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 คำสั่งหลักที่ใช้บ่อย:

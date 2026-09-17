@@ -189,8 +189,8 @@ required by the checked-in runbook, and verify the native Claude marketplace
 path remains installable:
 
 ```text
-/plugin marketplace add https://github.com/affaan-m/ECC
-/plugin install ecc@ecc
+/plugin marketplace add coreybowlby-os/si-claude-plugin
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ### 8. Verify Announcement Delivery

@@ -44,7 +44,7 @@ It does **not** auto-register the full ECC command/agent/instruction catalog in 
 After installation, the `ecc-install` CLI is also available:
 
 ```bash
-npx ecc-universal install typescript
+npx github:coreybowlby-os/si-claude-plugin install typescript
 ```
 
 ### Option 2: Direct Use

@@ -212,7 +212,7 @@ La mayoría de los usuarios de Claude Code deben usar exactamente un método de 
 
 - **Opción recomendada por defecto:** instala el plugin de Claude Code, luego copia solo las carpetas de reglas que realmente necesites.
 - **Usa el instalador manual solo si** quieres un control más granular, deseas evitar completamente la ruta del plugin o tu build de Claude Code tiene problemas para resolver la entrada del marketplace autoalojado.
-- **No combines métodos de instalación.** La configuración rota más común es: `/plugin install` primero, luego `install.sh --profile full` o `npx ecc-universal install --profile full` después.
+- **No combines métodos de instalación.** La configuración rota más común es: `/plugin install` primero, luego `install.sh --profile full` o `npx github:coreybowlby-os/si-claude-plugin install --profile full` después.
 
 Si ya combinaste múltiples instalaciones y hay duplicados, salta directamente a [Restablecer / Desinstalar ECC](#restablecer--desinstalar-ecc).
 
@@ -227,7 +227,7 @@ Si los hooks te parecen demasiado globales o solo quieres las reglas, agentes, c
 ```powershell
 .\install.ps1 --profile minimal --target claude
 # o
-npx ecc-universal install --profile minimal --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
 ```
 
 Este perfil excluye intencionalmente `hooks-runtime`.
@@ -249,7 +249,7 @@ Añade hooks después solo si quieres aplicación en tiempo de ejecución:
 Si no estás seguro de qué perfil o componente de ECC instalar, consulta al asesor empaquetado desde cualquier proyecto:
 
 ```bash
-npx ecc-universal consult "security reviews" --target claude
+npx github:coreybowlby-os/si-claude-plugin consult "security reviews" --target claude
 ```
 
 Devuelve los componentes coincidentes, los perfiles relacionados y los comandos de vista previa/instalación. Usa el comando de vista previa antes de instalar si quieres inspeccionar el plan de archivos exacto.
@@ -257,8 +257,8 @@ Devuelve los componentes coincidentes, los perfiles relacionados y los comandos 
 Para flujos de trabajo de ML/MLOps en producción, mantén la instalación opt-in y con alcance de componentes:
 
 ```bash
-npx ecc-universal consult "mlops training model deployment" --target claude
-npx ecc-universal install --profile minimal --target claude --with capability:machine-learning
+npx github:coreybowlby-os/si-claude-plugin consult "mlops training model deployment" --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude --with capability:machine-learning
 ```
 
 ### Paso 1: Instalar el Plugin (Recomendado)
@@ -267,10 +267,10 @@ npx ecc-universal install --profile minimal --target claude --with capability:ma
 
 ```bash
 # Agregar marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Instalar plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ### Nota de Nombres y Migración
@@ -278,16 +278,16 @@ npx ecc-universal install --profile minimal --target claude --with capability:ma
 ECC tiene tres identificadores públicos que no son intercambiables:
 
 - Repositorio fuente de GitHub: `affaan-m/ECC`
-- Identificador de marketplace/plugin de Claude: `ecc@ecc`
+- Identificador de marketplace/plugin de Claude: `SI-Claude-Plugin@SI-Claude-Plugin`
 - Paquete npm: `ecc-universal`
 
-Esto es intencional. Las instalaciones del marketplace/plugin de Anthropic se identifican por un identificador de plugin canónico, por lo que ECC usa `ecc@ecc` para mantener los nombres de herramientas y los espacios de nombres de comandos slash lo suficientemente cortos para los validadores estrictos de Desktop/API. Las publicaciones antiguas pueden mostrar el anterior identificador largo del marketplace; trátalo solo como un alias heredado. Por su parte, el paquete npm se mantuvo en `ecc-universal`, por lo que las instalaciones de npm y las del marketplace usan intencionalmente nombres diferentes.
+Esto es intencional. Las instalaciones del marketplace/plugin de Anthropic se identifican por un identificador de plugin canónico, por lo que ECC usa `SI-Claude-Plugin@SI-Claude-Plugin` para mantener los nombres de herramientas y los espacios de nombres de comandos slash lo suficientemente cortos para los validadores estrictos de Desktop/API. Las publicaciones antiguas pueden mostrar el anterior identificador largo del marketplace; trátalo solo como un alias heredado. Por su parte, el paquete npm se mantuvo en `ecc-universal`, por lo que las instalaciones de npm y las del marketplace usan intencionalmente nombres diferentes.
 
 ### Paso 2: Instalar Reglas Solo Si Las Necesitas
 
 > ADVERTENCIA: **Importante:** Los plugins de Claude Code no pueden distribuir `rules` automáticamente.
 >
-> Si ya instalaste ECC mediante `/plugin install`, **no ejecutes `./install.sh --profile full`, `.\install.ps1 --profile full`, ni `npx ecc-universal install --profile full` después**. El plugin ya carga las skills, comandos y hooks de ECC. Ejecutar el instalador completo tras una instalación del plugin copia esas mismas superficies en tus directorios de usuario y puede crear skills duplicadas más comportamiento duplicado en tiempo de ejecución.
+> Si ya instalaste ECC mediante `/plugin install`, **no ejecutes `./install.sh --profile full`, `.\install.ps1 --profile full`, ni `npx github:coreybowlby-os/si-claude-plugin install --profile full` después**. El plugin ya carga las skills, comandos y hooks de ECC. Ejecutar el instalador completo tras una instalación del plugin copia esas mismas superficies en tus directorios de usuario y puede crear skills duplicadas más comportamiento duplicado en tiempo de ejecución.
 >
 > Para instalaciones de plugin, copia manualmente solo los directorios `rules/` que quieras bajo `~/.claude/rules/ecc/`. Empieza con `rules/common` más un pack de lenguaje o framework que uses realmente. No copies todos los directorios de reglas a menos que quieras explícitamente todo ese contexto en Claude.
 >
@@ -322,7 +322,7 @@ Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/ecc/"
 
 # Ruta de instalación completamente manual (usa esto en lugar de /plugin install)
 # .\install.ps1 --profile full
-# npx ecc-universal install --profile full
+# npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 Para instrucciones de instalación manual consulta el README en la carpeta `rules/`. Al copiar reglas manualmente, copia el directorio completo del lenguaje (por ejemplo `rules/common` o `rules/golang`), no los archivos dentro de él, para que las referencias relativas sigan funcionando y los nombres de archivo no colisionen.
@@ -338,7 +338,7 @@ Usa esto solo si estás omitiendo intencionalmente la ruta del plugin:
 ```powershell
 .\install.ps1 --profile full
 # o
-npx ecc-universal install --profile full
+npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 Si eliges esta ruta, detente aquí. No ejecutes también `/plugin install`.
@@ -391,7 +391,7 @@ Si combinaste métodos, limpia en este orden:
 # /plan "Añadir autenticación de usuario"
 
 # Ver comandos disponibles
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 **¡Listo!** Ahora tienes acceso a 63 agentes, 249 skills y 79 shims de comandos legados.
@@ -687,10 +687,10 @@ La forma más fácil de usar este repo — instálalo como plugin de Claude Code
 
 ```bash
 # Añadir este repo como marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Instalar el plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 O añade directamente a tu `~/.claude/settings.json`:
@@ -706,7 +706,7 @@ O añade directamente a tu `~/.claude/settings.json`:
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```
@@ -936,7 +936,7 @@ skill e2e-testing                             → e2e-runner: pruebas de flujos 
 <summary><b>¿Cómo veo qué agentes/comandos están instalados?</b></summary>
 
 ```bash
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 Muestra todos los agentes, comandos y skills disponibles del plugin.

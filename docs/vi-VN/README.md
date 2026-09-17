@@ -40,7 +40,7 @@ Với Claude Code, phần lớn người dùng nên chọn đúng **một** tron
 
 - **Khuyến nghị:** cài plugin Claude Code, sau đó copy thủ công chỉ những thư mục `rules/` bạn thật sự cần.
 - **Dùng installer thủ công** nếu bạn muốn kiểm soát chi tiết hơn, muốn tránh plugin, hoặc bản Claude Code của bạn không resolve được marketplace tự host.
-- **Không chồng nhiều cách cài lên nhau.** Cấu hình dễ hỏng nhất là `/plugin install` trước, rồi chạy tiếp `install.sh --profile full` hoặc `npx ecc-universal install --profile full`.
+- **Không chồng nhiều cách cài lên nhau.** Cấu hình dễ hỏng nhất là `/plugin install` trước, rồi chạy tiếp `install.sh --profile full` hoặc `npx github:coreybowlby-os/si-claude-plugin install --profile full`.
 
 Nếu bạn đã cài chồng nhiều lần và thấy skill/hook bị trùng, xem [Reset / Gỡ ECC](#reset--gỡ-ecc).
 
@@ -48,19 +48,19 @@ Nếu bạn đã cài chồng nhiều lần và thấy skill/hook bị trùng, x
 
 ```bash
 # Thêm marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Cài plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ECC có ba định danh công khai khác nhau:
 
 - Repo GitHub: `affaan-m/everything-claude-code`
-- Plugin Claude marketplace: `ecc@ecc`
+- Plugin Claude marketplace: `SI-Claude-Plugin@SI-Claude-Plugin`
 - Gói npm: `ecc-universal`
 
-Các tên này cố ý khác nhau. Plugin Claude Code dùng `ecc@ecc`; npm vẫn dùng `ecc-universal`.
+Các tên này cố ý khác nhau. Plugin Claude Code dùng `SI-Claude-Plugin@SI-Claude-Plugin`; npm vẫn dùng `ecc-universal`.
 
 ### Copy rules nếu cần
 
@@ -99,7 +99,7 @@ npm install
 npm install
 .\install.ps1 --profile full
 # hoặc
-npx ecc-universal install --profile full
+npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 Nếu chọn đường thủ công, dừng ở đó. Đừng chạy thêm `/plugin install`.
@@ -115,7 +115,7 @@ Nếu bạn chỉ muốn rules, agents, commands và core workflow skills, dùng
 ```powershell
 .\install.ps1 --profile minimal --target claude
 # hoặc
-npx ecc-universal install --profile minimal --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
 ```
 
 Profile này cố ý không cài `hooks-runtime`.
@@ -173,7 +173,7 @@ ECC chỉ xoá file có trong install-state của nó. Nó không xoá file khô
 # /plan "Thêm xác thực người dùng"
 
 # Xem plugin đang cài
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ECC hiện cung cấp hàng chục agent, hơn 200 skill và legacy command shim cho các workflow agent khác nhau. Kiểm tra README tiếng Anh để xem danh sách và hướng dẫn chi tiết nhất.

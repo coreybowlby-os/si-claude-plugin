@@ -135,19 +135,19 @@ command -v ecc-memory-mcp
 
 ```bash
 # 添加市场
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # 安装插件
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
-> 安装名称说明：较早的帖子里可能还会出现较长的旧标识符。Anthropic 的 marketplace/plugin 安装是按规范化插件标识符寻址的，因此 ECC 现在统一为 `ecc@ecc`，让工具名和 slash command 命名空间保持简短。
+> 安装名称说明：较早的帖子里可能还会出现较长的旧标识符。Anthropic 的 marketplace/plugin 安装是按规范化插件标识符寻址的，因此 ECC 现在统一为 `SI-Claude-Plugin@SI-Claude-Plugin`，让工具名和 slash command 命名空间保持简短。
 
 ### 第二步：仅在需要时安装规则
 
 > WARNING: **重要提示：** Claude Code 插件无法自动分发 `rules`。
 >
-> 如果你已经通过 `/plugin install` 安装了 ECC，**不要再运行 `./install.sh --profile full`、`.\install.ps1 --profile full` 或 `npx ecc-universal install --profile full`**。插件已经会自动加载 ECC 的技能、命令和 hooks；此时再执行完整安装，会把同一批内容再次复制到用户目录，导致技能重复以及运行时行为重复。
+> 如果你已经通过 `/plugin install` 安装了 ECC，**不要再运行 `./install.sh --profile full`、`.\install.ps1 --profile full` 或 `npx github:coreybowlby-os/si-claude-plugin install --profile full`**。插件已经会自动加载 ECC 的技能、命令和 hooks；此时再执行完整安装，会把同一批内容再次复制到用户目录，导致技能重复以及运行时行为重复。
 >
 > 对于插件安装路径，请只手动复制你需要的 `rules/` 目录。只有在你完全不走插件安装、而是选择“纯手动安装 ECC”时，才应该使用完整安装器。
 
@@ -178,7 +178,7 @@ Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/"
 
 # 纯手动安装 ECC（不要和 /plugin install 叠加）
 # .\install.ps1 --profile full
-# npx ecc-universal install --profile full
+# npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 如需手动安装说明，请查看 `rules/` 文件夹中的 README 文档。手动复制规则文件时，请直接复制**整个语言目录**（例如 `rules/common` 或 `rules/golang`），而非目录内的单个文件，以保证相对路径引用正常、文件名不会冲突。
@@ -193,7 +193,7 @@ Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/"
 # /plan "添加用户认证"
 
 # 查看可用命令
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 **完成！** 你现在可以使用 68 个代理、300 个技能和 94 个命令。
@@ -583,10 +583,10 @@ Claude Code v2.1+ 会**按照约定自动加载**已安装插件中的 `hooks/ho
 
 ```bash
 # 将此仓库添加为市场
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # 安装插件
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 或直接添加到你的 `~/.claude/settings.json`：
@@ -602,7 +602,7 @@ Claude Code v2.1+ 会**按照约定自动加载**已安装插件中的 `hooks/ho
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```

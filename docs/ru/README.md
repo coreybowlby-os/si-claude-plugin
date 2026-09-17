@@ -174,7 +174,7 @@ ECC v2.0.0-rc.1 добавляет публичную историю опера�
 
 - **Рекомендуемый вариант по умолчанию:** установите плагин Claude Code, затем скопируйте только те папки правил, которые вам действительно нужны.
 - **Используйте ручной установщик только если** вам нужен более тонкий контроль, вы хотите полностью избежать пути через плагин или ваша сборка Claude Code не может разрешить self-hosted запись в marketplace.
-- **Не накладывайте методы установки друг на друга.** Самая частая сломанная конфигурация: сначала `/plugin install`, затем `install.sh --profile full` или `npx ecc-universal install --profile full`.
+- **Не накладывайте методы установки друг на друга.** Самая частая сломанная конфигурация: сначала `/plugin install`, затем `install.sh --profile full` или `npx github:coreybowlby-os/si-claude-plugin install --profile full`.
 
 Если вы уже наложили несколько установок и видите дублирование, сразу переходите к разделу [Сброс / удаление ECC](#сброс--удаление-ecc).
 
@@ -189,7 +189,7 @@ ECC v2.0.0-rc.1 добавляет публичную историю опера�
 ```powershell
 .\install.ps1 --profile minimal --target claude
 # или
-npx ecc-universal install --profile minimal --target claude
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
 ```
 
 Этот профиль намеренно исключает `hooks-runtime`.
@@ -211,7 +211,7 @@ npx ecc-universal install --profile minimal --target claude
 Если вы не уверены, какой профиль ECC или компонент установить, спросите упакованный advisor из любого проекта:
 
 ```bash
-npx ecc-universal consult "security reviews" --target claude
+npx github:coreybowlby-os/si-claude-plugin consult "security reviews" --target claude
 ```
 
 Он вернёт подходящие компоненты, связанные профили и команды предпросмотра/установки. Используйте команду предпросмотра перед установкой, если хотите посмотреть точный план файлов.
@@ -222,10 +222,10 @@ npx ecc-universal consult "security reviews" --target claude
 
 ```bash
 # Добавьте marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Установите плагин
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ### Примечание об именовании и миграции
@@ -233,16 +233,16 @@ npx ecc-universal consult "security reviews" --target claude
 У ECC теперь три публичных идентификатора, и они не взаимозаменяемы:
 
 - исходный репозиторий GitHub: `affaan-m/everything-claude-code`
-- идентификатор Claude marketplace/plugin: `ecc@ecc`
+- идентификатор Claude marketplace/plugin: `SI-Claude-Plugin@SI-Claude-Plugin`
 - npm-пакет: `ecc-universal`
 
-Это сделано намеренно. Установки Anthropic marketplace/plugin ключуются каноническим идентификатором плагина, поэтому ECC использует `ecc@ecc`, чтобы имена инструментов и пространства имен slash-команд оставались достаточно короткими для строгих валидаторов Desktop/API. Старые публикации могут всё ещё показывать прежний длинный marketplace-идентификатор; считайте его только устаревшим alias. Отдельно npm-пакет остался `ecc-universal`, поэтому npm-установки и marketplace-установки намеренно используют разные имена.
+Это сделано намеренно. Установки Anthropic marketplace/plugin ключуются каноническим идентификатором плагина, поэтому ECC использует `SI-Claude-Plugin@SI-Claude-Plugin`, чтобы имена инструментов и пространства имен slash-команд оставались достаточно короткими для строгих валидаторов Desktop/API. Старые публикации могут всё ещё показывать прежний длинный marketplace-идентификатор; считайте его только устаревшим alias. Отдельно npm-пакет остался `ecc-universal`, поэтому npm-установки и marketplace-установки намеренно используют разные имена.
 
 ### Шаг 2: Установите правила (обязательно)
 
 > ПРЕДУПРЕЖДЕНИЕ: **Важно:** плагины Claude Code не могут автоматически распространять `rules`.
 >
-> Если вы уже установили ECC через `/plugin install`, **не запускайте после этого `./install.sh --profile full`, `.\install.ps1 --profile full` или `npx ecc-universal install --profile full`**. Плагин уже загружает навыки, команды и хуки ECC. Запуск полного установщика после установки плагина скопирует те же компоненты в пользовательские директории и может создать дублирующиеся навыки и дублирующееся runtime-поведение.
+> Если вы уже установили ECC через `/plugin install`, **не запускайте после этого `./install.sh --profile full`, `.\install.ps1 --profile full` или `npx github:coreybowlby-os/si-claude-plugin install --profile full`**. Плагин уже загружает навыки, команды и хуки ECC. Запуск полного установщика после установки плагина скопирует те же компоненты в пользовательские директории и может создать дублирующиеся навыки и дублирующееся runtime-поведение.
 >
 > Для установки через плагин вручную скопируйте только нужные директории `rules/` в `~/.claude/rules/ecc/`. Начните с `rules/common` плюс один языковой или framework-пакет, который вы действительно используете. Не копируйте все директории правил, если явно не хотите весь этот контекст в Claude.
 >
@@ -277,7 +277,7 @@ Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/ecc/"
 
 # Полностью ручной путь установки ECC (используйте вместо /plugin install)
 # .\install.ps1 --profile full
-# npx ecc-universal install --profile full
+# npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 Инструкции по ручной установке смотрите в README в папке `rules/`. При ручном копировании правил копируйте всю языковую директорию целиком (например, `rules/common` или `rules/golang`), а не файлы внутри неё, чтобы относительные ссылки продолжали работать и имена файлов не конфликтовали.
@@ -293,7 +293,7 @@ Copy-Item -Recurse rules/typescript "$HOME/.claude/rules/ecc/"
 ```powershell
 .\install.ps1 --profile full
 # или
-npx ecc-universal install --profile full
+npx github:coreybowlby-os/si-claude-plugin install --profile full
 ```
 
 Если выбираете этот путь, на нём и остановитесь. Не запускайте дополнительно `/plugin install`.
@@ -346,7 +346,7 @@ ECC удаляет только файлы, записанные в его insta
 # /plan "Добавить аутентификацию пользователей"
 
 # Проверить доступные команды
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 **Готово.** Теперь у вас есть доступ к 50 агентам, 185 навыкам и 68 устаревшим совместимым заглушкам команд.
@@ -763,10 +763,10 @@ Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded fil
 
 ```bash
 # Добавить этот репозиторий как marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Установить плагин
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 Или добавьте напрямую в `~/.claude/settings.json`:
@@ -782,7 +782,7 @@ Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded fil
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```
@@ -1010,7 +1010,7 @@ e2e-testing skill                             → e2e-runner: тесты кри�
 <summary><b>Как проверить, какие агенты/команды установлены?</b></summary>
 
 ```bash
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 Показывает всех доступных агентов, команды и навыки из плагина.

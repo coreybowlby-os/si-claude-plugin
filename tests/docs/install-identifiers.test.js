@@ -39,8 +39,22 @@ for (const relativePath of publicInstallDocs) {
     assert.ok(!content.includes('everything-claude-code@everything-claude-code'));
   });
 
-  test(`${relativePath} documents the short marketplace plugin identifier`, () => {
-    assert.ok(content.includes('ecc@ecc'));
+  test(`${relativePath} documents this fork's marketplace plugin identifier`, () => {
+    assert.ok(
+      content.includes('SI-Claude-Plugin@SI-Claude-Plugin'),
+      'public install docs must name the identifier this installer actually registers'
+    );
+  });
+
+  // The previous assertion here required `ecc@ecc`, upstream's identifier, which
+  // meant the docs told readers to install a different project than the one
+  // claude-plugin-setup.js registers. Guard against it coming back as an install
+  // instruction, while still allowing prose that names it to warn readers off.
+  test(`${relativePath} does not instruct installing upstream's plugin`, () => {
+    const installsUpstream = /\/plugin\s+install\s+ecc@ecc/.test(content) ||
+      /marketplace\s+add\s+(?:https:\/\/github\.com\/)?affaan-m\//.test(content) ||
+      /npx\s+ecc-universal/.test(content);
+    assert.ok(!installsUpstream, 'public install docs must not point at upstream ECC');
   });
 }
 

@@ -14,8 +14,8 @@ Verify that 2.2.0 is readable from the registry, then run the pinned package
 from the project you want to configure:
 
 ```bash
-npm view ecc-universal version
-npx ecc-universal@2.2.0 install --profile minimal --target antigravity
+curl -fsSL https://raw.githubusercontent.com/coreybowlby-os/si-claude-plugin/main/VERSION
+npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target antigravity
 ```
 
 ### Source checkout alternative

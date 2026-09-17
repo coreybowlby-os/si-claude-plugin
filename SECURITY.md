@@ -56,7 +56,7 @@ Official ECC surfaces are:
 - GitHub repo: <https://github.com/affaan-m/ECC>
 - npm package: `ecc-universal`
 - GitHub App: <https://github.com/apps/ecc-tools>
-- marketplace/plugin slug: `ecc@ecc`
+- marketplace/plugin slug: `SI-Claude-Plugin@SI-Claude-Plugin`
 - website: <https://ecc.tools>
 
 Official AgentShield surface:

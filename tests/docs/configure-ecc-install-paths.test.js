@@ -62,7 +62,9 @@ for (const relativePath of configureEccDocs) {
     const content = readConfigureEccDoc(relativePath);
 
     assert.ok(content.includes('sicp setup'));
-    assert.ok(content.includes('npx ecc-universal setup'));
+    // GitHub-only distribution: the runnable form is the github: npx spec, not
+    // upstream's published ecc-universal package.
+    assert.ok(content.includes('npx github:coreybowlby-os/si-claude-plugin setup'));
     assert.ok(content.includes('--mode claude-plugin'));
     assert.ok(content.includes('--scope <scope>'));
     assert.ok(content.includes('--hooks <hooks>'));
@@ -102,7 +104,10 @@ for (const relativePath of configureEccDocs) {
   test(`${relativePath} keeps provider capabilities truthful`, () => {
     const content = readConfigureEccDoc(relativePath);
 
-    assert.ok(content.includes('codex plugin add ecc@ecc --json'));
+    // Codex's marketplace name is lowercase (CODEX_MARKETPLACE_NAME), which is a
+    // different identifier from the Claude handle. Assert the one codex-plugin-setup
+    // actually issues.
+    assert.ok(content.includes('codex plugin add si-claude-plugin@si-claude-plugin --json'));
     assert.ok(content.includes('Codex'));
     assert.ok(content.includes('.kimi-code'));
     assert.ok(content.includes('--target kimi'));

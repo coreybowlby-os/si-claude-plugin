@@ -106,10 +106,10 @@
 
 ```bash
 # マーケットプレイスを追加
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # プラグインをインストール
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ### ステップ2：ルールをインストール（必須）
@@ -139,7 +139,7 @@ cp -r everything-claude-code/rules/golang ~/.claude/rules/golang
 # /plan "ユーザー認証を追加"
 
 # 利用可能なコマンドを確認
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 **完了です！** これで13のエージェント、43のスキル、31のコマンドにアクセスできます。
@@ -427,10 +427,10 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
 
 ```bash
 # このリポジトリをマーケットプレイスとして追加
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # プラグインをインストール
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 または、`~/.claude/settings.json` に直接追加：
@@ -446,7 +446,7 @@ Duplicate hook file detected: ./hooks/hooks.json is already resolved to a loaded
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```

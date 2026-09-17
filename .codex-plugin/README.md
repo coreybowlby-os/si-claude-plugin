@@ -26,7 +26,7 @@ repository marketplace, install the native plugin, and verify the registration:
 
 ```bash
 codex plugin marketplace add coreybowlby-os/si-claude-plugin
-codex plugin add ecc@ecc
+codex plugin add si-claude-plugin@si-claude-plugin
 codex plugin list --json
 ```
 
@@ -36,15 +36,15 @@ registration. To fetch a newer marketplace snapshot before applying a new ECC
 release, run:
 
 ```bash
-codex plugin marketplace upgrade ecc
-codex plugin add ecc@ecc
+codex plugin marketplace upgrade si-claude-plugin
+codex plugin add si-claude-plugin@si-claude-plugin
 ```
 
 For local development, the same native journey accepts a checkout path:
 
 ```bash
 codex plugin marketplace add /absolute/path/to/ECC
-codex plugin add ecc@ecc
+codex plugin add si-claude-plugin@si-claude-plugin
 ```
 
 ECC's marketplace entry points at the repository root. Codex copies the selected

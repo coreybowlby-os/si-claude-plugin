@@ -29,7 +29,12 @@ for (const pattern of staleReleaseCopy) {
 }
 
 assert.match(readme, /ECC 2\.2 includes guided package setup/i);
-assert.match(readme, /npm view ecc-universal version/);
+// GitHub-only distribution: no registry to query, so the pre-flight check is
+// the VERSION file on main.
+assert.ok(
+  readme.includes('raw.githubusercontent.com/coreybowlby-os/si-claude-plugin/main/VERSION'),
+  'README should offer a version pre-flight check that does not depend on a registry'
+);
 
 for (const source of [changelog, releaseNotes, nasikoSkill, modules, components]) {
   assert.doesNotMatch(source, /Nasiko integration/i);

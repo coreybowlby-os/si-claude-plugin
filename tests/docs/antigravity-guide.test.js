@@ -34,12 +34,14 @@ test('guide requires an installer with native Antigravity 2.0 support', () => {
 });
 
 test('guide uses the published 2.2 package without stale pre-release copy', () => {
+  // This fork ships from GitHub and has no npm release, so there is no registry
+  // to propagate. The equivalent pre-flight check is the VERSION file on main.
   assert.ok(
-    guide.includes('npm view ecc-universal version'),
-    'Guide should let operators verify registry propagation before installation'
+    guide.includes('raw.githubusercontent.com/coreybowlby-os/si-claude-plugin/main/VERSION'),
+    'Guide should let operators verify the current version before installation'
   );
   assert.ok(
-    guide.includes('npx ecc-universal@2.2.0 install --profile minimal --target antigravity'),
+    guide.includes('npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target antigravity'),
     'Guide should provide the pinned published-package installation path'
   );
   assert.ok(

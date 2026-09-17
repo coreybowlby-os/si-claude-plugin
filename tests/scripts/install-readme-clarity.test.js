@@ -53,10 +53,10 @@ function runTests() {
 
   if (test('README leads with the idempotent guided plugin setup path', () => {
     const topClaudeSectionIndex = readme.indexOf('## Install with Claude Code');
-    const topGuidedCommandIndex = readme.indexOf('npx ecc-universal setup', topClaudeSectionIndex);
+    const topGuidedCommandIndex = readme.indexOf('npx github:coreybowlby-os/si-claude-plugin setup', topClaudeSectionIndex);
     const nativePluginCommandIndex = readme.indexOf('/plugin marketplace add', topClaudeSectionIndex);
     const installSectionIndex = readme.indexOf('## Install ECC');
-    const guidedCommandIndex = readme.indexOf('npx ecc-universal setup', installSectionIndex);
+    const guidedCommandIndex = readme.indexOf('npx github:coreybowlby-os/si-claude-plugin setup', installSectionIndex);
     const claudeDetailsIndex = readme.indexOf('### Claude Code details', installSectionIndex);
 
     assert.ok(
@@ -73,7 +73,7 @@ function runTests() {
       'README should show the recommended universal command before provider-specific details'
     );
     assert.ok(
-      readme.includes('installs, updates, or safely moves `ecc@ecc`'),
+      readme.includes('installs, updates, or safely moves `SI-Claude-Plugin@SI-Claude-Plugin`'),
       'README should explain that rerunning guided setup reconciles existing installs'
     );
     assert.ok(
@@ -95,9 +95,9 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('README documents modern package-runner alternatives', () => {
-    assert.ok(readme.includes('pnpm dlx ecc-universal setup'));
-    assert.ok(readme.includes('yarn dlx ecc-universal setup'));
-    assert.ok(readme.includes('bunx ecc-universal setup'));
+    assert.ok(readme.includes('pnpm dlx github:coreybowlby-os/si-claude-plugin setup'));
+    assert.ok(readme.includes('yarn dlx github:coreybowlby-os/si-claude-plugin setup'));
+    assert.ok(readme.includes('bunx github:coreybowlby-os/si-claude-plugin setup'));
     assert.ok(
       readme.includes('Yarn Classic 1 does not provide `yarn dlx`'),
       'README should not advertise the modern Yarn command to Yarn Classic users'
@@ -122,10 +122,10 @@ function runTests() {
       'README should document doctor before reinstalling'
     );
     for (const command of [
-      'npx ecc-universal list-installed',
-      'npx ecc-universal doctor',
-      'npx ecc-universal repair',
-      'npx ecc-universal uninstall --dry-run',
+      'npx github:coreybowlby-os/si-claude-plugin list-installed',
+      'npx github:coreybowlby-os/si-claude-plugin doctor',
+      'npx github:coreybowlby-os/si-claude-plugin repair',
+      'npx github:coreybowlby-os/si-claude-plugin uninstall --dry-run',
     ]) {
       assert.ok(
         readme.includes(command),
@@ -148,7 +148,7 @@ function runTests() {
       'README should document the shell minimal profile command'
     );
     assert.ok(
-      readme.includes('npx ecc-universal install --profile minimal --target claude'),
+      readme.includes('npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude'),
       'README should document the published universal-package minimal profile command'
     );
     assert.ok(
@@ -175,7 +175,7 @@ function runTests() {
       'README should surface component discovery before install steps'
     );
     assert.ok(
-      readme.includes('npx ecc-universal consult "security reviews" --target claude'),
+      readme.includes('npx github:coreybowlby-os/si-claude-plugin consult "security reviews" --target claude'),
       'README should document the packaged consult command'
     );
     assert.ok(
@@ -193,15 +193,15 @@ function runTests() {
 
   if (test('README gives the native guided Codex and managed Kimi dry-run paths', () => {
     assert.ok(
-      readme.includes('npx ecc-universal install --guided --harness codex --dry-run'),
+      readme.includes('npx github:coreybowlby-os/si-claude-plugin install --guided --harness codex --dry-run'),
       'README should verify Codex through the native guided reconciler'
     );
     assert.ok(
-      !readme.includes('npx ecc-universal install --profile core --target codex --dry-run'),
+      !readme.includes('npx github:coreybowlby-os/si-claude-plugin install --profile core --target codex --dry-run'),
       'README should not present the legacy managed Codex adapter as the native lifecycle'
     );
     assert.ok(
-      readme.includes('npx ecc-universal install --profile core --target kimi --dry-run')
+      readme.includes('npx github:coreybowlby-os/si-claude-plugin install --profile core --target kimi --dry-run')
     );
     for (const target of ['cursor', 'gemini', 'opencode', 'codebuddy', 'joycode', 'qwen', 'zed', 'hermes', 'openclaw']) {
       assert.ok(readme.includes(`\`${target}\``), `README should name the ${target} target`);

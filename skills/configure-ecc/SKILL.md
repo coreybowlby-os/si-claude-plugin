@@ -13,7 +13,7 @@ and show the welcome only after success. Never clone ECC into a temporary
 directory or copy plugin components by hand.
 
 For a human-operated terminal, the canonical entry points are `sicp setup` and
-`npx ecc-universal setup`. Inside a harness, use the explicit non-interactive
+`npx github:coreybowlby-os/si-claude-plugin setup`. Inside a harness, use the explicit non-interactive
 commands below instead.
 
 ## Route by the current harness
@@ -41,7 +41,7 @@ claude plugin list --json
 claude plugin marketplace list --json
 ```
 
-Treat a single existing `ecc@ecc` installation as a reconfiguration. Do not
+Treat a single existing `SI-Claude-Plugin@SI-Claude-Plugin` installation as a reconfiguration. Do not
 interpret Claude's provider-owned "Open home page" control as installation
 evidence. Stop and report the recovery returned by setup for multiple ECC
 scopes, a legacy/manual install, malformed settings, or a marketplace collision;
@@ -119,7 +119,7 @@ the selected values. Then independently run:
 claude plugin list --json
 ```
 
-Continue only when exactly one enabled `ecc@ecc` entry exists at the selected
+Continue only when exactly one enabled `SI-Claude-Plugin@SI-Claude-Plugin` entry exists at the selected
 scope. When `$CLAUDE_PLUGIN_ROOT` is available, pass the successful setup
 `action` (`installed`, `updated`, `migrated`, `resumed`, or
 `already-migrated`) to the bundled renderer:
@@ -150,14 +150,14 @@ If the ECC marketplace is missing, add it. Otherwise refresh its snapshot:
 
 ```bash
 codex plugin marketplace add coreybowlby-os/si-claude-plugin
-codex plugin marketplace upgrade ecc --json
+codex plugin marketplace upgrade si-claude-plugin --json
 ```
 
 Ask for one confirmation, then install or idempotently refresh the installed
 cache and verify it:
 
 ```bash
-codex plugin add ecc@ecc --json
+codex plugin add si-claude-plugin@si-claude-plugin --json
 codex plugin list --json
 ```
 

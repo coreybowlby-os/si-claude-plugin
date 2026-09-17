@@ -11,7 +11,7 @@ metadata:
 一次，以非交互方式执行，验证，最后才显示欢迎信息。不要把 ECC 克隆到
 临时目录，也不要手动复制插件组件。
 
-在用户自己操作的终端中，规范入口是 `sicp setup` 和 `npx ecc-universal setup`。
+在用户自己操作的终端中，规范入口是 `sicp setup` 和 `npx github:coreybowlby-os/si-claude-plugin setup`。
 在工具内请改用下方参数完整的非交互命令。
 
 ## 按当前工具分流
@@ -36,7 +36,7 @@ claude plugin list --json
 claude plugin marketplace list --json
 ```
 
-只有一个现有 `ecc@ecc` 时，将本次视为重新配置。不要把 Claude 提供商所有的
+只有一个现有 `SI-Claude-Plugin@SI-Claude-Plugin` 时，将本次视为重新配置。不要把 Claude 提供商所有的
 “Open home page”控件当作安装证据。若 setup 报告多个 ECC 范围、旧版或手动
 安装、配置损坏或 marketplace 冲突，请停止并原样报告恢复建议，不要猜测要删除哪个。
 
@@ -107,7 +107,7 @@ npx --yes --package ecc-universal sicp setup --mode claude-plugin \
 claude plugin list --json
 ```
 
-只有在所选范围中恰好存在一个已启用的 `ecc@ecc` 条目时才继续。如果
+只有在所选范围中恰好存在一个已启用的 `SI-Claude-Plugin@SI-Claude-Plugin` 条目时才继续。如果
 `$CLAUDE_PLUGIN_ROOT` 可用，把成功 setup 的 `action`（`installed`、`updated`、
 `migrated`、`resumed` 或 `already-migrated`）传给内置渲染器：
 
@@ -132,13 +132,13 @@ Hook 四档模式。Codex 原生插件支持提供商专用 Hook，但 Codex 会
 
 ```bash
 codex plugin marketplace add coreybowlby-os/si-claude-plugin
-codex plugin marketplace upgrade ecc --json
+codex plugin marketplace upgrade si-claude-plugin --json
 ```
 
 只确认一次，然后安装或幂等刷新已安装缓存，并验证：
 
 ```bash
-codex plugin add ecc@ecc --json
+codex plugin add si-claude-plugin@si-claude-plugin --json
 codex plugin list --json
 ```
 

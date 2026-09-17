@@ -128,10 +128,10 @@ Comece em menos de 2 minutos:
 
 ```bash
 # Adicionar marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Instalar plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 ### Passo 2: Instalar as Regras (Obrigatório)
@@ -161,7 +161,7 @@ npm install        # ou: pnpm install | yarn install | bun install
 # .\install.ps1 --target antigravity typescript
 
 # O ponto de entrada do pacote npm publicado também funciona multiplataforma
-npx ecc-universal install typescript
+npx github:coreybowlby-os/si-claude-plugin install typescript
 ```
 
 ### Passo 3: Começar a Usar
@@ -174,7 +174,7 @@ npx ecc-universal install typescript
 # /plan "Adicionar autenticação de usuário"
 
 # Verificar comandos disponíveis
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 **Pronto!** Você agora tem acesso a 28 agentes, 116 skills e 59 comandos.
@@ -317,10 +317,10 @@ claude --version
 
 ```bash
 # Adicionar este repositório como marketplace
-/plugin marketplace add https://github.com/affaan-m/ECC
+/plugin marketplace add coreybowlby-os/si-claude-plugin
 
 # Instalar o plugin
-/plugin install ecc@ecc
+/plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
 Ou adicione diretamente ao seu `~/.claude/settings.json`:
@@ -336,7 +336,7 @@ Ou adicione diretamente ao seu `~/.claude/settings.json`:
     }
   },
   "enabledPlugins": {
-    "ecc@ecc": true
+    "SI-Claude-Plugin@SI-Claude-Plugin": true
   }
 }
 ```
@@ -459,7 +459,7 @@ Regras são diretrizes sempre seguidas, organizadas em `common/` (agnóstico à 
 <summary><b>Como verificar quais agentes/comandos estão instalados?</b></summary>
 
 ```bash
-/plugin list ecc@ecc
+/plugin list SI-Claude-Plugin@SI-Claude-Plugin
 ```
 </details>
 

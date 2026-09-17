@@ -233,7 +233,10 @@ function main() {
       assert.ok(localModelPath.includes('assets/images/sponsors/moonshot.png'));
       assert.ok(localModelPath.includes('assets/images/community/ecc-tools-mark.svg'));
       assert.match(readme, /install\.sh --target kimi --profile minimal/);
-      assert.match(readme, /npx ecc-universal doctor --target kimi/);
+      assert.ok(
+        readme.includes('npx github:coreybowlby-os/si-claude-plugin doctor --target kimi'),
+        'README should show the Kimi doctor check using the GitHub-only runner'
+      );
       assert.match(readme, /\.kimi-code\/AGENTS\.md/);
       assert.match(readme, /\.kimi-code\/skills\//);
       assert.match(readme, /~\/\.kimi-code\/config\.toml/);
