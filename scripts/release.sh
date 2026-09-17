@@ -16,7 +16,10 @@ PLUGIN_JSON=".claude-plugin/plugin.json"
 MARKETPLACE_JSON=".claude-plugin/marketplace.json"
 CODEX_MARKETPLACE_JSON=".agents/plugins/marketplace.json"
 CODEX_PLUGIN_JSON=".codex-plugin/plugin.json"
-CODEX_MARKETPLACE_PLUGIN_JSON="plugins/ecc/.codex-plugin/plugin.json"
+# The bundled Codex marketplace plugin lives in a directory named after the
+# Codex marketplace, which the rename moved from "ecc" to "si-claude-plugin".
+# Derived rather than written out, so the path follows the name.
+CODEX_MARKETPLACE_PLUGIN_JSON="plugins/$(node -p "require('./scripts/lib/resolve-ecc-root').CODEX_MARKETPLACE_NAME")/.codex-plugin/plugin.json"
 OPENCODE_PACKAGE_JSON=".opencode/package.json"
 OPENCODE_PACKAGE_LOCK_JSON=".opencode/package-lock.json"
 OPENCODE_ECC_HOOKS_PLUGIN=".opencode/plugins/ecc-hooks.ts"
@@ -134,6 +137,15 @@ update_readme_version_row() {
     const thirdCol = process.argv[6];
     const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const current = fs.readFileSync(file, "utf8");
+    // Neither README carries this row, and neither did upstream at the merge
+    // base, so the strict failure below aborted every release before one could
+    // complete. An absent row means there is no documented version to keep in
+    // sync; a row that exists but will not update is still worth stopping for,
+    // so only the first case is skipped.
+    if (!new RegExp(`^\\| \\*\\*${escape(label)}\\*\\* \\|`, "m").test(current)) {
+      console.log(`Notice: ${file} has no **${label}** version row to update.`);
+      process.exit(0);
+    }
     const updated = current.replace(
       new RegExp(
         `^(\\| \\*\\*${escape(label)}\\*\\* \\| ${escape(firstCol)} \\| ${escape(secondCol)} \\| ${escape(thirdCol)} \\| )[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?( \\|(?: [^|]+ \\|)*)$`,
@@ -182,6 +194,14 @@ update_latest_release_heading() {
     const oldVersion = process.argv[3];
     const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const current = fs.readFileSync(file, "utf8");
+    // This retitles the previous release's heading. Neither this README nor
+    // upstream's at the merge base carries a heading for the outgoing version,
+    // so requiring one aborted the release outright. Skip when there is no such
+    // heading; a heading that exists but will not update still fails below.
+    if (!new RegExp(`^### v${escape(oldVersion)}( .*)$`, "m").test(current)) {
+      console.log(`Notice: ${file} has no v${oldVersion} release heading to retitle.`);
+      process.exit(0);
+    }
     const updated = current.replace(
       new RegExp(`^### v${escape(oldVersion)}( .*)$`, "m"),
       `### v${version}$1`
