@@ -194,16 +194,6 @@ update_latest_release_heading() {
     const oldVersion = process.argv[3];
     const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const current = fs.readFileSync(file, "utf8");
-    // This retitles the heading of the previous release. Neither this README
-    // nor the upstream one at the merge base carries a heading for the outgoing
-    // version, so requiring one aborted the release outright. Skip when there
-    // is no such heading; one that exists but will not update still fails.
-    // NOTE: this whole block is inside a single-quoted shell string, so it must
-    // never contain an apostrophe.
-    if (!new RegExp(`^### v${escape(oldVersion)}( .*)$`, "m").test(current)) {
-      console.log(`Notice: ${file} has no v${oldVersion} release heading to retitle.`);
-      process.exit(0);
-    }
     const updated = current.replace(
       new RegExp(`^### v${escape(oldVersion)}( .*)$`, "m"),
       `### v${version}$1`

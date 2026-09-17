@@ -856,6 +856,12 @@ It's harness- and model-agnostic: a plain CLI (`ecc-plan-canvas`) speaking JSON,
 <details>
 <summary><strong>Release history in detail</strong></summary>
 
+### v2.2.1: Guided Multi-Harness Install (Aug 2026)
+
+Reviewable multi-harness setup across Claude Code, Codex, and Kimi Code, with a
+matching command entry point. Full notes:
+[docs/releases/2.2.1/release-notes.md](docs/releases/2.2.1/release-notes.md).
+
 ### v2.0.0: The Agent Harness Operating System (Jun 2026)
 
 Stable graduation of the 2.0 line: the control-pane substrate (session adapters + MCP inventory), the worktree-lifecycle service, the `orch-*` orchestrator family, and the launch of the [ECC Discord community](https://discord.gg/36yGMHGFbR). Full notes: [docs/releases/2.0.0/release-notes.md](docs/releases/2.0.0/release-notes.md).
