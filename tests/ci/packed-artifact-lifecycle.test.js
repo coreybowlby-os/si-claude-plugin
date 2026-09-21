@@ -15,6 +15,19 @@ const PACKAGE_NAME = require('../../package.json').name;
 const PACKAGE_FILE = `${PACKAGE_NAME}-2.2.0.tgz`;
 const PACKAGE_REL = `release-artifacts/${PACKAGE_FILE}`;
 
+// release.yml runs the runner from release-artifacts/ with no repository
+// present, so it cannot read package.json there and falls back to a literal.
+// That literal is only safe while it matches the real name.
+function assertFallbackMatchesManifest() {
+  const source = fs.readFileSync(
+    path.join(__dirname, 'packed-artifact-lifecycle.js'),
+    'utf8'
+  );
+  const declared = source.match(/const FALLBACK_PACKAGE_NAME = '([^']+)'/);
+  assert.ok(declared, 'expected a FALLBACK_PACKAGE_NAME literal in the runner');
+  assert.strictEqual(declared[1], PACKAGE_NAME);
+}
+
 let passed = 0;
 let failed = 0;
 
@@ -64,6 +77,8 @@ test('rejects missing, malformed, and non-tgz release inputs', () => {
     ECC_RELEASE_SHA256: 'a'.repeat(64),
   }, '/workspace'), /release-artifacts/);
 });
+
+test('the standalone fallback package name matches the manifest', assertFallbackMatchesManifest);
 
 test('hashFile computes a lowercase SHA-256 digest', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-packed-hash-'));

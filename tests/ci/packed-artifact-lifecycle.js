@@ -9,7 +9,22 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const { spawnSync } = require('child_process');
 
-const PACKAGE_NAME = require('../../package.json').name;
+// release.yml copies this file on its own into release-artifacts/ and runs it
+// there with no repository checked out, so the manifest is not reachable from
+// disk. Read it when it is there and fall back to the published name when it is
+// not; packed-artifact-lifecycle.test.js runs in-repo and asserts the two agree,
+// so the fallback cannot silently drift from package.json.
+const FALLBACK_PACKAGE_NAME = 'si-claude-plugin';
+
+function resolvePackageName() {
+  try {
+    return require('../../package.json').name;
+  } catch {
+    return FALLBACK_PACKAGE_NAME;
+  }
+}
+
+const PACKAGE_NAME = resolvePackageName();
 const HASH_PATTERN = /^[a-f0-9]{64}$/i;
 // Derived from the manifest so renaming the package cannot leave this matcher
 // pointing at the old tarball name.
