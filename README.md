@@ -856,7 +856,7 @@ It's harness- and model-agnostic: a plain CLI (`ecc-plan-canvas`) speaking JSON,
 <details>
 <summary><strong>Release history in detail</strong></summary>
 
-### v2.3.0 — Guided Multi-Harness Install (Aug 2026)
+### v2.3.1 — Guided Multi-Harness Install (Aug 2026)
 
 Reviewable multi-harness setup across Claude Code, Codex, and Kimi Code, with a
 matching command entry point. Full notes:

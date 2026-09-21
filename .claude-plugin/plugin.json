@@ -1,6 +1,6 @@
 {
   "name": "SI-Claude-Plugin",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "SI Claude Plugin — an attributed fork of ECC for engineering teams - 68 agents, 300 skills, 94 legacy command shims, reusable hooks, rules, MCP conventions, and operator workflows for Claude Code plus adjacent agent harnesses",
   "author": {
     "name": "Corey Bowlby",
