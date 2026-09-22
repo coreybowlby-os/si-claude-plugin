@@ -22,7 +22,7 @@ if (!TOKEN || !APP_ID) {
   process.exit(1);
 }
 const REPO = process.env.ECC_REPO || join(homedir(), 'GitHub/ECC/everything-claude-code');
-const REPO_URL = 'https://github.com/affaan-m/ECC';
+const REPO_URL = 'https://github.com/coreybowlby-os/si-claude-plugin';
 const INVITE = process.env.DISCORD_INVITE || '';
 const API = 'https://discord.com/api/v10';
 
@@ -164,7 +164,7 @@ const handlers = {
   },
 
   release: async () => {
-    const res = await fetch('https://api.github.com/repos/affaan-m/ECC/releases/latest', {
+    const res = await fetch('https://api.github.com/repos/coreybowlby-os/si-claude-plugin/releases/latest', {
       headers: { 'User-Agent': 'ecc-discord-bot' },
     });
     if (!res.ok) return `couldn't reach GitHub (${res.status}) — ${REPO_URL}/releases`;

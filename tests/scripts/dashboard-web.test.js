@@ -838,7 +838,9 @@ test('renderHTML includes the dashboard title and footer', () => {
   const data = { agents: [], skills: [], commands: [], rules: [], mcps: [], hooks: [] };
   const html = renderHTML(data);
   assert.ok(html.includes('ECC Capabilities'));
-  assert.ok(html.includes('github.com/affaan-m/ECC'));
+  // The footer is a link the operator clicks. It pointed at upstream, which sent
+  // users of this fork to a different project; assert on this fork's repository.
+  assert.ok(html.includes('github.com/coreybowlby-os/si-claude-plugin'));
 });
 
 // ===================== Server / HTTP =====================

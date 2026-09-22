@@ -11,6 +11,7 @@ const {
 
 const SCHEMA_VERSION = 'ecc.platform-audit.v1';
 const DEFAULT_REPOS = Object.freeze([
+  'coreybowlby-os/si-claude-plugin',
   'affaan-m/ECC',
   'affaan-m/agentshield',
   'affaan-m/JARVIS',

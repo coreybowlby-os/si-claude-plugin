@@ -193,7 +193,7 @@ Examples:
   sicp sessions
   sicp sessions session-active --json
   sicp work-items upsert linear-ecc-20 --source linear --source-id ECC-20 --title "Review control-plane contract" --status blocked
-  sicp work-items sync-github --repo affaan-m/ECC
+  sicp work-items sync-github --repo coreybowlby-os/si-claude-plugin
   sicp session-inspect claude:latest
   sicp loop-status --json
   sicp uninstall --target antigravity --dry-run
