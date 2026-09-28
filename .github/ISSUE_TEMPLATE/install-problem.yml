@@ -83,7 +83,7 @@ body:
   - type: input
     id: versions
     attributes:
-      label: ECC and harness versions
+      label: SI Claude Plugin and harness versions
       description: If known. A tag, commit, or package version is enough.
       placeholder: ECC 2.1.0; Claude Code 2.x
   - type: textarea

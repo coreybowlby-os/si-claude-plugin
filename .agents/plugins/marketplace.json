@@ -1,7 +1,7 @@
 {
   "name": "si-claude-plugin",
   "interface": {
-    "displayName": "ECC"
+    "displayName": "SI Claude Plugin"
   },
   "plugins": [
     {

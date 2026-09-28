@@ -33,7 +33,7 @@ Usage:
   sicp install --guided --harness claude --harness codex --harness kimi [options]
 
 Guided harnesses:
-  claude  Native Claude Code plugin; choose user, project, or local scope and an ECC hook profile.
+  claude  Native Claude Code plugin; choose user, project, or local scope and a SI Claude Plugin hook profile.
   codex   Native Codex plugin and Codex-owned hook review/trust.
   kimi    Managed project install under ./.kimi-code; ECC hooks are not configured.
 

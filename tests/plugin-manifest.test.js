@@ -440,9 +440,9 @@ test('codex plugin.json has interface.displayName', () => {
   assert.ok(codexPlugin.interface && codexPlugin.interface.displayName, 'Expected interface.displayName for plugin directory presentation');
 });
 
-test('codex plugin.json uses canonical ECC repo and display name', () => {
+test('codex plugin.json uses this repository and its own display name', () => {
   assert.strictEqual(codexPlugin.repository, 'https://github.com/coreybowlby-os/si-claude-plugin');
-  assert.strictEqual(codexPlugin.interface.displayName, 'ECC');
+  assert.strictEqual(codexPlugin.interface.displayName, 'SI Claude Plugin');
 });
 
 test('codex plugin presentation assets exist and ship in npm package', () => {
