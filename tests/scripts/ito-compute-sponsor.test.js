@@ -134,12 +134,14 @@ function main() {
         /exact Itô compute route/
       );
     }],
-    ['README exposes the sponsor logo and honest self-hosting route', () => {
+    // This fork does not display upstream ECC's sponsor logos. That block
+    // carried upstream's referral links (greptile.com/go/ecc, utm_campaign=ECC),
+    // so a fork showing it would drive affiliate traffic for a sponsorship it
+    // has no part in. The honesty control on compute claims is what matters
+    // here and is kept below.
+    ['README describes an honest self-hosting route', () => {
       const readme = read('README.md');
-      assert.ok(readme.includes('assets/images/sponsors/ito-transparent.png'));
-      assert.ok(readme.includes('assets/images/sponsors/ito-transparent-light.png'));
       assert.doesNotMatch(readme, /assets\/images\/sponsors\/ito(?:-dark)?\.svg/);
-      assert.match(readme, /<p align="center" aria-label="Partners and sponsors">/);
       assert.doesNotMatch(
         readme,
         /<sub><strong>Partners &amp; sponsors<\/strong><\/sub>\s*<table>/
@@ -231,7 +233,7 @@ function main() {
       assert.strictEqual((localModelPath.match(/<td\b/g) || []).length, 3);
       assert.ok(localModelPath.includes('assets/images/sponsors/ito-transparent.png'));
       assert.ok(localModelPath.includes('assets/images/sponsors/moonshot.png'));
-      assert.ok(localModelPath.includes('assets/images/community/ecc-tools-mark.svg'));
+      assert.ok(localModelPath.includes('assets/ecc-icon.svg'));
       assert.match(readme, /install\.sh --target kimi --profile minimal/);
       assert.ok(
         readme.includes('npx github:coreybowlby-os/si-claude-plugin doctor --target kimi'),

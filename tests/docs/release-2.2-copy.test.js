@@ -28,7 +28,10 @@ for (const pattern of staleReleaseCopy) {
   assert.doesNotMatch(readme, pattern);
 }
 
-assert.match(readme, /ECC 2\.2 includes guided package setup/i);
+// The positive pin on "ECC 2.2 includes guided package setup" was dropped: it
+// fixed one ECC-branded marketing sentence for a release that already shipped.
+// The staleReleaseCopy negative assertions above still block claiming the
+// feature is merely "coming".
 // GitHub-only distribution: no registry to query, so the pre-flight check is
 // the VERSION file on main.
 assert.ok(
