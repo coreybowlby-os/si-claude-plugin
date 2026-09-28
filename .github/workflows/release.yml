@@ -181,6 +181,12 @@ jobs:
     name: Publish Release
     runs-on: ubuntu-latest
     needs: [verify, lifecycle]
+    # Cutting a release pauses here for a required reviewer on the `release`
+    # environment. Verification and the packed-artifact lifecycle have already
+    # run by this point, so the approval is a decision about publishing a green
+    # build, not a rubber stamp on an unknown one. Any npm credential belongs on
+    # this environment too, so it is only ever exposed after approval.
+    environment: release
     # This project is distributed from GitHub and has no npm release. Exposing
     # the token at job level lets the npm-only steps below skip themselves when
     # it is absent, so the GitHub Release is still cut. Setting NPM_TOKEN is all

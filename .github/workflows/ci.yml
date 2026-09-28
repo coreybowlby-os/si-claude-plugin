@@ -346,3 +346,34 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+
+  # Single stable status check for branch protection. Requiring the matrix jobs
+  # by name would break every time a Node version or platform is added or
+  # dropped; this job's name never changes, so the ruleset keeps working.
+  ci-gate:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - test
+      - pack-installer
+      - packed-install-lifecycle
+      - validate
+      - python-tests
+      - security
+      - coverage
+      - lint
+    if: always()
+
+    steps:
+      - name: Verify every CI job succeeded
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS"
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] \
+            || [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "::error::CI Gate failed — one or more CI jobs did not succeed."
+            exit 1
+          fi
+          echo "All CI jobs succeeded."
