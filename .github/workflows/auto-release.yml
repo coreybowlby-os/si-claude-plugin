@@ -116,7 +116,6 @@ jobs:
             echo "Skipping release — [skip release] found in commit message."
             exit 0
           fi
-          echo "skip=false" >> $GITHUB_OUTPUT
 
           # Fetch last tag to bound commit log
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
@@ -157,6 +156,21 @@ jobs:
             else console.log(maj + '.' + min + '.' + (pat+1));
           " "$CURRENT" "$BUMP")
 
+          # release.yml reads docs/releases/<version>/release-notes.md out of the
+          # tag's own tree, and separately requires the tagged commit to equal
+          # origin/main. Notes for $NEXT must therefore already be committed at
+          # this point — before release.sh creates the bump commit and tag —
+          # because they cannot be added afterwards without moving a published
+          # tag. Check here so a missing file skips cleanly instead of pushing a
+          # tag for a version that can never be released (cf. v2.3.0, v2.3.2).
+          RELEASE_NOTES="docs/releases/${NEXT}/release-notes.md"
+          if [ ! -f "$RELEASE_NOTES" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "::notice::Skipping release of ${NEXT} — no reviewed release notes at ${RELEASE_NOTES}. Commit that file to release this version."
+            exit 0
+          fi
+
+          echo "skip=false"      >> $GITHUB_OUTPUT
           echo "bump=$BUMP"       >> $GITHUB_OUTPUT
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
           echo "next=$NEXT"       >> $GITHUB_OUTPUT
