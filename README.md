@@ -1,7 +1,24 @@
 > [!WARNING]
-> **Official sources only.** Install SI Claude Plugin only from verified channels: the GitHub repository [github.com/coreybowlby-os/si-claude-plugin](https://github.com/coreybowlby-os/si-claude-plugin), the npm package [`si-claude-plugin`](https://www.npmjs.com/package/si-claude-plugin), and the plugin slug `SI-Claude-Plugin@SI-Claude-Plugin`. Third-party re-uploads and unofficial mirrors are not maintained or reviewed by this project and may contain malware.
+> **Official sources only.** Install SI Claude Plugin only from verified channels: the GitHub repository [github.com/coreybowlby-os/si-claude-plugin](https://github.com/coreybowlby-os/si-claude-plugin) and the plugin slug `SI-Claude-Plugin@SI-Claude-Plugin`. There is no npm package for this project, so any npm package using this name is not ours. Third-party re-uploads and unofficial mirrors are not maintained or reviewed by this project and may contain malware.
 >
 > This is a fork of [ECC](https://github.com/affaan-m/ECC). ECC's own channels — its repository, its npm packages, its GitHub App and `ecc.tools` — are **not** sources for this package, and this package is not published or reviewed by ECC.
+
+<p align="center">
+  <strong>Language:</strong>
+  <a href="README.md">English</a> |
+  <a href="docs/pt-BR/README.md">Português (Brasil)</a> |
+  <a href="README.zh-CN.md">简体中文</a> |
+  <a href="docs/zh-TW/README.md">繁體中文</a> |
+  <a href="docs/ja-JP/README.md">日本語</a> |
+  <a href="docs/ko-KR/README.md">한국어</a> |
+  <a href="docs/tr/README.md">Türkçe</a> |
+  <a href="docs/ru/README.md">Русский</a> |
+  <a href="docs/vi-VN/README.md">Tiếng Việt</a> |
+  <a href="docs/th/README.md">ไทย</a> |
+  <a href="docs/de-DE/README.md">Deutsch</a> |
+  <a href="docs/es/README.md">Español</a> |
+  <a href="docs/uk-UA/README.md">Українська</a>
+</p>
 
 ## Install with Claude Code
 
@@ -29,7 +46,7 @@ Alternatively, run Claude Code's native plugin commands inside Claude Code:
 /plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
-The native path installs ECC's skills, agents, commands, and plugin-managed hooks. If you choose it, stop there. Do not also run a full manual install into Claude Code.
+The native path installs this plugin's skills, agents, commands, and plugin-managed hooks. If you choose it, stop there. Do not also run a full manual install into Claude Code.
 
 > Both paths install the same `SI-Claude-Plugin@SI-Claude-Plugin` plugin. Choose one and do not stack
 > another manual Claude install on top.
@@ -59,7 +76,6 @@ The native path installs ECC's skills, agents, commands, and plugin-managed hook
 
 <sub>**Free and MIT-licensed.** This is a fork of [ECC](https://github.com/affaan-m/ECC), maintained independently. It is not affiliated with ECC and offers no commercial tier — if it is useful to you, the upstream author's work is what made it possible.</sub>
 
-
 # This Harness
 
 Your agent can write code, but si-claude-plugin gives it a coordinated engineering system and toolbox: it plans before it builds, verifies changes with tests, reviews its own work from a fresh context, remembers what matters, and turns repeated wins into reusable skills and workflows.
@@ -85,9 +101,7 @@ Access to 68 agents, 300 skills, and 94 legacy command shims, plus hooks, rules,
 | Rules            |   Selective | Always-loaded standards you choose by language or project                            |
 | AgentShield      |    Included | Scanning for prompts, hooks, MCP config, permissions, secrets, and agent files       |
 
-
-
-## Install 
+## Install
 
 > [!IMPORTANT]
 > Includes guided package setup for Claude Code, Codex, and Kimi Code.
@@ -276,7 +290,7 @@ claude
 
 If your gateway remaps model names, configure that in Claude Code rather than in ECC. ECC's hooks, skills, commands, and rules are model-provider agnostic once the `claude` CLI is already working. See Anthropic's [LLM gateway documentation](https://docs.anthropic.com/en/docs/claude-code/llm-gateway) and [model configuration documentation](https://docs.anthropic.com/en/docs/claude-code/model-config).
 
-Run or self-host any open-source model behind that gateway using separate compute and serving setup. If you need GPU capacity, [Itô](https://compute.itomarkets.com) is ECC's preferred compute sponsor; any GPU provider works. The sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, `sicp ito find` invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
+Run or self-host any open-source model behind that gateway using separate compute and serving setup. If you need GPU capacity, [Itô](https://compute.itomarkets.com) is upstream ECC's compute sponsor and is carried over here; this fork has no sponsorship arrangement of its own, and any GPU provider works. The link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, `sicp ito find` invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
 
 ### Self-host Kimi with ECC + Itô compute
 
@@ -300,8 +314,8 @@ The Kimi Code harness and the model-serving layer are separate. ECC configures t
 </td>
 <td width="33%" align="center">
   <a href=".kimi/README.md">
-    <img src="assets/images/community/ecc-tools-mark.svg" height="52" alt="ECC Tools" /><br />
-    <strong>3. Run Kimi Code with ECC</strong>
+    <img src="assets/ecc-icon.svg" height="52" alt="" /><br />
+    <strong>3. Run Kimi Code with SI Claude Plugin</strong>
   </a><br />
   <sub>Install project instructions and skills, then start Kimi Code.</sub>
 </td>
@@ -736,7 +750,7 @@ It's harness- and model-agnostic: a plain CLI (`ecc-plan-canvas`) speaking JSON,
 ### Also in 2.1
 
 - **Kimi Code install target** (`--target kimi`): ECC installs natively into [Moonshot AI](https://www.moonshot.ai)'s Kimi Code CLI
-- **Self-host on GPUs**: a verified path with [Itô](https://compute.itomarkets.com), ECC's preferred compute sponsor, including the opt-in `sicp ito find` RFQ bridge (details and disclosures above in [Self-Hosted Models and Custom Endpoints](#self-hosted-models-and-custom-endpoints))
+- **Self-host on GPUs**: a verified path with [Itô](https://compute.itomarkets.com), upstream ECC's compute sponsor, including the opt-in `sicp ito find` RFQ bridge (details and disclosures above in [Self-Hosted Models and Custom Endpoints](#self-hosted-models-and-custom-endpoints))
 - **Moonshot AI (Kimi), Itô, and Atlas Cloud** are now public sponsors
 - **Hermes + OpenClaw install targets**, a Codex navigation guide, consolidated PostToolUse hooks, and supply-chain hardening
 
@@ -1730,27 +1744,15 @@ OpenCode's plugin system has 20+ event types:
 
 #### Plugin installation
 
-**Option 1: Use directly**
+Run OpenCode from a clone. This project is distributed from GitHub only, so
+there is no npm package to add to `opencode.json`:
+
 ```bash
 cd si-claude-plugin
 opencode
 ```
 
-**Option 2: Install as npm package**
-```bash
-npm install si-claude-plugin
-```
-
-Then add to your `opencode.json`:
-```json
-{
-  "plugin": ["ecc-universal"]
-}
-```
-
-That npm plugin entry enables ECC's published OpenCode plugin module (hooks/events and plugin tools). It does **not** automatically add ECC's full command/agent/instruction catalog to your project config.
-
-For the full ECC OpenCode setup, either:
+For the full OpenCode setup, either:
 - run OpenCode inside this repository, or
 - copy the bundled `.opencode/` config assets into your project and wire the `instructions`, `agent`, and `command` entries in `opencode.json`
 
@@ -1926,7 +1928,8 @@ Install SI Claude Plugin only from official sources:
 
 - GitHub repository: <https://github.com/coreybowlby-os/si-claude-plugin>
 - Claude Code plugin: `SI-Claude-Plugin@SI-Claude-Plugin`
-- npm package: [`si-claude-plugin`](https://www.npmjs.com/package/si-claude-plugin)
+
+This project is not published to npm. An npm package bearing this name is not ours.
 
 ECC's own repository, npm packages, GitHub App and website are not sources for this package.
 
