@@ -1,64 +1,3 @@
-<p align="center">
-  <img src="assets/hero.png" alt="ECC - the agent harness operating system" width="100%" />
-</p>
-
-<p align="center">
-  <a href="https://www.star-history.com/affaan-m/ecc">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=affaan-m/ECC&type=trending&theme=dark" />
-      <img src="https://api.star-history.com/badge?repo=affaan-m/ECC&type=trending" alt="GitHub Trending Repository of the Day" height="46" />
-    </picture>
-  </a>
-  <a href="https://www.star-history.com/affaan-m/ecc">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/badge?repo=affaan-m/ECC&type=rank&theme=dark" />
-      <img src="https://api.star-history.com/badge?repo=affaan-m/ECC&type=rank" alt="Star History Global Rank" height="46" />
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-  <strong>Language:</strong>
-  <a href="README.md">English</a> |
-  <a href="docs/pt-BR/README.md">Português (Brasil)</a> |
-  <a href="README.zh-CN.md">简体中文</a> |
-  <a href="docs/zh-TW/README.md">繁體中文</a> |
-  <a href="docs/ja-JP/README.md">日本語</a> |
-  <a href="docs/ko-KR/README.md">한국어</a> |
-  <a href="docs/tr/README.md">Türkçe</a> |
-  <a href="docs/ru/README.md">Русский</a> |
-  <a href="docs/vi-VN/README.md">Tiếng Việt</a> |
-  <a href="docs/th/README.md">ไทย</a> |
-  <a href="docs/de-DE/README.md">Deutsch</a> |
-  <a href="docs/es/README.md">Español</a> |
-  <a href="docs/uk-UA/README.md">Українська</a>
-</p>
-
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license" /></a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/coreybowlby-os/si-claude-plugin/stargazers"><img src="https://img.shields.io/github/stars/coreybowlby-os/si-claude-plugin?style=flat" alt="Stars" /></a>
-  <a href="https://github.com/coreybowlby-os/si-claude-plugin/network/members"><img src="https://img.shields.io/github/forks/coreybowlby-os/si-claude-plugin?style=flat" alt="Forks" /></a>
-  <a href="https://github.com/coreybowlby-os/si-claude-plugin/graphs/contributors"><img src="https://img.shields.io/github/contributors/coreybowlby-os/si-claude-plugin?style=flat" alt="Contributors" /></a>
-</p>
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/si-claude-plugin"><img src="https://img.shields.io/npm/dw/ecc-universal?label=ecc-universal&logo=npm" alt="ecc-universal npm downloads" /></a>
-  <a href="https://www.npmjs.com/package/ecc-agentshield"><img src="https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield&logo=npm" alt="ecc-agentshield npm downloads" /></a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white" alt="Shell" />
-  <img src="https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white" alt="Go" />
-  <img src="https://img.shields.io/badge/-Java-ED8B00?logo=openjdk&logoColor=white" alt="Java" />
-  <img src="https://img.shields.io/badge/-Perl-39457E?logo=perl&logoColor=white" alt="Perl" />
-  <img src="https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white" alt="Markdown" />
-</p>
-
 > [!WARNING]
 > **Official sources only.** Install SI Claude Plugin only from verified channels: the GitHub repository [github.com/coreybowlby-os/si-claude-plugin](https://github.com/coreybowlby-os/si-claude-plugin), the npm package [`si-claude-plugin`](https://www.npmjs.com/package/si-claude-plugin), and the plugin slug `SI-Claude-Plugin@SI-Claude-Plugin`. Third-party re-uploads and unofficial mirrors are not maintained or reviewed by this project and may contain malware.
 >
@@ -120,29 +59,10 @@ The native path installs ECC's skills, agents, commands, and plugin-managed hook
 
 <sub>**Free and MIT-licensed.** This is a fork of [ECC](https://github.com/affaan-m/ECC), maintained independently. It is not affiliated with ECC and offers no commercial tier — if it is useful to you, the upstream author's work is what made it possible.</sub>
 
-<div align="center">
 
-<sub><strong>Partners &amp; sponsors</strong></sub>
+# This Harness
 
-<p align="center" aria-label="Partners and sponsors">
-  <a href="https://www.coderabbit.ai" title="CodeRabbit"><img src="assets/images/sponsors/coderabbit.png" height="54" alt="CodeRabbit" /></a>&nbsp;&nbsp;&nbsp;
-  <a href="https://www.greptile.com/go/ecc" title="Greptile"><img src="assets/images/sponsors/greptile.png" height="54" alt="Greptile" /></a>&nbsp;&nbsp;&nbsp;
-  <a href="https://www.atlascloud.ai/?utm_source=github&amp;utm_medium=link&amp;utm_campaign=ECC" title="Atlas Cloud"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/images/sponsors/atlascloud-dark.svg" /><img src="assets/images/sponsors/atlascloud.svg" width="154" alt="Atlas Cloud" /></picture></a>&nbsp;&nbsp;&nbsp;
-  <a href="https://www.moonshot.ai" title="Moonshot AI - Kimi"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/images/sponsors/moonshot-dark.png" /><img src="assets/images/sponsors/moonshot.png" width="132" alt="Moonshot AI - Kimi" /></picture></a>&nbsp;&nbsp;&nbsp;
-  <a href="https://compute.itomarkets.com" title="Itô Markets"><picture><source media="(prefers-color-scheme: light)" srcset="assets/images/sponsors/ito-transparent-light.png" /><img src="assets/images/sponsors/ito-transparent.png" width="96" alt="Itô Markets" /></picture></a>
-</p>
-
-<sub><strong>Community sponsors:</strong> <a href="https://github.com/mikejmorgan-ai">Mike Morgan</a> · <a href="https://github.com/jasonwu513">@jasonwu513</a> · <a href="https://github.com/1anter">@1anter</a> · <a href="https://github.com/massimotodaro">@massimotodaro</a> · <a href="https://github.com/meadmccabe">@meadmccabe</a></sub>
-
-<sub><a href="https://github.com/sponsors/affaan-m"><strong>Become a Sponsor</strong></a></sub>
-
-</div>
-
-<p align="center"><a href="#install-ecc">Jump to install ↓</a></p>
-
-# ECC
-
-Your agent can write code, but ECC gives it a coordinated engineering system and toolbox: it plans before it builds, verifies changes with tests, reviews its own work from a fresh context, remembers what matters, and turns repeated wins into reusable skills and workflows.
+Your agent can write code, but si-claude-plugin gives it a coordinated engineering system and toolbox: it plans before it builds, verifies changes with tests, reviews its own work from a fresh context, remembers what matters, and turns repeated wins into reusable skills and workflows.
 
 ```text
 plan -> test -> implement -> review -> verify -> remember -> improve
@@ -152,7 +72,7 @@ Instead of rebuilding that process in every prompt, you install it once and make
 
 > Optimize the context window. Persist everything else.
 
-ECC is MIT-licensed open source. It works best with Claude Code today, has a supported Codex sync path, and provides capability-limited adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen, and other harnesses. See the [support status matrix](#platform-support) before assuming feature parity.
+It works best with Claude Code today, has a supported Codex sync path, and provides capability-limited adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen, and other harnesses. See the [support status matrix](#platform-support) before assuming feature parity.
 
 Access to 68 agents, 300 skills, and 94 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
 
@@ -165,19 +85,12 @@ Access to 68 agents, 300 skills, and 94 legacy command shims, plus hooks, rules,
 | Rules            |   Selective | Always-loaded standards you choose by language or project                            |
 | AgentShield      |    Included | Scanning for prompts, hooks, MCP config, permissions, secrets, and agent files       |
 
-<p align="center">
-  <a href="https://www.star-history.com/affaan-m/ecc">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/star-history-dark.svg" />
-      <img src="assets/star-history-light.svg" alt="ECC star history: first 40,000 stars, January 18 to February 7, 2026" width="100%" />
-    </picture>
-  </a>
-</p>
 
-## Install ECC
+
+## Install 
 
 > [!IMPORTANT]
-> ECC 2.2 includes guided package setup for Claude Code, Codex, and Kimi Code.
+> Includes guided package setup for Claude Code, Codex, and Kimi Code.
 > The universal package requires Node.js 18 or newer. Claude plugin setup also
 > requires Git and Claude Code 2.1 or newer on `PATH`.
 
@@ -198,7 +111,7 @@ npx github:coreybowlby-os/si-claude-plugin install --guided
 
 ### Pick one path only (per harness)
 
-You can use ECC with Claude Code, Codex, and other harnesses at the same time. Choose one install method for each harness:
+You can use with Claude Code, Codex, and other harnesses at the same time. Choose one install method for each harness:
 
 - **Recommended default:** run the guided Claude plugin setup above
 - **Also supported for Claude Code:** use the [native plugin commands above](#install-with-claude-code)
@@ -208,17 +121,15 @@ You can use ECC with Claude Code, Codex, and other harnesses at the same time. C
 - **Avoid:** Claude Code plugin + full Claude manual install
 - **Avoid:** Codex sync + Codex marketplace plugin
 
-**Do not stack install methods.** Installing ECC twice into the same harness can duplicate skills, commands, hooks, or configuration; installing it once into multiple harnesses does not.
+**Do not stack install methods.** Installing twice into the same harness can duplicate skills, commands, hooks, or configuration; installing it once into multiple harnesses does not.
 
 If you already layered multiple installs and things look duplicated, skip straight to [Reset / Uninstall ECC](#reset--uninstall-ecc).
-
-**Install trouble?** Open the short [install or runtime problem form](https://github.com/affaan-m/ECC/issues/new?template=install-problem.yml), or run `sicp feedback`. ECC never uploads diagnostics automatically.
 
 ### Claude Code details
 
 Claude Code owns these built-in commands, including their errors when a marketplace, plugin, or conflicting scope already exists. ECC cannot intercept that parser. If either native command reports an existing install or scope conflict, use the 2.2 guided setup or resolve the conflicting Claude plugin scope before retrying; do not layer a manual install on top.
 
-After ECC is installed, `/ecc:configure-ecc` is the namespaced in-Claude reconfiguration skill. It delegates to the same safe setup flow, but it is available only after the plugin is installed and cannot replace Claude Code's built-in `/plugin` command during a first install.
+After plugin is installed, `/ecc:configure-ecc` is the namespaced in-Claude reconfiguration skill. It delegates to the same safe setup flow, but it is available only after the plugin is installed and cannot replace Claude Code's built-in `/plugin` command during a first install.
 
 Claude Code plugins cannot distribute `rules`, so add only the rule packs you actually want:
 
