@@ -15,9 +15,11 @@ Security fixes land on `main` first. Backports are best-effort and only for curr
 
 Use GitHub private vulnerability reporting whenever possible — it reaches the maintainer directly:
 
-- <https://github.com/affaan-m/ECC/security/advisories/new>
+- <https://github.com/coreybowlby-os/si-claude-plugin/security/advisories/new>
 
-You can also email **<affaan@ecc.tools>** (the `security@ecc.tools` alias is not monitored — use `affaan@ecc.tools`).
+Private vulnerability reporting is enabled on this repository, so that form is
+the reporting channel. Reports sent to upstream ECC reach a maintainer who
+cannot patch this fork.
 
 Do **not** open a public GitHub issue for security vulnerabilities.
 
@@ -42,8 +44,7 @@ If a report is declined, we will explain whether it is not reproducible, out of 
 
 This policy covers:
 
-- the `affaan-m/ECC` repository
-- the `ecc-universal` npm package
+- the `coreybowlby-os/si-claude-plugin` repository
 - ECC plugin, install, repair, dashboard, hook, rule, skill, MCP, and command surfaces shipped from this repository
 - GitHub Actions workflows and release automation in this repository
 - the ECC Tools GitHub App integration points documented by this repository
@@ -51,12 +52,17 @@ This policy covers:
 
 ## Official Distribution Surfaces
 
-Official ECC surfaces are:
+This fork is distributed from GitHub only:
 
-- GitHub repo: <https://github.com/affaan-m/ECC>
-- npm package: `ecc-universal`
-- GitHub App: <https://github.com/apps/ecc-tools>
+- GitHub repo: <https://github.com/coreybowlby-os/si-claude-plugin>
 - marketplace/plugin slug: `SI-Claude-Plugin@SI-Claude-Plugin`
+
+Upstream ECC maintains its own surfaces. This fork does not publish to them and
+cannot vouch for them:
+
+- npm package: `ecc-universal`
+- GitHub repo: <https://github.com/affaan-m/ECC>
+- GitHub App: <https://github.com/apps/ecc-tools>
 - website: <https://ecc.tools>
 
 Official AgentShield surface:
@@ -92,7 +98,7 @@ ECC treats supply-chain exposure as a first-class security surface.
 - GitHub Actions must use pinned commit SHAs for third-party actions.
 - Workflows must avoid shelling untrusted GitHub context directly into `run:` blocks.
 - Release and install docs must point only to official packages.
-- Package metadata should point at `affaan-m/ECC`, not historical repo paths.
+- Package metadata should point at `coreybowlby-os/si-claude-plugin`, not upstream or historical repo paths.
 - Private vulnerability reports are triaged privately before public disclosure.
 - Security advisories are published only when a supported release is affected and coordinated disclosure is appropriate.
 
