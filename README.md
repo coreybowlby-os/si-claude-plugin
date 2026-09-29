@@ -910,6 +910,51 @@ Rules, skills, agents, and hooks solve different problems. Keeping those jobs se
 | Hooks | Scripts triggered by harness events | Run outside the model context |
 | Instincts | Patterns learned from real sessions with confidence scores | Recalled when relevant |
 
+### Skills change this session; agents are a separate one
+
+This is the distinction people get wrong most often, and it is the one that
+decides how much context a task costs you.
+
+A **skill** changes how the current session behaves. It loads instructions into
+the conversation you are already in, so it inherits your history, your files and
+your tools, and its output lands directly in your context.
+
+An **agent** (subagent) is a separate worker. It starts with a fresh context
+window, sees only the task you hand it, runs with a declared tool allowlist and
+its own model, and returns a summary. Your conversation never sees the forty
+files it read to produce that summary.
+
+| | Skill | Agent |
+|---|---|---|
+| Context window | yours | its own, fresh |
+| Sees | the conversation so far | only the task it is given |
+| Tools | whatever your session has | a declared allowlist |
+| Model | your session's | its own |
+| Result | becomes your context | a summary returned to you |
+| Cost | spends your context | spends its own, protects yours |
+
+**Which to reach for.** Use a skill when you want the work done differently
+*here* — the task needs the conversation history, and you want the full result in
+front of you. Use an agent when the work would flood your context (searching a
+large tree to answer one question), when it should run with less privilege than
+you have, or when several independent pieces should run at once.
+
+**Least privilege is real, not decorative.** All 68 agents declare a tool list.
+40 of them cannot write files at all, and 13 can neither write nor run Bash — a
+reviewer that can only read is a reviewer that cannot quietly "fix" what it was
+asked to critique.
+
+**They compose.** Agents load skills. `/code-review` dispatches the
+`code-reviewer` agent, which applies coding-standards skills inside its own
+context, and you get the findings without the file dumps.
+
+**How to tell them apart in this repo.** Agents live in `agents/` as single `.md`
+files and always declare both `tools:` and `model:`. Skills live in
+`skills/<name>/SKILL.md` and never declare `model:` — 11 of the 300 suggest a
+`tools:` list, but none pick a model. If the frontmatter names a model, it is an
+agent. For which command dispatches which agent, see
+[docs/COMMAND-AGENT-MAP.md](docs/COMMAND-AGENT-MAP.md).
+
 ### Share context between harnesses
 
 ECC's Memory Vault gives Claude, Codex, Hermes, OpenClaw, Kimi, and other harnesses one local, inspectable Markdown format for durable context and handoffs. Project and team memories live under `.ecc/memory/`; user memories live under `~/.ecc/memory/`.
@@ -1344,14 +1389,21 @@ See `skills/continuous-learning-v2/` for full documentation. Keep `continuous-le
 
 ### Agents
 
-Subagents handle delegated tasks with limited scope. Example:
+An agent is a subagent: it runs in its own context window with its own model and
+a declared tool allowlist, and returns a summary rather than its whole transcript.
+See [Skills change this session; agents are a separate one](#skills-change-this-session-agents-are-a-separate-one)
+for when to use one instead of a skill.
+
+This is the real frontmatter of the shipped `code-reviewer`. The `tools` line is
+the privilege boundary — it has no `Write` or `Edit`, so it cannot modify the code
+it reviews:
 
 ```markdown
 ---
 name: code-reviewer
-description: Reviews code for quality, security, and maintainability
+description: Expert code review specialist. Proactively reviews code for quality, security, and maintainability.
 tools: Read, Grep, Glob, Bash
-model: opus
+model: sonnet
 ---
 
 You are a senior code reviewer...
