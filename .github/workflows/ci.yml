@@ -24,14 +24,48 @@ jobs:
 
     strategy:
       fail-fast: false
+      # Explicit combinations rather than a cross-product. The three axes do not
+      # earn equal coverage: 60 test files branch on process.platform, 2 read
+      # CLAUDE_CODE_PACKAGE_MANAGER, and 1 branches on the Node version. So OS
+      # breadth is kept in full, while the node x pm cross-product — which was
+      # re-validating the same install nine times over — is collapsed to the
+      # pairings that actually differ.
+      #
+      # This took the matrix from 33 jobs to 15 (278 runner-minutes to ~126).
+      # It also cuts flake exposure: CI Gate is a required check, and at the
+      # per-lane ETIMEDOUT rate we measured, 33 lanes meant a majority chance
+      # that some lane stalled and blocked a green run.
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['18.x', '20.x', '22.x']
-        pm: [npm, pnpm, yarn, bun]
-        exclude:
-          # Bun has limited Windows support
-          - os: windows-latest
-            pm: bun
+        include:
+          # OS x Node on npm. This is the platform-sensitive surface and the
+          # only axis combination where failures have actually clustered.
+          - { os: ubuntu-latest,  node: '18.x', pm: npm }
+          - { os: ubuntu-latest,  node: '20.x', pm: npm }
+          - { os: ubuntu-latest,  node: '22.x', pm: npm }
+          - { os: windows-latest, node: '18.x', pm: npm }
+          - { os: windows-latest, node: '20.x', pm: npm }
+          - { os: windows-latest, node: '22.x', pm: npm }
+          - { os: macos-latest,   node: '18.x', pm: npm }
+          - { os: macos-latest,   node: '20.x', pm: npm }
+          - { os: macos-latest,   node: '22.x', pm: npm }
+
+          # Package-manager compatibility. Each manager is exercised once; the
+          # pm axis mostly proves the install itself resolves, which does not
+          # vary by Node version.
+          - { os: ubuntu-latest,  node: '20.x', pm: pnpm }
+          - { os: ubuntu-latest,  node: '20.x', pm: yarn }
+          - { os: ubuntu-latest,  node: '20.x', pm: bun }
+          # Node 18 takes a different pnpm path in this workflow (corepack
+          # pnpm@9 instead of pnpm 10), so that pairing is a real interaction
+          # rather than a repeat.
+          - { os: ubuntu-latest,  node: '18.x', pm: pnpm }
+
+          # OS-specific package-manager risk.
+          # Yarn Berry on Windows: path handling and the --immutable default.
+          - { os: windows-latest, node: '20.x', pm: yarn }
+          # Bun on macOS: where the intermittent spawn stall showed up.
+          - { os: macos-latest,   node: '20.x', pm: bun }
+          # Bun is not exercised on Windows: support there is limited.
 
     steps:
       - name: Checkout
