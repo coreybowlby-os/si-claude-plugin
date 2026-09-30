@@ -76,29 +76,40 @@ The native path installs this plugin's skills, agents, commands, and plugin-mana
 
 <sub>**Free and MIT-licensed.** This is a fork of [ECC](https://github.com/affaan-m/ECC), maintained independently. It is not affiliated with ECC and offers no commercial tier — if it is useful to you, the upstream author's work is what made it possible.</sub>
 
-# This Harness
+# What this is
 
-Your agent can write code, but si-claude-plugin gives it a coordinated engineering system and toolbox: it plans before it builds, verifies changes with tests, reviews its own work from a fresh context, remembers what matters, and turns repeated wins into reusable skills and workflows.
+Your agent can already write code. This gives it a way of working.
+
+It plans before it builds. It writes tests and checks they actually pass. It
+reviews its own work with fresh eyes instead of grading its own homework. It
+remembers what mattered, and anything that works twice becomes a reusable skill.
 
 ```text
 plan -> test -> implement -> review -> verify -> remember -> improve
 ```
 
-Instead of rebuilding that process in every prompt, you install it once and make it part of how your agent works.
+You set that up once, rather than re-explaining it in every prompt.
 
 > Optimize the context window. Persist everything else.
 
-It works best with Claude Code today, has a supported Codex sync path, and provides capability-limited adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen, and other harnesses. See the [support status matrix](#platform-support) before assuming feature parity.
+It works best with Claude Code. Codex has a supported sync path. There are also
+adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen and
+a few others, but they cover less — check the [support matrix](#platform-support)
+before you rely on a specific feature.
 
-Access to 68 agents, 300 skills, and 94 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
+Access to 68 agents, 300 skills, and 94 legacy command shims, plus hooks, rules,
+memory, continuous learning, and AgentShield security scanning.
+
+The agents cover planning, review, fixing broken builds, security, architecture
+and specific languages.
 
 | Included         |       Count | What it gives you                                                                    |
 | ---------------- | ----------: | ------------------------------------------------------------------------------------ |
 | Agents           |   68 agents | Planning, review, build repair, security, architecture, and domain work              |
 | Skills           |  300 skills | TDD, research, security, docs, frontend, data, ML, operations, and more              |
-| Commands         | 94 commands | Convenient entry points while SI Claude Plugin moves to a skills-first surface                    |
+| Commands         | 94 commands | Shortcuts, kept working while things move to a skills-first setup                     |
 | Hooks and memory |     Runtime | Enforcement, session summaries, continuous learning, instincts, and context controls |
-| Rules            |   Selective | Always-loaded standards you choose by language or project                            |
+| Rules            |   Selective | Standards that load every time, so pick only the ones you want                       |
 | AgentShield      |    Included | Scanning for prompts, hooks, MCP config, permissions, secrets, and agent files       |
 
 ## Install
@@ -910,49 +921,49 @@ Rules, skills, agents, and hooks solve different problems. Keeping those jobs se
 | Hooks | Scripts triggered by harness events | Run outside the model context |
 | Instincts | Patterns learned from real sessions with confidence scores | Recalled when relevant |
 
-### Skills change this session; agents are a separate one
+### Skills vs agents
 
-This is the distinction people get wrong most often, and it is the one that
-decides how much context a task costs you.
+People mix these up constantly, and the difference is what decides how much of
+your context a job eats.
 
-A **skill** changes how the current session behaves. It loads instructions into
-the conversation you are already in, so it inherits your history, your files and
-your tools, and its output lands directly in your context.
+A **skill** changes how your current session works. It drops instructions into
+the conversation you're already in, so it sees your history and your files, uses
+the same tools you have, and its output lands right in front of you.
 
-An **agent** (subagent) is a separate worker. It starts with a fresh context
-window, sees only the task you hand it, runs with a declared tool allowlist and
-its own model, and returns a summary. Your conversation never sees the forty
-files it read to produce that summary.
+An **agent** (or subagent) is a separate worker. It starts fresh, only sees the
+job you hand it, can only touch the tools it's allowed, runs on its own model,
+and hands back a summary. You never see the forty files it read to write that
+summary.
 
 | | Skill | Agent |
 |---|---|---|
 | Context window | yours | its own, fresh |
-| Sees | the conversation so far | only the task it is given |
-| Tools | whatever your session has | a declared allowlist |
-| Model | your session's | its own |
-| Result | becomes your context | a summary returned to you |
-| Cost | spends your context | spends its own, protects yours |
+| Sees | the conversation so far | only the job you give it |
+| Tools | same as yours | only what it's allowed |
+| Model | yours | its own |
+| Result | lands in your context | a summary comes back |
+| Cost | spends your context | spends its own, saves yours |
 
-**Which to reach for.** Use a skill when you want the work done differently
-*here* — the task needs the conversation history, and you want the full result in
-front of you. Use an agent when the work would flood your context (searching a
-large tree to answer one question), when it should run with less privilege than
-you have, or when several independent pieces should run at once.
+**So which one?** Reach for a skill when you want the job done differently right
+here, and you want the whole result in front of you. Reach for an agent when the
+work would bury your context (digging through a big tree to answer one question),
+when it shouldn't have as much access as you do, or when you want a few things
+running at once.
 
-**Least privilege is real, not decorative.** All 68 agents declare a tool list.
-40 of them cannot write files at all, and 13 can neither write nor run Bash — a
-reviewer that can only read is a reviewer that cannot quietly "fix" what it was
-asked to critique.
+**The tool limits are real.** All 68 agents list what they're allowed to touch.
+40 of them can't write files at all, and 13 can't write or run Bash either. A
+reviewer that can only read can't quietly "fix" the thing it was supposed to be
+critiquing.
 
-**They compose.** Agents load skills. `/code-review` dispatches the
-`code-reviewer` agent, which applies coding-standards skills inside its own
-context, and you get the findings without the file dumps.
+**They work together.** Agents use skills. `/code-review` hands off to the
+`code-reviewer` agent, which applies the coding-standards skills in its own
+context, and you get the findings without the pile of files.
 
-**How to tell them apart in this repo.** Agents live in `agents/` as single `.md`
-files and always declare both `tools:` and `model:`. Skills live in
-`skills/<name>/SKILL.md` and never declare `model:` — 11 of the 300 suggest a
-`tools:` list, but none pick a model. If the frontmatter names a model, it is an
-agent. For which command dispatches which agent, see
+**Telling them apart here.** Agents are single `.md` files in `agents/`, and they
+always set both `tools:` and `model:`. Skills live in `skills/<name>/SKILL.md` and
+never set `model:` — 11 of the 300 suggest a `tools:` list, but none pick a model.
+So if you see a model in the frontmatter, it's an agent. To see which command
+calls which agent, check
 [docs/COMMAND-AGENT-MAP.md](docs/COMMAND-AGENT-MAP.md).
 
 ### Share context between harnesses
@@ -1391,7 +1402,7 @@ See `skills/continuous-learning-v2/` for full documentation. Keep `continuous-le
 
 An agent is a subagent: it runs in its own context window with its own model and
 a declared tool allowlist, and returns a summary rather than its whole transcript.
-See [Skills change this session; agents are a separate one](#skills-change-this-session-agents-are-a-separate-one)
+See [Skills vs agents](#skills-vs-agents)
 for when to use one instead of a skill.
 
 This is the real frontmatter of the shipped `code-reviewer`. The `tools` line is
