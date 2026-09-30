@@ -2129,12 +2129,6 @@ node tests/lib/package-manager.test.js
 node tests/hooks/hooks.test.js
 ```
 
-## Background
-
-I've been using Claude Code since the experimental rollout. Won the Anthropic x Forum Ventures hackathon in Sep 2025 with [@DRodriguezFX](https://x.com/DRodriguezFX), built [zenith.chat](https://zenith.chat) entirely with agentic workflows.
-
-These configs are battle-tested across multiple production applications.
-
 ## Community and Project
 
 <details>
