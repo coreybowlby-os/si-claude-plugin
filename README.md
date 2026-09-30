@@ -46,7 +46,7 @@ Alternatively, run Claude Code's native plugin commands inside Claude Code:
 /plugin install SI-Claude-Plugin@SI-Claude-Plugin
 ```
 
-The native path installs this plugin's skills, agents, commands, and plugin-managed hooks. If you choose it, stop there. Do not also run a full manual install into Claude Code.
+That installs the skills, agents, commands and plugin-managed hooks. If you go this route you're done — don't also run a manual install on top.
 
 > Both paths install the same `SI-Claude-Plugin@SI-Claude-Plugin` plugin. Choose one and do not stack
 > another manual Claude install on top.
@@ -136,7 +136,7 @@ npx github:coreybowlby-os/si-claude-plugin install --guided
 
 ### Pick one path only (per harness)
 
-You can use with Claude Code, Codex, and other harnesses at the same time. Choose one install method for each harness:
+You can run it alongside Claude Code, Codex and other harnesses at the same time. Just pick one install method per harness:
 
 - **Recommended default:** run the guided Claude plugin setup above
 - **Also supported for Claude Code:** use the [native plugin commands above](#install-with-claude-code)
@@ -148,13 +148,13 @@ You can use with Claude Code, Codex, and other harnesses at the same time. Choos
 
 **Do not stack install methods.** Installing twice into the same harness can duplicate skills, commands, hooks, or configuration; installing it once into multiple harnesses does not.
 
-If you already layered multiple installs and things look duplicated, skip straight to [Reset / Uninstall SI Claude Plugin](#reset--uninstall-si-claude-plugin).
+If you've already stacked a few installs and things look duplicated, jump to [Reset / Uninstall SI Claude Plugin](#reset--uninstall-si-claude-plugin).
 
 ### Claude Code details
 
-Claude Code owns these built-in commands, including their errors when a marketplace, plugin, or conflicting scope already exists. SI Claude Plugin cannot intercept that parser. If either native command reports an existing install or scope conflict, use the 2.2 guided setup or resolve the conflicting Claude plugin scope before retrying; do not layer a manual install on top.
+Claude Code owns these built-in commands, and their error messages too. If one complains about an existing install or a scope conflict, that's Claude Code talking — this plugin can't intercept it. Either use the 2.2 guided setup, or clear the conflicting plugin scope and try again. Don't layer a manual install on top of it.
 
-After plugin is installed, `/ecc:configure-ecc` is the namespaced in-Claude reconfiguration skill. It delegates to the same safe setup flow, but it is available only after the plugin is installed and cannot replace Claude Code's built-in `/plugin` command during a first install.
+Once the plugin is in, `/ecc:configure-ecc` lets you reconfigure it from inside Claude. It runs the same safe setup flow, but it's available only after the plugin is installed — so it can't stand in for Claude Code's built-in `/plugin` command on a first install.
 
 Claude Code plugins cannot distribute `rules`, so add only the rule packs you actually want:
 
@@ -213,7 +213,7 @@ package, not this fork. Installing it gets you upstream's plugin under the `ecc@
 identifier — a different project with different maintainers. See the attribution
 notice at the top of this README.
 
-If your local Claude setup was wiped or reset, that does not mean you need to repurchase anything. Start with `node scripts/ecc.js list-installed`, then run `node scripts/ecc.js doctor` and `node scripts/ecc.js repair` before reinstalling. That usually restores SI Claude Plugin-managed files without rebuilding your setup.
+If your local Claude setup got wiped, you probably don't need to start over. Run `node scripts/ecc.js list-installed`, then `node scripts/ecc.js doctor` and `node scripts/ecc.js repair` before reinstalling — that usually puts the managed files back without rebuilding anything.
 </details>
 
 ### Codex App and CLI
@@ -227,7 +227,9 @@ codex plugin list --json
 node scripts/codex/check-plugin-cache.js
 ```
 
-Both add commands are idempotent. To refresh later, run `codex plugin marketplace upgrade si-claude-plugin` followed by `codex plugin add si-claude-plugin@si-claude-plugin`. Codex stores one enabled plugin state in the active `CODEX_HOME`; it does not offer Claude's `user`, `project`, and `local` scopes. Its native hooks require an explicit trust decision and do not use Claude's four SI Claude Plugin hook profiles. Inside Codex, invoke `$configure-ecc` for the guided provider-aware flow.
+You can run either add command twice safely. To refresh later, run `codex plugin marketplace upgrade si-claude-plugin` then `codex plugin add si-claude-plugin@si-claude-plugin`.
+
+A few Codex differences worth knowing: it keeps one plugin state per `CODEX_HOME`, so there's no equivalent of Claude's `user`, `project` and `local` scopes. Its native hooks need you to explicitly trust them, and they don't use the four hook profiles. Inside Codex, run `$configure-ecc` for the guided setup.
 
 The older `scripts/sync-ecc-to-codex.sh` path is a deprecated compatibility option for users who intentionally need copied and merged configuration in `~/.codex`; it is not required for the native plugin. New sync runs write an ownership manifest so cleanup can preserve modified user files. Run Codex once first so `~/.codex/config.toml` exists, then:
 
@@ -245,9 +247,9 @@ node scripts/ecc.js uninstall --legacy-codex-sync --dry-run
 node scripts/ecc.js uninstall --legacy-codex-sync
 ```
 
-Pre-manifest installations are handled conservatively: SI Claude Plugin removes its marked `AGENTS.md` block but preserves copied files it cannot prove it owns and reports them for review.
+Older installs from before the manifest existed are treated carefully. It removes its own marked block in `AGENTS.md`, but leaves any copied file it can't prove it put there and tells you about it instead.
 
-You can also open the SI Claude Plugin repository directly in Codex for a project-local setup. Codex reads the root `AGENTS.md` and the trusted project configuration in `.codex/` without a global sync. Do not add the native marketplace plugin on top of the sync flow.
+You can also just open this repository in Codex for a project-local setup. Codex picks up the root `AGENTS.md` and the trusted config in `.codex/` without any global sync. Don't add the native marketplace plugin on top of that.
 
 For repo navigation, surface ownership, and PR diff packet guidance, read the [Codex SI Claude Plugin Navigation Map](docs/CODEX-NAVIGATION-GUIDE.md). See the [.codex plugin notes](.codex-plugin/README.md) for native lifecycle details.
 
@@ -280,7 +282,7 @@ npm install
 
 GitHub Copilot support is already included in this repository. `.github/copilot-instructions.md` provides the instruction layer, `.github/prompts/` contains the reusable `/plan`, `/tdd`, `/security-review`, `/build-fix`, and `/refactor` prompts, and `.vscode/settings.json` enables `chat.promptFiles`.
 
-For a harness without a native SI Claude Plugin target, use the [manual adaptation guide](docs/MANUAL-ADAPTATION-GUIDE.md). It explains how to carry a small set of SI Claude Plugin skills and workflow instructions into chat-style tools without pretending hooks or native skill discovery are available.
+If your harness has no native target, see the [manual adaptation guide](docs/MANUAL-ADAPTATION-GUIDE.md). It covers moving a handful of skills and workflow instructions into chat-style tools, without pretending hooks or skill discovery work there.
 
 Cursor installs agent definitions under `.cursor/agents/ecc-*.md`. Cursor-native loading behavior can vary by Cursor build. SI Claude Plugin does not install root `AGENTS.md` into `.cursor/`. The adapter keeps Cursor's context scoped to its native rules and agent surfaces.
 
@@ -289,9 +291,9 @@ Deep per-harness notes (feature parity, hook adapters, limitations) live in [Pla
 
 ## Self-Hosted Models and Custom Endpoints
 
-SI Claude Plugin works through each harness's normal configuration, so you can use an official provider, a compatible custom API endpoint or model gateway, or a self-hosted model without changing SI Claude Plugin's workflows.
+It goes through whatever config your harness already uses, so an official provider, a compatible custom API endpoint or model gateway, or a self-hosted model all work without changing any of the workflows.
 
-For Claude Code, SI Claude Plugin does not hardcode Anthropic-hosted transport settings. Minimal gateway example:
+Nothing here hardcodes Anthropic's hosted endpoints for Claude Code. A minimal gateway setup:
 
 ```bash
 export ANTHROPIC_BASE_URL=https://your-gateway.example.com
@@ -299,7 +301,7 @@ export ANTHROPIC_AUTH_TOKEN=your-token
 claude
 ```
 
-If your gateway remaps model names, configure that in Claude Code rather than in SI Claude Plugin. SI Claude Plugin's hooks, skills, commands, and rules are model-provider agnostic once the `claude` CLI is already working. See Anthropic's [LLM gateway documentation](https://docs.anthropic.com/en/docs/claude-code/llm-gateway) and [model configuration documentation](https://docs.anthropic.com/en/docs/claude-code/model-config).
+If your gateway renames models, set that up in Claude Code, not here. Once the `claude` CLI works, the hooks, skills, commands and rules don't care which provider is behind it. Anthropic's docs cover the details: [LLM gateway](https://docs.anthropic.com/en/docs/claude-code/llm-gateway) and [model configuration](https://docs.anthropic.com/en/docs/claude-code/model-config).
 
 Run or self-host any open-source model behind that gateway using separate compute and serving setup. If you need GPU capacity, [Itô](https://compute.itomarkets.com) is upstream ECC's preferred compute sponsor, carried over here; this fork has no sponsorship arrangement of its own, and any GPU provider works. The sponsorship link is passive: it does not invoke an RFQ, reserve capacity, provision compute, or configure serving. Separately, `sicp ito find` invokes the explicitly configured canonical Itô CLI and submits a live authenticated RFQ; it does not reserve capacity. Managed inference through Itô is not live yet.
 
