@@ -274,10 +274,17 @@ test('uses one shell-free focused runner across Linux, macOS, and Windows', () =
   const packageJson = read(files.packageJson);
   const platformRunner = read(files.platformRunner);
 
-  assert.match(
-    ci,
-    /os:\s*\[ubuntu-latest,\s*windows-latest,\s*macos-latest\]/
-  );
+  // Assert the guarantee, not the YAML shape: the test matrix has to exercise
+  // all three platforms. It used to be written as a cross-product axis
+  // (`os: [ubuntu-latest, windows-latest, macos-latest]`) and is now an explicit
+  // `include:` list, so matching that one array form pinned syntax rather than
+  // coverage.
+  for (const platform of ['ubuntu-latest', 'windows-latest', 'macos-latest']) {
+    assert.ok(
+      ci.includes(platform),
+      `CI must still exercise ${platform}`
+    );
+  }
   assert.match(
     packageJson,
     /"test:plugin-setup-platform":\s*"node docker\/plugin-setup\/run-platform-tests\.js"/
