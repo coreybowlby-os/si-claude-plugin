@@ -79,18 +79,27 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # release.sh ends with `git push origin main "v$VERSION"`. With
-      # persist-credentials disabled there is no stored credential for that
-      # push, so supply one through a helper instead. Only the helper stub is
-      # written to .git/config; the token itself stays in the environment and
-      # is read at push time, rather than sitting on disk as a base64
-      # http.extraheader for the rest of the job.
-      - name: Authorize pushes without persisting credentials
+      # GITHUB_TOKEN can no longer push the bump commit. The ruleset on main
+      # requires a pull request, and GitHub refuses to add the GitHub Actions app
+      # as a bypass actor on a user-owned repository. A deploy key is accepted as
+      # a bypass actor and, unlike a PAT, is scoped to this repository alone.
+      - name: Authorize the bump push with the release deploy key
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_DEPLOY_KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
         run: |
-          git config --local credential.helper \
-            '!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f'
+          if [ -z "$RELEASE_DEPLOY_KEY" ]; then
+            echo "::error::RELEASE_DEPLOY_KEY is not set, so the bump push would be rejected by the main ruleset"
+            exit 1
+          fi
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          printf '%s\n' "$RELEASE_DEPLOY_KEY" > "$HOME/.ssh/release_key"
+          chmod 600 "$HOME/.ssh/release_key"
+          ssh-keyscan -t ed25519 github.com >> "$HOME/.ssh/known_hosts" 2>/dev/null
+          git config --local core.sshCommand "ssh -i $HOME/.ssh/release_key -o IdentitiesOnly=yes"
+          git remote set-url origin "git@github.com:${{ github.repository }}.git"
+          git ls-remote --heads origin main >/dev/null
+          echo "Deploy key authenticated against origin."
 
       - name: Determine version bump
         id: version
