@@ -307,7 +307,7 @@ Run or self-host any open-source model behind that gateway using separate comput
 
 ### Self-host Kimi with SI Claude Plugin + Itô compute
 
-The Kimi Code harness and the model-serving layer are separate. SI Claude Plugin configures the agent harness; you bring an API endpoint or self-host an open-weight Kimi model on your own GPU capacity. This adapter is verified against Kimi Code 0.31.x (`@moonshot-ai/kimi-code`):
+Kimi Code and the thing actually serving the model are two separate pieces. This sets up the harness; you supply an API endpoint, or self-host an open-weight Kimi model on your own GPUs. The adapter is tested against Kimi Code 0.31.x (`@moonshot-ai/kimi-code`):
 
 <table aria-label="Local Kimi model path" width="100%">
 <tr>
@@ -335,7 +335,7 @@ The Kimi Code harness and the model-serving layer are separate. SI Claude Plugin
 </tr>
 </table>
 
-Configure the endpoint with Kimi Code's <a href="https://moonshotai.github.io/kimi-cli/en/configuration/providers.html">official provider guide</a>, then install SI Claude Plugin:
+Set the endpoint up with Kimi Code's <a href="https://moonshotai.github.io/kimi-cli/en/configuration/providers.html">provider guide</a>, then install:
 
 ```bash
 bash ./install.sh --target kimi --profile minimal
@@ -343,7 +343,9 @@ node scripts/ecc.js doctor --target kimi
 kimi
 ```
 
-Kimi Code discovers the installed `.kimi-code/AGENTS.md` instructions and `.kimi-code/skills/` workflows natively; project-level `.agents/skills/` is also an official discovery location. SI Claude Plugin safely merges project MCP entries into `.kimi-code/mcp.json` and does not change the user-level `~/.kimi-code/config.toml`. Kimi Code supports native hooks, but SI Claude Plugin's current managed-project adapter does not configure them, so this installer does not offer Kimi hook profiles. The installer dry-run and regression suite verify that every managed Kimi write stays inside the project-local `.kimi-code/` root.
+Kimi Code finds the installed `.kimi-code/AGENTS.md` instructions and `.kimi-code/skills/` workflows on its own, and `.agents/skills/` in the project works too. MCP entries get merged into `.kimi-code/mcp.json`; your user-level `~/.kimi-code/config.toml` is left alone.
+
+Kimi Code does support native hooks, but this adapter doesn't set them up yet, so there are no Kimi hook profiles to pick. Every write it makes stays inside the project's `.kimi-code/` folder — the dry-run and the test suite both check that.
 
 ### Itô compute CLI bridge
 
@@ -355,14 +357,14 @@ The `ito-compute-cli` package is currently unpublished. Build it locally from th
 
 ## Advanced Install Options
 
-The options stay here, directly under the main install paths, so you do not have to hunt through the README when the default setup is not the right fit.
+These live right under the main install paths, so you don't have to go hunting when the default setup isn't what you need.
 
 <details>
 <summary><strong>Low-context install with no hook runtime</strong></summary>
 
 ### Low-context / no-hooks path
 
-Use this when you want SI Claude Plugin's rules, agents, commands, platform config, and core workflows without runtime hooks:
+Use this when you want the rules, agents, commands, platform config and core workflows, but no runtime hooks:
 
 ```bash
 npx github:coreybowlby-os/si-claude-plugin install --profile minimal --target claude
@@ -414,7 +416,7 @@ Ask the packaged advisor which components match your work:
 node scripts/ecc.js consult "security reviews" --target claude
 ```
 
-It returns matching components, related profiles, and preview/install commands. Use the preview command before installing if you want to inspect the exact file plan.
+It returns matching components, related profiles, and preview/install commands. Run the preview first if you want to see exactly which files it would touch.
 
 You can also install explicit skills or capabilities:
 
@@ -451,7 +453,7 @@ Retired shims live in `legacy-command-shims/`. Copy individual files from there 
 <details>
 <summary><strong>Project-local rules instead of global rules</strong></summary>
 
-Use project-local rules when SI Claude Plugin's standards should apply to one repository rather than every Claude Code session:
+Use project-local rules when the standards should apply to one repo rather than every Claude Code session:
 
 ```bash
 cd your-project
@@ -498,7 +500,7 @@ bash ./install.sh --target claude --modules hooks-runtime --enable-hooks
 
 That writes resolved hooks to `~/.claude/hooks/hooks.json` and leaves any existing `~/.claude/settings.json` untouched.
 
-If you installed SI Claude Plugin via `/plugin install`, do not copy those hooks into `settings.json`. Claude Code v2.1+ already auto-loads plugin `hooks/hooks.json`, and duplicating them in `settings.json` causes duplicate execution and cross-platform hook conflicts.
+If you installed with `/plugin install`, don't copy those hooks into `settings.json`. Claude Code v2.1+ already loads plugin `hooks/hooks.json` by itself, and having them in both places runs every hook twice and causes conflicts across platforms.
 
 On Windows, Claude's config root is `%USERPROFILE%\\.claude`; install the hook runtime with:
 
@@ -508,11 +510,11 @@ pwsh -File .\install.ps1 --target claude --modules hooks-runtime --enable-hooks
 
 #### Configure MCPs
 
-Claude plugin installs intentionally do not auto-enable SI Claude Plugin's bundled MCP server definitions. This avoids overlong plugin MCP tool names on strict third-party gateways while keeping manual MCP setup available.
+Plugin installs don't switch on the bundled MCP servers for you, and that's on purpose — plugin MCP tool names get long enough to upset stricter third-party gateways. You can still set them up by hand.
 
 Use Claude Code's `/mcp` command or CLI-managed MCP setup for live Claude Code server changes; Claude Code persists those choices in `~/.claude.json`. For repo-local MCP access, copy desired MCP server definitions from `mcp-configs/mcp-servers.json` into a project-scoped `.mcp.json`.
 
-SI Claude Plugin ships exactly one default connector (`chrome-devtools`); everything else is a skill wrapping a CLI/REST API or an opt-in catalog entry. The rule and the June 2026 audit that retired the previous six defaults live in [docs/MCP-CONNECTOR-POLICY.md](docs/MCP-CONNECTOR-POLICY.md).
+There's exactly one connector on by default (`chrome-devtools`). Everything else is either a skill wrapping a CLI or REST API, or something you opt into from the catalog. The reasoning, and the June 2026 audit that cut the previous six defaults, is in [docs/MCP-CONNECTOR-POLICY.md](docs/MCP-CONNECTOR-POLICY.md).
 
 If you already run your own copies of SI Claude Plugin-bundled MCPs, set:
 
@@ -530,7 +532,7 @@ SI Claude Plugin-managed install and Codex sync flows will skip or remove those 
 
 `multi-*` commands are **not** covered by the base plugin/rules install.
 
-To use `/multi-plan`, `/multi-execute`, `/multi-backend`, `/multi-frontend`, and `/multi-workflow`, you must also install the `ccg-workflow` runtime. Initialize it with `npx ccg-workflow`.
+`/multi-plan`, `/multi-execute`, `/multi-backend`, `/multi-frontend` and `/multi-workflow` need the `ccg-workflow` runtime as well. Set it up with `npx ccg-workflow`.
 
 That runtime provides the external dependencies these commands expect, including:
 
@@ -572,14 +574,14 @@ node scripts/uninstall.js --dry-run
 node scripts/uninstall.js
 ```
 
-If you are leaving, the uninstall command prints an optional [20-second feedback form](https://github.com/coreybowlby-os/si-claude-plugin/issues/new?template=quick-feedback.yml). It is a public GitHub issue, never blocks uninstall, and SI Claude Plugin does not upload diagnostics. You can also run `sicp feedback` at any time to see the problem, feedback, and feature routes.
+If you're leaving, uninstall prints an optional [20-second feedback form](https://github.com/coreybowlby-os/si-claude-plugin/issues/new?template=quick-feedback.yml). It's a public GitHub issue, it never blocks the uninstall, and nothing gets uploaded anywhere. You can also run `sicp feedback` any time to see the problem, feedback and feature routes.
 
 Plugin users should remove the plugin from Claude Code, then delete only the rule folders they manually copied and no longer want. SI Claude Plugin only removes files recorded in its install-state. It does not claim unrelated files in your harness directories.
 
 If you stacked methods, clean up in this order:
 
 1. Remove the Claude Code plugin install.
-2. Run the SI Claude Plugin uninstall command from the project directory that contains the managed install-state.
+2. Run the uninstall command from the project directory that holds the managed install-state.
 3. Delete any extra rule folders you copied manually and no longer want.
 4. Reinstall once, using a single path.
 </details>
@@ -650,7 +652,7 @@ npx github:coreybowlby-os/si-claude-plugin doctor --target kimi
 
 Do not use `npx ecc-install --profile minimal --target claude`: `ecc-install` is a binary name inside `ecc-universal`, not a separately published npm package.
 
-SI Claude Plugin also ships advanced managed adapters for `cursor`, `antigravity`, `gemini`, `opencode`, `codebuddy`, `joycode`, `qwen`, `zed`, `hermes`, and `openclaw`. Those targets still use their documented `sicp install --target ...` paths until each adapter has passed the guided collision, update, repair, and uninstall lifecycle matrix. Neither wizard silently installs into every detected harness.
+There are also managed adapters for `cursor`, `antigravity`, `gemini`, `opencode`, `codebuddy`, `joycode`, `qwen`, `zed`, `hermes` and `openclaw`. Those still go through their own `sicp install --target ...` paths, because each adapter has to clear the full collision, update, repair and uninstall matrix before the wizard takes it on. Neither wizard quietly installs into every harness it finds.
 
 ## Start Using SI Claude Plugin
 
@@ -683,7 +685,7 @@ Manual installs may expose the shorter compatibility form:
 /plan "Add authentication"
 ```
 
-Skills are the primary workflow surface. Commands remain convenient entry points and compatibility shims. Check what is installed with:
+Skills are the main way to work. Commands are still around as shortcuts and for backwards compatibility. To see what you have installed:
 
 ```bash
 /plugin list SI-Claude-Plugin@SI-Claude-Plugin
@@ -693,7 +695,7 @@ Skills are the primary workflow surface. Commands remain convenient entry points
 <details>
 <summary><strong>Which agent should I use?</strong></summary>
 
-Skills are the canonical workflow surface; maintained slash entries stay available for command-first workflows.
+Skills are the real surface here, but the maintained slash commands stay if you prefer working that way.
 
 | I want to... | Use this surface | Agent used |
 |--------------|-----------------|------------|
@@ -719,7 +721,7 @@ Skills are the canonical workflow surface; maintained slash entries stay availab
 <details>
 <summary><strong>Common workflows</strong></summary>
 
-Slash forms below are shown where they remain part of the maintained command surface. Retired short-name shims such as `/tdd` and `/eval` live in `legacy-command-shims/` for explicit opt-in only.
+The slash forms below are the ones still maintained. Retired short names like `/tdd` and `/eval` sit in `legacy-command-shims/` if you specifically want them.
 
 **Starting a new feature:**
 ```
@@ -752,11 +754,11 @@ e2e-testing skill                             -> e2e-runner: critical user flow 
 
 ### Plan Canvas: review plans by pointing, not retyping
 
-Your agent writes a plan, then opens it in a loopback-only browser canvas. Click the part you mean, attach numbered annotations, chat from a side rail, and hit **Approve plan** or **Request changes**. The verdict maps straight onto `/plan`'s CONFIRM gate. Mermaid diagrams render live, and edits to the plan file reload the page.
+Your agent writes a plan and opens it in a browser canvas that only listens on loopback. Click the bit you mean, leave numbered notes, chat from the side rail, then hit **Approve plan** or **Request changes** — that answer feeds straight into `/plan`'s CONFIRM gate. Mermaid diagrams render as you go, and saving the plan file reloads the page.
 
 ![Plan Canvas demo: reviewing an ECC plan in the browser, scrolling diagrams, attaching an anchored annotation, chatting with the agent, and approving the plan](https://raw.githubusercontent.com/affaan-m/ECC/main/docs/releases/2.1.0/assets/ecc-plan-canvas-demo.gif)
 
-It's harness- and model-agnostic: a plain CLI (`ecc-plan-canvas`) speaking JSON, so any agent can drive it. Try it: ask your agent to `/ecc:plan` anything, then review from the page instead of the terminal.
+It doesn't care which harness or model you use — it's just a CLI (`ecc-plan-canvas`) speaking JSON, so any agent can drive it. Ask your agent to `/ecc:plan` something and review it on the page instead of in the terminal.
 
 [Open the plan used in this demo →](https://github.com/affaan-m/ECC/blob/main/docs/releases/2.1.0/plan-canvas-demo.plan.md)
 
@@ -769,7 +771,7 @@ It's harness- and model-agnostic: a plain CLI (`ecc-plan-canvas`) speaking JSON,
 
 ### Current development: Unified Memory Vault
 
-`sicp memory` gives Claude, Codex, Hermes, OpenClaw, Kimi, and other harnesses one local, inspectable Markdown format for durable context and handoffs. The optional `ecc-memory-mcp` stdio server exposes the same bounded save/search/read/doctor surface without enabling itself by default. Full detail in [Share context between harnesses](#share-context-between-harnesses) below.
+`sicp memory` gives Claude, Codex, Hermes, OpenClaw, Kimi and the rest one local Markdown format you can actually read, for context that needs to outlive a session and for handing work between harnesses. There's an optional `ecc-memory-mcp` stdio server with the same save/search/read/doctor surface; it doesn't turn itself on. More in [Share context between harnesses](#share-context-between-harnesses) below.
 
 <details>
 <summary><strong>Previous releases</strong></summary>
@@ -2018,7 +2020,7 @@ Use `/mcp` for Claude Code runtime disables; Claude Code persists those choices 
 
 `ECC_DISABLED_MCPS` is an SI Claude Plugin install/sync filter, not a live Claude Code toggle.
 
-If context is getting heavy, run `/context-budget`, remove rules you do not need, and disable unused MCP servers. See the [token optimization guide](docs/token-optimization.md).
+If context is getting heavy, run `/context-budget`, drop rules you aren't using, and switch off MCP servers you don't need. More in the [token optimization guide](docs/token-optimization.md).
 </details>
 
 Security references:
@@ -2033,7 +2035,7 @@ Security references:
 <details>
 <summary><strong>SI Claude Plugin appears twice or hooks fire twice</strong></summary>
 
-The usual cause is installing the Claude plugin and then running `./install.sh --profile full` on top of it.
+Usually this means the Claude plugin went in first and then `./install.sh --profile full` ran on top of it.
 
 1. Remove the Claude Code plugin install.
 2. Run `node scripts/ecc.js uninstall --dry-run` from the SI Claude Plugin checkout.
@@ -2058,13 +2060,15 @@ Run the cache check from an SI Claude Plugin checkout:
 node scripts/codex/check-plugin-cache.js
 ```
 
-If it reports unresolved parent references, refresh the native cache with `codex plugin marketplace upgrade si-claude-plugin`, run `codex plugin add si-claude-plugin@si-claude-plugin` again, and restart Codex. Registration in `codex plugin list` confirms the marketplace entry, while the cache check verifies that the installed manifest can resolve its skills, MCP configuration, and assets. Use `bash scripts/sync-ecc-to-codex.sh` only when you intentionally need the legacy copied-configuration compatibility path.
+If it reports unresolved parent references, refresh the cache with `codex plugin marketplace upgrade si-claude-plugin`, run `codex plugin add si-claude-plugin@si-claude-plugin` again, and restart Codex.
+
+The two checks answer different questions: `codex plugin list` tells you the marketplace entry registered, and the cache check tells you the installed manifest can actually find its skills, MCP config and assets. Only reach for `bash scripts/sync-ecc-to-codex.sh` if you specifically want the old copied-configuration path.
 </details>
 
 <details>
 <summary><strong>My context window is shrinking</strong></summary>
 
-Too many MCP servers eat your context. Each MCP tool description consumes tokens from your 200k window, potentially reducing it to ~70k. SessionStart context is capped at 8000 characters by default; lower it with `ECC_SESSION_START_MAX_CHARS=4000` or disable it with `ECC_SESSION_START_CONTEXT=off` for local-model or low-context setups.
+Too many MCP servers eat your context. Every MCP tool description costs tokens out of your 200k window, and it adds up fast — enough to leave you around 70k. SessionStart context is capped at 8000 characters by default; drop it with `ECC_SESSION_START_MAX_CHARS=4000`, or turn it off entirely with `ECC_SESSION_START_CONTEXT=off` if you're on a local model or tight on context.
 
 **Fix:** Disable unused MCPs from Claude Code with `/mcp`. Claude Code writes those runtime choices to `~/.claude.json`; `.claude/settings.json` and `.claude/settings.local.json` are not reliable toggles for already-loaded MCP servers.
 
@@ -2108,7 +2112,7 @@ Yes. SI Claude Plugin is cross-platform:
 <details>
 <summary><strong>My platform is not listed</strong></summary>
 
-Use the [manual adaptation guide](docs/MANUAL-ADAPTATION-GUIDE.md), or open a [GitHub discussion](https://github.com/affaan-m/ECC/discussions) with the harness name and the file, skill, command, and hook formats it supports.
+Try the [manual adaptation guide](docs/MANUAL-ADAPTATION-GUIDE.md), or open a [GitHub discussion](https://github.com/coreybowlby-os/si-claude-plugin/discussions) and say which harness it is and what file, skill, command and hook formats it supports.
 </details>
 
 ## Running Tests
@@ -2136,9 +2140,9 @@ These configs are battle-tested across multiple production applications.
 <details>
 <summary><strong>Support and sponsorship</strong></summary>
 
-SI Claude Plugin is MIT-licensed and free. There is no paid tier and no hosted service — this is a community fork maintained independently of SI Claude Plugin.
+This is MIT-licensed and free. No paid tier, no hosted service — it's a community fork, maintained independently of ECC.
 
-It is a fork of [ECC](https://github.com/affaan-m/ECC). If you find it useful, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m), whose work this builds on.
+It's a fork of [ECC](https://github.com/affaan-m/ECC). If it's useful to you, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m) — this builds on their work.
 
 <table>
 <tr>
@@ -2151,7 +2155,7 @@ It is a fork of [ECC](https://github.com/affaan-m/ECC). If you find it useful, c
 <details>
 <summary><strong>Contributing</strong></summary>
 
-Contributions are welcome across skills, agents, rules, hooks, docs, tests, adapters, and security improvements.
+Contributions are welcome — skills, agents, rules, hooks, docs, tests, adapters, security fixes, any of it.
 
 - [Contributing guide](CONTRIBUTING.md)
 - [Skill development guide](docs/SKILL-DEVELOPMENT-GUIDE.md)
