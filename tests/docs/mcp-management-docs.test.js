@@ -56,7 +56,7 @@ test('README MCP guidance avoids settings.json disable instructions', () => {
     'README should route runtime MCP disables through /mcp and ~/.claude.json'
   );
   assert.ok(
-    source.includes('`ECC_DISABLED_MCPS` is an ECC install/sync filter, not a live Claude Code toggle.'),
+    source.includes('`ECC_DISABLED_MCPS` is an SI Claude Plugin install/sync filter, not a live Claude Code toggle.'),
     'README should explain ECC_DISABLED_MCPS scope'
   );
   assert.ok(

@@ -163,7 +163,7 @@ function main() {
     ['README keeps the primary choices and all three guides inline', () => {
       const readme = read('README.md');
       const primaryLinks = extractNamedTable(readme, 'SI Claude Plugin primary links');
-      const guides = extractNamedTable(readme, 'ECC guides');
+      const guides = extractNamedTable(readme, 'SI Claude Plugin guides');
       const centeredPrimaryLinks = readme.match(
         /<div align="center">\s*<table[^>]*aria-label="SI Claude Plugin primary links"[^>]*>[\s\S]*?<\/table>\s*<\/div>/
       );

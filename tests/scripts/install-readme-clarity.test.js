@@ -55,7 +55,7 @@ function runTests() {
     const topClaudeSectionIndex = readme.indexOf('## Install with Claude Code');
     const topGuidedCommandIndex = readme.indexOf('npx github:coreybowlby-os/si-claude-plugin setup', topClaudeSectionIndex);
     const nativePluginCommandIndex = readme.indexOf('/plugin marketplace add', topClaudeSectionIndex);
-    const installSectionIndex = readme.indexOf('## Install ECC');
+    const installSectionIndex = readme.indexOf('## Install');
     const guidedCommandIndex = readme.indexOf('npx github:coreybowlby-os/si-claude-plugin setup', installSectionIndex);
     const claudeDetailsIndex = readme.indexOf('### Claude Code details', installSectionIndex);
 
@@ -78,7 +78,7 @@ function runTests() {
     );
     assert.ok(
       readme.includes('Claude Code owns these built-in commands'),
-      'README should distinguish provider-owned slash behavior from ECC setup behavior'
+      'README should distinguish provider-owned slash behavior from SI Claude Plugin setup behavior'
     );
     assert.ok(
       readme.includes('`/ecc:configure-ecc`'),
@@ -90,7 +90,7 @@ function runTests() {
     );
     assert.ok(
       readme.includes('currently configures the Claude Code plugin'),
-      'README should not imply that the current setup wizard installs every ECC harness'
+      'README should not imply that the current setup wizard installs every SI Claude Plugin harness'
     );
   })) passed++; else failed++;
 
@@ -106,7 +106,7 @@ function runTests() {
 
   if (test('README documents reset and uninstall flow', () => {
     assert.ok(
-      readme.includes('### Reset / Uninstall ECC'),
+      readme.includes('### Reset / Uninstall SI Claude Plugin'),
       'README should have a visible reset/uninstall section'
     );
     assert.ok(
@@ -133,7 +133,7 @@ function runTests() {
       );
     }
     assert.ok(
-      readme.includes('ECC only removes files recorded in its install-state.'),
+      readme.includes('SI Claude Plugin only removes files recorded in its install-state.'),
       'README should explain uninstall safety boundaries'
     );
   })) passed++; else failed++;
@@ -226,7 +226,7 @@ function runTests() {
       'README capability map should describe the native Codex skill set'
     );
     assert.ok(
-      readme.includes('| ECC hooks | Native plugin hooks | Native reviewed subset with explicit trust |'),
+      readme.includes('| SI Claude Plugin hooks | Native plugin hooks | Native reviewed subset with explicit trust |'),
       'README capability map should describe the native Codex hook subset'
     );
     assert.ok(
@@ -238,7 +238,7 @@ function runTests() {
       'README should not deny the shipped native Codex hook subset'
     );
     assert.ok(
-      readme.includes("# Recommended current install: add ECC's native plugin from the repo marketplace"),
+      readme.includes("# Recommended current install: add SI Claude Plugin's native plugin from the repo marketplace"),
       'README Codex detail should lead with the native plugin install'
     );
     assert.ok(
@@ -246,7 +246,7 @@ function runTests() {
       'README Codex detail should label the sync path as compatibility-only'
     );
     assert.ok(
-      !readme.includes('# Automatic setup: sync ECC assets'),
+      !readme.includes('# Automatic setup: sync SI Claude Plugin assets'),
       'README should not present the legacy Codex sync as the primary setup'
     );
     assert.ok(
@@ -269,7 +269,7 @@ function runTests() {
       'README should avoid overclaiming Cursor agent loading semantics'
     );
     assert.ok(
-      readme.includes('ECC does not install root `AGENTS.md` into `.cursor/`.'),
+      readme.includes('SI Claude Plugin does not install root `AGENTS.md` into `.cursor/`.'),
       'README should explain why root AGENTS.md is not copied into Cursor context'
     );
   })) passed++; else failed++;
