@@ -251,6 +251,51 @@ for (const entry of hooksConfig.hooks.Stop) {
   else failed++;
 }
 
+// The registered wrapper reads stdin through an event-based reader rather than
+// fs.readFileSync(0) so that its own deadline can actually interrupt a stall:
+// a synchronous read blocks the event loop, and no timer can fire during one.
+// These cover the deadline firing and, critically, what it is allowed to emit.
+for (const entry of hooksConfig.hooks.Stop) {
+  if (
+    test(`${entry.id} wrapper deadline fires and fails open`, () => {
+      const result = runRegisteredStopHook(entry, multibytePayload, {
+        ECC_HOOK_WRAPPER_DEADLINE_MS: '1'
+      });
+      assert.strictEqual(
+        result.status,
+        0,
+        `${entry.id}: a deadline must fail open with exit 0, got ${result.status}${describeSpawn(result)}`
+      );
+      assert.match(
+        result.stderr,
+        /exceeded 1ms/,
+        `${entry.id}: the deadline must say why it gave up; got ${JSON.stringify(result.stderr.slice(0, 200))}`
+      );
+    })
+  )
+    passed++;
+  else failed++;
+
+  // A payload cut mid-stream is invalid JSON, which the harness treats as a
+  // hook failure and which blocks the tool call (#2222). Empty stdout with
+  // exit 0 is the "no opinion" signal, so the deadline must emit nothing at
+  // all rather than whatever part of the payload it happened to buffer.
+  if (
+    test(`${entry.id} wrapper deadline never emits a partial payload`, () => {
+      const result = runRegisteredStopHook(entry, multibytePayload, {
+        ECC_HOOK_WRAPPER_DEADLINE_MS: '1'
+      });
+      assert.strictEqual(
+        result.stdout,
+        '',
+        `${entry.id}: expected no stdout on deadline, got ${Buffer.byteLength(result.stdout)} bytes`
+      );
+    })
+  )
+    passed++;
+  else failed++;
+}
+
 for (const [hookId, script] of STOP_HOOKS) {
   if (
     test(`${hookId} via runner keeps stdout valid for a 100KB Stop payload`, () => {

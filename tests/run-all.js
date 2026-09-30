@@ -82,10 +82,25 @@ for (const testFile of testFiles) {
     delete childEnv[key];
   }
 
+  // Bound every suite. Without a timeout a single hung suite holds the whole
+  // lane until the CI job's own deadline kills it, and the job log then shows
+  // no suite name, no signal and no error code — which is why intermittent
+  // stalls here have been so hard to attribute. The budget is deliberately
+  // larger than the largest in-suite spawn budget (120s in the hook suites) so
+  // that a suite always gets to report its own failure first; this only fires
+  // when a suite is genuinely stuck.
+  //
+  // maxBuffer is set explicitly because the default is 1MB: a suite that ever
+  // printed more than that would be killed mid-run and surface as a bare
+  // `status: null`, indistinguishable from a crash.
+  const SUITE_TIMEOUT_MS = 300000;
+  const startedAt = Date.now();
   const result = spawnSync('node', [testPath], {
     encoding: 'utf8',
     stdio: ['pipe', 'pipe', 'pipe'],
-    env: childEnv
+    env: childEnv,
+    timeout: SUITE_TIMEOUT_MS,
+    maxBuffer: 64 * 1024 * 1024
   });
 
   const stdout = result.stdout || '';
@@ -103,14 +118,25 @@ for (const testFile of testFiles) {
   if (passedMatch) totalPassed += parseInt(passedMatch[1], 10);
   if (failedMatch) totalFailed += parseInt(failedMatch[1], 10);
 
+  // spawnSync reports a timeout, a signal kill, a failed spawn and a maxBuffer
+  // overflow all as `status: null`. Print the fields that tell them apart so a
+  // stall names itself instead of reading as a generic failure.
+  const elapsedMs = Date.now() - startedAt;
+  const spawnDetail =
+    ` [status=${result.status} signal=${result.signal || 'none'}` +
+    ` error=${(result.error && result.error.code) || 'none'} elapsed=${elapsedMs}ms]`;
+
   if (result.error) {
-    console.log(`✗ ${displayPath} failed to start: ${result.error.message}`);
+    const timedOut = result.error.code === 'ETIMEDOUT';
+    console.log(
+      `✗ ${displayPath} ${timedOut ? `timed out after ${SUITE_TIMEOUT_MS}ms` : `failed to start: ${result.error.message}`}${spawnDetail}`
+    );
     totalFailed += failedMatch ? 0 : 1;
     continue;
   }
 
   if (result.status !== 0) {
-    console.log(`✗ ${displayPath} exited with status ${result.status}`);
+    console.log(`✗ ${displayPath} exited with status ${result.status}${result.status === null ? spawnDetail : ''}`);
     totalFailed += failedMatch ? 0 : 1;
   }
 }
