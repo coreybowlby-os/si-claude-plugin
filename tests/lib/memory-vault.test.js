@@ -6,6 +6,8 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
+const { trySymlink } = require('./helpers/symlink');
+
 const {
   MAX_DIAGNOSTICS,
   MAX_FILES,
@@ -276,7 +278,10 @@ test('never follows a pre-existing destination symlink during create-only public
     fs.mkdirSync(notes, { recursive: true });
     fs.writeFileSync(outside, 'outside sentinel');
     const destination = path.join(notes, 'mem_20260726_01kexample.md');
-    fs.symlinkSync(outside, destination);
+    if (!trySymlink(outside, destination)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
 
     assert.throws(
       () => saveMemory(
@@ -355,7 +360,7 @@ test('rejects a vault path that traverses a symlink before creating directories'
   const fixture = createFixture();
   const outside = path.join(fixture.root, 'outside');
   fs.mkdirSync(outside);
-  fs.symlinkSync(outside, path.join(fixture.projectRoot, '.ecc'));
+  assert.ok(trySymlink(outside, path.join(fixture.projectRoot, '.ecc'), 'dir'), 'directory junctions need no privilege');
   try {
     assert.throws(
       () => saveMemory(
@@ -377,7 +382,7 @@ test('rejects a symlinked ancestor when roots come back from initializeVault', (
   try {
     const initialized = initializeVault({ roots: fixture.roots, scopes: ['project'] });
     fs.rmSync(path.join(fixture.projectRoot, '.ecc'), { recursive: true, force: true });
-    fs.symlinkSync(outside, path.join(fixture.projectRoot, '.ecc'));
+    assert.ok(trySymlink(outside, path.join(fixture.projectRoot, '.ecc'), 'dir'), 'directory junctions need no privilege');
 
     assert.throws(
       () => saveMemory(
@@ -564,7 +569,10 @@ test('opens regular text files without following a stable symlink', () => {
   const link = path.join(root, 'link.md');
   try {
     fs.writeFileSync(target, 'safe');
-    fs.symlinkSync(target, link);
+    if (!trySymlink(target, link)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
     assert.strictEqual(readRegularTextFile(target, { maxBytes: 16 }), 'safe');
     assert.throws(
       () => readRegularTextFile(link, { maxBytes: 16 }),
@@ -836,11 +844,9 @@ test('doctor reports malformed files, broken links, duplicate IDs, and skipped s
 
     const outsideFile = path.join(outside, 'outside.md');
     fs.writeFileSync(outsideFile, serializeMemoryDocument(baseMemory({ links: [] })));
-    try {
-      fs.symlinkSync(outsideFile, path.join(fixture.roots.project, 'notes', 'linked.md'));
-    } catch {
-      // Symlink creation can be unavailable on Windows CI.
-    }
+    // The doctor must report the broken state whether or not this host can
+    // create the extra symlink, so an unprivileged host simply omits it.
+    trySymlink(outsideFile, path.join(fixture.roots.project, 'notes', 'linked.md'));
 
     const report = doctorMemoryVault({ roots: fixture.roots });
     assert.strictEqual(report.ok, false);

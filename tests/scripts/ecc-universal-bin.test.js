@@ -175,7 +175,11 @@ function prepareLocalPackedProject(packageManager) {
     });
   }
   fs.mkdirSync(modulesDirectory, { recursive: true });
-  run('tar', ['-xzf', fixture.archivePath, '-C', modulesDirectory], {
+  // Pass tar relative, forward-slash paths. GNU tar (first on PATH under Git
+  // Bash/MSYS) parses `C:\...` as a remote `host:path` archive; bsdtar (the
+  // Windows default) does not. Relative paths mean the same thing to both.
+  const toTarPath = target => path.relative(projectDirectory, target).split(path.sep).join('/');
+  run('tar', ['-xzf', toTarPath(fixture.archivePath), '-C', toTarPath(modulesDirectory)], {
     cwd: projectDirectory,
     timeout: archiveExtractionTimeoutMs,
   });
