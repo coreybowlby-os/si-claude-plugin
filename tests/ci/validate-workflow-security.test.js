@@ -10,6 +10,9 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const SCRIPT_PATH = path.join(__dirname, '..', '..', 'scripts', 'ci', 'validate-workflow-security.js');
+// Fixtures pin actions to a full commit SHA so each case isolates the rule it
+// targets; the pinning rule itself is exercised by its own cases below.
+const PINNED_SHA = '0123456789abcdef0123456789abcdef01234567';
 
 function test(name, fn) {
   try {
@@ -50,14 +53,14 @@ function run() {
 
   if (test('allows safe workflow_run workflow that only checks out the base repository', () => {
     const result = runValidator({
-      'safe.yml': `name: Safe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo safe\n`,
+      'safe.yml': `name: Safe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: echo safe\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
 
   if (test('rejects workflow_run checkout using github.event.workflow_run.head_branch', () => {
     const result = runValidator({
-      'unsafe-workflow-run.yml': `name: Unsafe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: \${{ github.event.workflow_run.head_branch }}\n`,
+      'unsafe-workflow-run.yml': `name: Unsafe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          ref: \${{ github.event.workflow_run.head_branch }}\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail');
     assert.match(result.stderr, /workflow_run must not checkout an untrusted workflow_run head ref\/repository/);
@@ -66,7 +69,7 @@ function run() {
 
   if (test('rejects workflow_run checkout using github.event.workflow_run.head_repository.full_name', () => {
     const result = runValidator({
-      'unsafe-repository.yml': `name: Unsafe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          repository: \${{ github.event.workflow_run.head_repository.full_name }}\n`,
+      'unsafe-repository.yml': `name: Unsafe\non:\n  workflow_run:\n    workflows: ["CI"]\n    types: [completed]\njobs:\n  repair:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          repository: \${{ github.event.workflow_run.head_repository.full_name }}\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail');
     assert.match(result.stderr, /head_repository\.full_name/);
@@ -74,7 +77,7 @@ function run() {
 
   if (test('rejects pull_request_target checkout using github.event.pull_request.head.sha', () => {
     const result = runValidator({
-      'unsafe-pr-target.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
+      'unsafe-pr-target.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail');
     assert.match(result.stderr, /pull_request_target must not checkout an untrusted pull_request head ref\/repository/);
@@ -85,7 +88,7 @@ function run() {
   // inspect their `with.ref` values in privileged workflows.
   if (test('rejects pull_request_target checkout when uses is double-quoted', () => {
     const result = runValidator({
-      'unsafe-double-quoted.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: "actions/checkout@v4"\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
+      'unsafe-double-quoted.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: "actions/checkout@${PINNED_SHA}"\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on double-quoted uses:');
     assert.match(result.stderr, /pull_request\.head\.sha/);
@@ -93,7 +96,7 @@ function run() {
 
   if (test('rejects pull_request_target checkout when uses is single-quoted', () => {
     const result = runValidator({
-      'unsafe-single-quoted.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: 'actions/checkout@v4'\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
+      'unsafe-single-quoted.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: 'actions/checkout@${PINNED_SHA}'\n        with:\n          ref: \${{ github.event.pull_request.head.sha }}\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on single-quoted uses:');
     assert.match(result.stderr, /pull_request\.head\.sha/);
@@ -106,7 +109,7 @@ function run() {
 
   if (test('rejects pull_request_target checkout fetching refs/pull/N/merge', () => {
     const result = runValidator({
-      'unsafe-pr-target-merge-ref.yml': `name: Unsafe\non:\n  pull_request_target:\n    types: [opened]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: refs/pull/\${{ github.event.pull_request.number }}/merge\n          persist-credentials: false\n`,
+      'unsafe-pr-target-merge-ref.yml': `name: Unsafe\non:\n  pull_request_target:\n    types: [opened]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          ref: refs/pull/\${{ github.event.pull_request.number }}/merge\n          persist-credentials: false\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on refs/pull/N/merge under pull_request_target');
     assert.match(result.stderr, /pull_request_target must not checkout an untrusted pull_request head ref/);
@@ -114,7 +117,7 @@ function run() {
 
   if (test('rejects pull_request_target checkout fetching hardcoded refs/pull/N/head', () => {
     const result = runValidator({
-      'unsafe-pr-target-head-ref.yml': `name: Unsafe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: refs/pull/123/head\n          persist-credentials: false\n`,
+      'unsafe-pr-target-head-ref.yml': `name: Unsafe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          ref: refs/pull/123/head\n          persist-credentials: false\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on hardcoded refs/pull/N/head');
     assert.match(result.stderr, /pull_request_target must not checkout an untrusted pull_request head ref/);
@@ -122,7 +125,7 @@ function run() {
 
   if (test('allows pull_request_target checkout of the base ref (no with.ref)', () => {
     const result = runValidator({
-      'safe-pr-target-base.yml': `name: Safe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          persist-credentials: false\n      - run: echo inspecting base\n`,
+      'safe-pr-target-base.yml': `name: Safe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: echo inspecting base\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
@@ -135,7 +138,7 @@ function run() {
 
   if (test('emits a single violation when both expressionPattern and refPattern match the same step', () => {
     const result = runValidator({
-      'unsafe-pr-target-both.yml': `name: Unsafe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: refs/pull/\${{ github.event.pull_request.head.sha }}/merge\n          persist-credentials: false\n`,
+      'unsafe-pr-target-both.yml': `name: Unsafe\non:\n  pull_request_target:\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          ref: refs/pull/\${{ github.event.pull_request.head.sha }}/merge\n          persist-credentials: false\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail');
     // Count ERROR: lines for this rule's description. Should be exactly 1.
@@ -145,7 +148,7 @@ function run() {
 
   if (test('rejects shared cache use in pull_request_target workflows', () => {
     const result = runValidator({
-      'unsafe-pr-target-cache.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/cache@v5\n        with:\n          path: ~/.npm\n          key: cache\n      - run: echo inspect\n`,
+      'unsafe-pr-target-cache.yml': `name: Unsafe\non:\n  pull_request_target:\n    branches: [main]\njobs:\n  inspect:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/cache@${PINNED_SHA}\n        with:\n          path: ~/.npm\n          key: cache\n      - run: echo inspect\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on pull_request_target cache use');
     assert.match(result.stderr, /pull_request_target workflows must not restore or save shared dependency caches/);
@@ -153,7 +156,7 @@ function run() {
 
   if (test('rejects dependency cache use in ordinary workflows', () => {
     const result = runValidator({
-      'unsafe-cache.yml': `name: Unsafe\non:\n  pull_request:\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/cache@v5\n        with:\n          path: ~/.npm\n          key: cache\n`,
+      'unsafe-cache.yml': `name: Unsafe\non:\n  pull_request:\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/cache@${PINNED_SHA}\n        with:\n          path: ~/.npm\n          key: cache\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on actions/cache use');
     assert.match(result.stderr, /dependency caches are disabled during active supply-chain hardening/);
@@ -186,7 +189,7 @@ function run() {
 
   if (test('rejects checkout credential persistence in workflows with write permissions', () => {
     const result = runValidator({
-      'unsafe-write-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -194,7 +197,7 @@ function run() {
 
   if (test('allows checkout with disabled credential persistence in workflows with write permissions', () => {
     const result = runValidator({
-      'safe-write-checkout.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
+      'safe-write-checkout.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
@@ -209,7 +212,7 @@ function run() {
 
   if (test('rejects checkout credential persistence in workflows with permissions: write-all', () => {
     const result = runValidator({
-      'unsafe-write-all-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -221,7 +224,7 @@ function run() {
 
   if (test('rejects double-quoted permissions: "write-all"', () => {
     const result = runValidator({
-      'unsafe-write-all-double.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: "write-all"\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-double.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: "write-all"\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on quoted write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -229,7 +232,7 @@ function run() {
 
   if (test('rejects single-quoted permissions: \'write-all\'', () => {
     const result = runValidator({
-      'unsafe-write-all-single.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: 'write-all'\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-single.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: 'write-all'\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on single-quoted write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -237,14 +240,14 @@ function run() {
 
   if (test('allows compliant workflow with permissions: write-all (persist-credentials: false)', () => {
     const result = runValidator({
-      'safe-write-all.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
+      'safe-write-all.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
 
   if (test('rejects actions/cache in workflows with id-token write', () => {
     const result = runValidator({
-      'unsafe-oidc-cache.yml': `name: Unsafe\non:\n  push:\npermissions:\n  contents: read\njobs:\n  release:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: read\n      id-token: write\n    steps:\n      - uses: actions/cache@v5\n        with:\n          path: ~/.npm\n          key: cache\n`,
+      'unsafe-oidc-cache.yml': `name: Unsafe\non:\n  push:\npermissions:\n  contents: read\njobs:\n  release:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: read\n      id-token: write\n    steps:\n      - uses: actions/cache@${PINNED_SHA}\n        with:\n          path: ~/.npm\n          key: cache\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on id-token workflow cache use');
     assert.match(result.stderr, /id-token: write must not restore or save shared dependency caches/);
@@ -276,6 +279,38 @@ function run() {
   if (test('allows npm audit when registry signatures are verified', () => {
     const result = runValidator({
       'safe-audit.yml': `name: Safe\non:\n  push:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          npm audit signatures\n          npm audit --audit-level=high\n`,
+    });
+    assert.strictEqual(result.status, 0, result.stderr || result.stdout);
+  })) passed++; else failed++;
+
+  if (test('rejects a third-party action pinned to a mutable tag', () => {
+    const result = runValidator({
+      'tag-ref.yml': `name: Tag\non:\n  push:\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n`,
+    });
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on a tag-pinned action');
+    assert.match(result.stderr, /must be pinned to a full 40-character commit SHA/);
+    assert.match(result.stderr, /actions\/checkout@v4/);
+  })) passed++; else failed++;
+
+  if (test('rejects an action pinned to an abbreviated SHA', () => {
+    const result = runValidator({
+      'short-sha.yml': `name: Short\non:\n  push:\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: 'actions/setup-node@0123456'\n`,
+    });
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on an abbreviated SHA');
+    assert.match(result.stderr, /actions\/setup-node@0123456/);
+  })) passed++; else failed++;
+
+  if (test('rejects an unpinned reusable workflow call', () => {
+    const result = runValidator({
+      'reusable.yml': `name: Reusable\non:\n  push:\njobs:\n  call:\n    uses: octo-org/ci/.github/workflows/build.yml@main\n`,
+    });
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on a branch-pinned reusable workflow');
+    assert.match(result.stderr, /octo-org\/ci\/\.github\/workflows\/build\.yml@main/);
+  })) passed++; else failed++;
+
+  if (test('allows SHA-pinned, local, and docker actions', () => {
+    const result = runValidator({
+      'pinned.yml': `name: Pinned\non:\n  push:\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA} # v7.0.0\n      - uses: "pnpm/action-setup@${PINNED_SHA}"\n      - uses: ./.github/actions/local\n      - uses: docker://alpine:3.20\n  call:\n    uses: ./.github/workflows/reusable.yml\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
