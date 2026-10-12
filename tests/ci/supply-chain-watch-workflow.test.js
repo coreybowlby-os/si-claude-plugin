@@ -43,7 +43,9 @@ function run() {
   if (test('uses read-only permissions and non-persisting checkout credentials', () => {
     assert.match(source, /permissions:\r?\n\s+contents: read/);
     assert.doesNotMatch(source, /^\s+[A-Za-z-]+:\s*write\b/m);
-    assert.match(source, /uses: actions\/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0/);
+    // Assert the pin shape, not a specific SHA: Dependabot bumps these weekly,
+    // and validate-workflow-security.js enforces full-SHA pins repo-wide.
+    assert.match(source, /uses: actions\/checkout@[0-9a-f]{40}\b/);
     assert.match(source, /persist-credentials: false/);
     assert.doesNotMatch(source, /id-token:\s*write/);
     assert.doesNotMatch(source, /actions\/cache@/);
@@ -61,7 +63,7 @@ function run() {
     assert.match(source, /node tests\/ci\/supply-chain-advisory-sources\.test\.js/);
     assert.match(source, /node scripts\/ci\/supply-chain-advisory-sources\.js --refresh --json > artifacts\/supply-chain-advisory-sources\.json/);
     assert.match(source, /node scripts\/ci\/validate-workflow-security\.js/);
-    assert.match(source, /uses: actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a/);
+    assert.match(source, /uses: actions\/upload-artifact@[0-9a-f]{40}\b/);
     assert.match(source, /name: supply-chain-ioc-report/);
     assert.match(source, /artifacts\/supply-chain-ioc-report\.json/);
     assert.match(source, /artifacts\/supply-chain-advisory-sources\.json/);

@@ -45,6 +45,11 @@ const NPM_AUDIT_PATTERN = /\bnpm\s+audit\b(?!\s+signatures\b)/;
 const NPM_AUDIT_SIGNATURES_PATTERN = /\bnpm\s+audit\s+signatures\b/;
 const ACTIONS_CACHE_PATTERN = /uses:\s*['"]?actions\/cache@/m;
 const ID_TOKEN_WRITE_PATTERN = /^\s*id-token:\s*write\b/m;
+// Every step action and reusable-workflow call must reference an immutable
+// commit. Tags and branches can be re-pointed by whoever controls the upstream
+// repo. Local (./) and docker:// references are not fetched from a git ref.
+const USES_PATTERN = /^\s*(?:-\s+)?uses:\s*['"]?([^'"\s#]+)/gm;
+const FULL_SHA_REF_PATTERN = /@[0-9a-f]{40}$/;
 const TOP_LEVEL_JOBS_PATTERN = /^jobs:\s*$/m;
 const UNSAFE_INSTALL_PATTERNS = [
   {
@@ -78,6 +83,22 @@ function getWorkflowFiles(workflowsDir) {
 
 function getLineNumber(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
+}
+
+function isExemptActionRef(ref) {
+  return ref.startsWith('./') || ref.startsWith('docker://');
+}
+
+function findUnpinnedActions(filePath, source) {
+  return [...source.matchAll(USES_PATTERN)]
+    .filter(match => !isExemptActionRef(match[1]) && !FULL_SHA_REF_PATTERN.test(match[1]))
+    .map(match => ({
+      filePath,
+      event: 'unpinned action',
+      description: 'third-party actions and reusable workflows must be pinned to a full 40-character commit SHA',
+      expression: match[1],
+      line: getLineNumber(source, match.index),
+    }));
 }
 
 function extractCheckoutSteps(source) {
@@ -239,6 +260,8 @@ function findViolations(filePath, source) {
       line: getLineNumber(source, source.search(NPM_AUDIT_PATTERN)),
     });
   }
+
+  violations.push(...findUnpinnedActions(filePath, source));
 
   return violations;
 }
