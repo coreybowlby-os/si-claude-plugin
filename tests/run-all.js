@@ -8,6 +8,7 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const { buildHermeticEnv } = require('./lib/helpers/hermetic-env');
 
 const testsDir = __dirname;
 const repoRoot = path.resolve(testsDir, '..');
@@ -73,14 +74,9 @@ for (const testFile of testFiles) {
 
   console.log(`\n━━━ Running ${displayPath} ━━━`);
 
-  // Run each test hermetically: strip inherited git env vars. When the suite
-  // runs inside a git hook (e.g. pre-push), git sets GIT_DIR/GIT_WORK_TREE,
-  // which would hijack `git -C <dir>` calls in tests that exercise real git
-  // and make them operate on the host repo instead of their own fixtures.
-  const childEnv = { ...process.env };
-  for (const key of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_PREFIX']) {
-    delete childEnv[key];
-  }
+  // Run each test hermetically: strip env vars a host git hook or agent
+  // session leaks in. See tests/lib/helpers/hermetic-env.js for the why.
+  const childEnv = buildHermeticEnv(process.env);
 
   // Bound every suite. Without a timeout a single hung suite holds the whole
   // lane until the CI job's own deadline kills it, and the job log then shows

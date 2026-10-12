@@ -320,6 +320,11 @@ function runPatchedRunAll(tempRoot) {
   const tempTestsDir = path.join(tempRoot, 'tests');
   let source = fs.readFileSync(path.join(__dirname, '..', 'run-all.js'), 'utf8');
   source = source.replace('const testsDir = __dirname;', `const testsDir = ${JSON.stringify(tempTestsDir)};`);
+  // The wrapper lives in tempRoot, so point run-all's relative helper require
+  // back at the real tests/ tree.
+  const helperRequire = "require('./lib/helpers/hermetic-env')";
+  assert.ok(source.includes(helperRequire), 'run-all.js helper require moved; update runPatchedRunAll');
+  source = source.replace(helperRequire, `require(${JSON.stringify(path.join(__dirname, '..', 'lib', 'helpers', 'hermetic-env'))})`);
   fs.writeFileSync(wrapperPath, source);
 
   const result = spawnSync('node', [wrapperPath], {
