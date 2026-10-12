@@ -5,6 +5,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawn, spawnSync } = require('child_process');
+
+const { trySymlink } = require('../lib/helpers/symlink');
 const { PassThrough } = require('stream');
 const { pathToFileURL } = require('url');
 
@@ -264,7 +266,11 @@ async function main() {
   await test('starts when the npm bin invokes the server through a symlink', async () => {
     const binRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-memory-bin-'));
     const binPath = path.join(binRoot, 'ecc-memory-mcp');
-    fs.symlinkSync(SERVER, binPath);
+    if (!trySymlink(SERVER, binPath)) {
+      fs.rmSync(binRoot, { recursive: true, force: true });
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
     try {
       await withClient(async client => {
         const tools = await client.listTools();

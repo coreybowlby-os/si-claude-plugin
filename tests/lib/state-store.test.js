@@ -8,6 +8,8 @@ const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
+const { trySymlink } = require('./helpers/symlink');
+
 const {
   createStateStore,
   resolveStateStorePath,
@@ -389,7 +391,10 @@ async function runTests() {
 
     try {
       fs.writeFileSync(targetPath, 'do not overwrite');
-      fs.symlinkSync(targetPath, dbPath);
+      if (!trySymlink(targetPath, dbPath)) {
+        console.log('    (skipped — symlinks not supported)');
+        return;
+      }
 
       await assert.rejects(
         () => createStateStore({ dbPath }),
@@ -409,7 +414,7 @@ async function runTests() {
 
     try {
       fs.mkdirSync(outsideDir);
-      fs.symlinkSync(outsideDir, linkedParent, process.platform === 'win32' ? 'junction' : 'dir');
+      assert.ok(trySymlink(outsideDir, linkedParent, 'dir'), 'directory junctions need no privilege');
 
       await assert.rejects(
         () => createStateStore({ dbPath }),

@@ -13,6 +13,7 @@ const {
   rollbackLegacyCodexSync,
   uninstallLegacyCodexSync,
 } = require('../../scripts/lib/codex-legacy-sync');
+const { trySymlink } = require('./helpers/symlink');
 
 function tempDir(prefix) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -179,7 +180,10 @@ function runTests() {
 
     fs.writeFileSync(outsidePath, '<!-- BEGIN ECC -->\n# Outside\n<!-- END ECC -->\n');
     fs.rmSync(agentsPath);
-    fs.symlinkSync(outsidePath, agentsPath);
+    if (!trySymlink(outsidePath, agentsPath)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
     const symlinkResult = uninstallLegacyCodexSync({ codexHome });
     assert.strictEqual(symlinkResult.status, 'partial');
     assert.ok(symlinkResult.retainedPaths.includes(agentsPath));
@@ -237,7 +241,10 @@ function runTests() {
     const linkedPath = path.join(codexHome, 'prompts', 'ecc-plan.md');
     fs.mkdirSync(path.dirname(linkedPath), { recursive: true });
     fs.writeFileSync(outsidePath, '# Outside\n');
-    fs.symlinkSync(outsidePath, linkedPath);
+    if (!trySymlink(outsidePath, linkedPath)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
     const statePath = beginLegacySyncState({
       codexHome,
       backupDir: path.join(codexHome, 'backups', 'ecc-test'),
@@ -257,7 +264,10 @@ function runTests() {
     const outsideDir = path.join(homeDir, 'outside');
     fs.mkdirSync(codexHome, { recursive: true });
     fs.mkdirSync(outsideDir, { recursive: true });
-    fs.symlinkSync(outsideDir, path.join(codexHome, 'prompts'));
+    if (!trySymlink(outsideDir, path.join(codexHome, 'prompts'), 'dir')) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
     const statePath = beginLegacySyncState({
       codexHome,
       backupDir: path.join(codexHome, 'backups', 'ecc-test'),
@@ -289,7 +299,10 @@ function runTests() {
     fs.writeFileSync(promptPath, '# ECC generated prompt\n');
     finalizeLegacySyncState({ statePath });
     fs.rmSync(promptPath);
-    fs.symlinkSync(outsidePath, promptPath);
+    if (!trySymlink(outsidePath, promptPath)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
 
     const result = uninstallLegacyCodexSync({ codexHome });
     assert.strictEqual(result.status, 'partial');
@@ -481,7 +494,10 @@ function runTests() {
     });
     recordLegacySyncPath({ statePath, filePath: promptPath });
     fs.rmSync(promptPath);
-    fs.symlinkSync(outsidePath, promptPath);
+    if (!trySymlink(outsidePath, promptPath)) {
+      console.log('    (skipped — symlinks not supported)');
+      return;
+    }
 
     const result = rollbackLegacyCodexSync({ statePath });
     assert.strictEqual(result.status, 'partial');
