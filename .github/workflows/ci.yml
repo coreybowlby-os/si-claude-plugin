@@ -115,13 +115,13 @@ jobs:
           YARN_ENABLE_SCRIPTS: 'false'
         run: |
           case "${{ matrix.pm }}" in
-            npm) npm ci --ignore-scripts ;;
+            npm) npm install --ignore-scripts --no-package-lock ;;
             # pnpm v10 can fail CI on ignored native build scripts
             # (for example msgpackr-extract) even though this repo is Yarn-native
             # and pnpm is only exercised here as a compatibility lane.
             pnpm) pnpm install --ignore-scripts --config.strict-dep-builds=false --no-frozen-lockfile ;;
             # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature
-            yarn) yarn install --mode=skip-build ;;
+            yarn) yarn install --immutable --mode=skip-build ;;
             bun) bun install --ignore-scripts ;;
             *) echo "Unsupported package manager: ${{ matrix.pm }}" && exit 1 ;;
           esac
@@ -162,7 +162,9 @@ jobs:
           node-version: '20.x'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Pack exact installer artifact
         id: pack
@@ -227,7 +229,9 @@ jobs:
           node-version: '20.x'
 
       - name: Install validation dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Validate agents
         run: node scripts/ci/validate-agents.js
@@ -318,14 +322,16 @@ jobs:
           node-version: '20.x'
 
       - name: Install audit dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Run npm audit
         run: |
           npm audit signatures
           # Runtime/package advisories are release blockers. Development-only
           # lint tooling remains covered by signature and IOC verification.
-          npm audit --omit=dev --audit-level=high
+          yarn npm audit --all --recursive --environment production --severity high
 
       - name: Run supply-chain IOC scan
         run: npm run security:ioc-scan
@@ -347,7 +353,9 @@ jobs:
           node-version: '20.x'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Run coverage
         run: npm run coverage
@@ -376,7 +384,9 @@ jobs:
           node-version: '20.x'
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Run lint
         run: npm run lint

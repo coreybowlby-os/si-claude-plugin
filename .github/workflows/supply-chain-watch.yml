@@ -30,12 +30,14 @@ jobs:
           node-version: '20.x'
 
       - name: Install dependencies without lifecycle scripts
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Verify registry signatures and advisories
         run: |
           npm audit signatures
-          npm audit --omit=dev --audit-level=high
+          yarn npm audit --all --recursive --environment production --severity high
 
       - name: Validate IOC scanner fixtures
         run: node tests/ci/scan-supply-chain-iocs.test.js

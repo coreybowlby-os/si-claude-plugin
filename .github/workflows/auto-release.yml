@@ -191,7 +191,9 @@ jobs:
         # postinstall that applies the core profile to the user's ~/.claude.
         # It is guarded to consumer installs, but a release runner has no
         # business executing it at all.
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       # npm keeps an existing yarn.lock in sync and writes it in Yarn Classic v1
       # format. This repo's yarn.lock is Yarn Berry, because package.json pins

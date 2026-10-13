@@ -44,7 +44,9 @@ jobs:
           node-version: "20.x"
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          corepack enable
+          yarn install --immutable --mode=skip-build
 
       - name: Build artifacts
         id: build

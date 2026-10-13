@@ -72,13 +72,13 @@ jobs:
           PACKAGE_MANAGER: ${{ inputs.package-manager }}
         run: |
           case "$PACKAGE_MANAGER" in
-            npm) npm ci --ignore-scripts ;;
+            npm) npm install --ignore-scripts --no-package-lock ;;
             # pnpm v10 can fail CI on ignored native build scripts
             # (for example msgpackr-extract) even though this repo is Yarn-native
             # and pnpm is only exercised here as a compatibility lane.
             pnpm) pnpm install --ignore-scripts --config.strict-dep-builds=false --no-frozen-lockfile ;;
             # Yarn Berry (v4+) removed --ignore-engines; engine checking is no longer a core feature
-            yarn) yarn install --mode=skip-build ;;
+            yarn) yarn install --immutable --mode=skip-build ;;
             bun) bun install --ignore-scripts ;;
             *) echo "Unsupported package manager: $PACKAGE_MANAGER" && exit 1 ;;
           esac

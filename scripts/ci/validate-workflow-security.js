@@ -53,8 +53,15 @@ const FULL_SHA_REF_PATTERN = /@[0-9a-f]{40}$/;
 const TOP_LEVEL_JOBS_PATTERN = /^jobs:\s*$/m;
 const UNSAFE_INSTALL_PATTERNS = [
   {
-    pattern: /\bnpm\s+ci\b(?![^\n]*--ignore-scripts)/g,
-    description: 'npm ci must include --ignore-scripts',
+    // yarn.lock is the canonical lockfile (package.json "packageManager"), and
+    // Dependabot updates only that file. A tracked package-lock.json drifts
+    // out of sync, so npm ci would fail on every npm dependency bump.
+    pattern: /\bnpm\s+ci\b/g,
+    description: 'npm ci needs package-lock.json, which this repo does not track; use yarn install --immutable --mode=skip-build',
+  },
+  {
+    pattern: /\bnpm\s+(?:install|i)\b(?![^\n]*--ignore-scripts)/g,
+    description: 'npm install must include --ignore-scripts',
   },
   {
     pattern: /\bpnpm\s+install\b(?![^\n]*--ignore-scripts)/g,
@@ -63,6 +70,10 @@ const UNSAFE_INSTALL_PATTERNS = [
   {
     pattern: /\byarn\s+install\b(?![^\n]*--mode=skip-build)/g,
     description: 'yarn install must use --mode=skip-build',
+  },
+  {
+    pattern: /\byarn\s+install\b(?![^\n]*--immutable)/g,
+    description: 'yarn install must use --immutable so CI fails instead of rewriting yarn.lock',
   },
   {
     pattern: /\bbun\s+install\b(?![^\n]*--ignore-scripts)/g,
@@ -214,7 +225,7 @@ function findViolations(filePath, source) {
       violations.push({
         filePath,
         event: 'dependency install scripts',
-        description: `workflow dependency installs must not run lifecycle scripts: ${installRule.description}`,
+        description: `unsafe workflow dependency install: ${installRule.description}`,
         expression: match[0],
         line: getLineNumber(source, match.index),
       });
