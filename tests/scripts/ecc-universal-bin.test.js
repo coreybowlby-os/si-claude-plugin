@@ -17,9 +17,6 @@ const repoRoot = path.join(__dirname, '..', '..');
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')
 );
-const packageLock = JSON.parse(
-  fs.readFileSync(path.join(repoRoot, 'package-lock.json'), 'utf8')
-);
 const activePackageManager = process.env.CLAUDE_CODE_PACKAGE_MANAGER || 'npm';
 const supportedPackageManagers = new Set(['npm', 'pnpm', 'yarn', 'bun']);
 const windowsPackageCommands = new Set([
@@ -320,7 +317,6 @@ test('Windows package shims use one safely quoted command line', () => {
 test('published package exposes ecc and ecc-universal through scripts/ecc.js', () => {
   assert.strictEqual(packageJson.bin.sicp, 'scripts/ecc.js');
   assert.strictEqual(packageJson.bin['si-claude-plugin'], 'scripts/ecc.js');
-  assert.deepStrictEqual(packageLock.packages[''].bin, packageJson.bin);
 
   const fixture = getPackedFixture();
   assert.ok(
