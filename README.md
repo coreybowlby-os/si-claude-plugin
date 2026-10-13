@@ -62,13 +62,6 @@ That installs the skills, agents, commands and plugin-managed hooks. If you go t
   </a><br />
   <sub>Report a bug · Ask a question</sub>
 </td>
-<td width="50%" align="center">
-  <a href="https://github.com/sponsors/affaan-m">
-    <img src="assets/images/community/heart.svg" height="42" alt="" /><br />
-    <strong>Sponsor ECC</strong>
-  </a><br />
-  <sub>Fund the upstream project this builds on</sub>
-</td>
 </tr>
 </table>
 
