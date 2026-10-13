@@ -52,9 +52,11 @@ function run() {
   })) passed++; else failed++;
 
   if (test('installs without lifecycle scripts and verifies registry signatures', () => {
-    assert.match(source, /npm ci --ignore-scripts/);
+    assert.match(source, /yarn install --immutable --mode=skip-build/);
+    // npm audit signatures verifies the installed tree, so it works on the
+    // yarn-installed node_modules; the advisory audit reads yarn.lock.
     assert.match(source, /npm audit signatures/);
-    assert.match(source, /npm audit --omit=dev --audit-level=high/);
+    assert.match(source, /yarn npm audit --all --recursive --environment production --severity high/);
   })) passed++; else failed++;
 
   if (test('runs IOC fixtures, emits JSON report, and uploads the artifact', () => {

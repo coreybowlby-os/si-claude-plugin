@@ -162,17 +162,33 @@ function run() {
     assert.match(result.stderr, /dependency caches are disabled during active supply-chain hardening/);
   })) passed++; else failed++;
 
-  if (test('rejects npm ci without ignore-scripts in any workflow', () => {
+  if (test('rejects npm ci, even with ignore-scripts, because yarn.lock is the only lockfile', () => {
     const result = runValidator({
-      'unsafe-install.yml': `name: Unsafe\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm ci\n`,
+      'npm-ci.yml': `name: NpmCi\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm ci --ignore-scripts\n`,
     });
-    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on npm ci without --ignore-scripts');
-    assert.match(result.stderr, /npm ci must include --ignore-scripts/);
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on npm ci');
+    assert.match(result.stderr, /npm ci needs package-lock\.json, which this repo does not track/);
+  })) passed++; else failed++;
+
+  if (test('rejects npm install without ignore-scripts', () => {
+    const result = runValidator({
+      'npm-install.yml': `name: NpmInstall\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm install --no-package-lock\n`,
+    });
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on npm install without --ignore-scripts');
+    assert.match(result.stderr, /npm install must include --ignore-scripts/);
+  })) passed++; else failed++;
+
+  if (test('rejects a yarn install that does not enforce the lockfile', () => {
+    const result = runValidator({
+      'yarn-mutable.yml': `name: YarnMutable\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: yarn install --mode=skip-build\n`,
+    });
+    assert.notStrictEqual(result.status, 0, 'Expected validator to fail on yarn install without --immutable');
+    assert.match(result.stderr, /yarn install must use --immutable/);
   })) passed++; else failed++;
 
   if (test('allows package-manager installs with lifecycle scripts disabled', () => {
     const result = runValidator({
-      'safe-install.yml': `name: Safe\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          npm ci --ignore-scripts\n          pnpm install --ignore-scripts --no-frozen-lockfile\n          yarn install --mode=skip-build\n          bun install --ignore-scripts\n`,
+      'safe-install.yml': `name: Safe\non:\n  pull_request:\njobs:\n  audit:\n    runs-on: ubuntu-latest\n    steps:\n      - run: |\n          npm install --ignore-scripts --no-package-lock\n          pnpm install --ignore-scripts --no-frozen-lockfile\n          yarn install --immutable --mode=skip-build\n          bun install --ignore-scripts\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
@@ -189,7 +205,7 @@ function run() {
 
   if (test('rejects checkout credential persistence in workflows with write permissions', () => {
     const result = runValidator({
-      'unsafe-write-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -197,7 +213,7 @@ function run() {
 
   if (test('allows checkout with disabled credential persistence in workflows with write permissions', () => {
     const result = runValidator({
-      'safe-write-checkout.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
+      'safe-write-checkout.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions:\n  contents: write\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
@@ -212,7 +228,7 @@ function run() {
 
   if (test('rejects checkout credential persistence in workflows with permissions: write-all', () => {
     const result = runValidator({
-      'unsafe-write-all-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-checkout.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -224,7 +240,7 @@ function run() {
 
   if (test('rejects double-quoted permissions: "write-all"', () => {
     const result = runValidator({
-      'unsafe-write-all-double.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: "write-all"\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-double.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: "write-all"\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on quoted write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -232,7 +248,7 @@ function run() {
 
   if (test('rejects single-quoted permissions: \'write-all\'', () => {
     const result = runValidator({
-      'unsafe-write-all-single.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: 'write-all'\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-write-all-single.yml': `name: Unsafe\non:\n  workflow_dispatch:\npermissions: 'write-all'\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on single-quoted write-all + credential-persisting checkout');
     assert.match(result.stderr, /write permissions must disable checkout credential persistence/);
@@ -240,7 +256,7 @@ function run() {
 
   if (test('allows compliant workflow with permissions: write-all (persist-credentials: false)', () => {
     const result = runValidator({
-      'safe-write-all.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: npm ci --ignore-scripts\n`,
+      'safe-write-all.yml': `name: Safe\non:\n  workflow_dispatch:\npermissions: write-all\njobs:\n  release:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${PINNED_SHA}\n        with:\n          persist-credentials: false\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.strictEqual(result.status, 0, result.stderr || result.stdout);
   })) passed++; else failed++;
@@ -255,7 +271,7 @@ function run() {
 
   if (test('rejects workflow-scoped id-token write', () => {
     const result = runValidator({
-      'unsafe-workflow-oidc.yml': `name: Unsafe\non:\n  push:\npermissions:\n  contents: read\n  id-token: write\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm ci --ignore-scripts\n`,
+      'unsafe-workflow-oidc.yml': `name: Unsafe\non:\n  push:\npermissions:\n  contents: read\n  id-token: write\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: yarn install --immutable --mode=skip-build\n`,
     });
     assert.notStrictEqual(result.status, 0, 'Expected validator to fail on workflow-level id-token write');
     assert.match(result.stderr, /id-token: write must be scoped to a publish-only job/);

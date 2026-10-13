@@ -45,7 +45,7 @@ for (const workflow of [
   });
 
   test(`${workflow} ignores dependency lifecycle scripts before privileged publish`, () => {
-    assert.match(content, /npm ci --ignore-scripts/);
+    assert.match(content, /yarn install --immutable --mode=skip-build/);
   });
 
   test(`${workflow} checks whether the tagged npm version already exists`, () => {

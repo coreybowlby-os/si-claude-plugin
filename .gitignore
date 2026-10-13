@@ -103,6 +103,7 @@ ecc2/target/
 # yarn is the canonical package manager for this repo (see package.json
 # "packageManager"); ignore stray lockfiles from running another manager locally
 /bun.lock
+/package-lock.json
 /bun.lockb
 assets/images/security/badrudi-exploit.mp4
 

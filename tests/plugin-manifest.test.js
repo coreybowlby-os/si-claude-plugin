@@ -91,7 +91,6 @@ function collectMarkdownFiles(rootPath) {
 }
 
 const rootPackage = loadJsonObject(packageJsonPath, 'package.json');
-const packageLock = loadJsonObject(packageLockPath, 'package-lock.json');
 const opencodePackageLock = loadJsonObject(opencodePackageLockPath, '.opencode/package-lock.json');
 const expectedVersion = rootPackage.version;
 
@@ -118,10 +117,12 @@ test('package.json declares a stable release after the install PR published base
   );
 });
 
-test('package-lock.json root version matches package.json', () => {
-  assert.strictEqual(packageLock.version, expectedVersion);
-  assert.ok(packageLock.packages && packageLock.packages[''], 'Expected package-lock root package entry');
-  assert.strictEqual(packageLock.packages[''].version, expectedVersion);
+test('yarn.lock is the only root lockfile (package.json declares yarn)', () => {
+  // A second lockfile drifts: Dependabot follows "packageManager" and updates
+  // only yarn.lock, so anything reading package-lock.json breaks on every bump.
+  assert.match(rootPackage.packageManager || '', /^yarn@/);
+  assert.ok(fs.existsSync(path.join(repoRoot, 'yarn.lock')), 'Expected yarn.lock at the repo root');
+  assert.ok(!fs.existsSync(packageLockPath), 'package-lock.json must not exist; yarn.lock is canonical');
 });
 
 test('AGENTS.md version line matches package.json', () => {
