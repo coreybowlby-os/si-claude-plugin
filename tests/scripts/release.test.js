@@ -21,8 +21,6 @@ const ciWorkflowPath = path.join(__dirname, '..', '..', '.github', 'workflows', 
 const releaseWorkflowSource = fs.readFileSync(releaseWorkflowPath, 'utf8');
 const reusableReleaseWorkflowSource = fs.readFileSync(reusableReleaseWorkflowPath, 'utf8');
 const ciWorkflowSource = fs.readFileSync(ciWorkflowPath, 'utf8');
-const rootReadmePath = path.join(__dirname, '..', '..', 'README.md');
-const rootReadmeSource = fs.readFileSync(rootReadmePath, 'utf8');
 const normalizedCiWorkflowSource = ciWorkflowSource.replace(/\r\n/g, '\n');
 
 function test(name, fn) {
@@ -90,8 +88,12 @@ function runTests() {
       'release.sh should allow prerelease semver suffixes'
     );
     assert.ok(
-      source.includes('update_latest_release_heading "$ROOT_ZH_CN_README_FILE"'),
+      source.includes('update_latest_release_heading "$ZH_CN_README_FILE"'),
       'release.sh should update localized latest-release headings that plugin-manifest.test.js verifies'
+    );
+    assert.ok(
+      !source.includes('README.zh-CN.md') && !source.includes('update_latest_release_heading "$README_FILE"'),
+      'release.sh must not require the removed root README.zh-CN.md or a root README release section'
     );
     assert.ok(
       source.includes('Error: could not update release heading for v${oldVersion} in ${file}'),
@@ -99,9 +101,17 @@ function runTests() {
     );
   })) passed++; else failed++;
 
-  if (test('a 2.2 bump preserves historical root README release headings', () => {
-    const historicalHeading = rootReadmeSource.match(/^### v2\.0\.0:.*$/m);
-    assert.ok(historicalHeading, 'README fixture should contain the historical v2.0.0 heading');
+  if (test('a 2.2 bump preserves historical release headings', () => {
+    // Inline fixture: the root README no longer carries a release-history
+    // section, but localized READMEs still do and the sync logic is shared.
+    const releaseNotesFixture = [
+      '### v2.1.0 Plan Canvas (Sep 2026)',
+      '',
+      '### v2.0.0: The Agent Harness Operating System (Jun 2026)',
+      '',
+    ].join('\n');
+    const historicalHeading = releaseNotesFixture.match(/^### v2\.0\.0:.*$/m);
+    assert.ok(historicalHeading, 'fixture should contain the historical v2.0.0 heading');
     assert.ok(
       source.includes('const oldVersion = process.argv[3]'),
       'release heading sync should receive the version being replaced'
@@ -118,7 +128,7 @@ function runTests() {
     const oldVersion = '2.1.0';
     const nextVersion = '2.2.0';
     const escapedOldVersion = oldVersion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const simulated = rootReadmeSource.replace(
+    const simulated = releaseNotesFixture.replace(
       new RegExp(`^### v${escapedOldVersion}( .*)$`, 'm'),
       `### v${nextVersion}$1`
     );

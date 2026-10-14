@@ -26,7 +26,6 @@ const trAgentsPath = path.join(repoRoot, 'docs', 'tr', 'AGENTS.md');
 const zhCnAgentsPath = path.join(repoRoot, 'docs', 'zh-CN', 'AGENTS.md');
 const ptBrReadmePath = path.join(repoRoot, 'docs', 'pt-BR', 'README.md');
 const trReadmePath = path.join(repoRoot, 'docs', 'tr', 'README.md');
-const rootZhCnReadmePath = path.join(repoRoot, 'README.zh-CN.md');
 const agentYamlPath = path.join(repoRoot, 'agent.yaml');
 const versionFilePath = path.join(repoRoot, 'VERSION');
 const zhCnReadmePath = path.join(repoRoot, 'docs', 'zh-CN', 'README.md');
@@ -186,11 +185,6 @@ test('docs/pt-BR/README.md latest release heading matches package.json', () => {
 test('docs/tr/README.md latest release heading matches package.json', () => {
   const source = fs.readFileSync(trReadmePath, 'utf8');
   assert.ok(source.includes(`### v${expectedVersion} `), 'Expected docs/tr/README.md to advertise the current release heading');
-});
-
-test('README.zh-CN.md latest release heading matches package.json', () => {
-  const source = fs.readFileSync(rootZhCnReadmePath, 'utf8');
-  assert.ok(source.includes(`### v${expectedVersion} `), 'Expected README.zh-CN.md to advertise the current release heading');
 });
 
 test('docs/zh-CN/README.md latest release heading matches package.json', () => {
@@ -632,7 +626,6 @@ test('.opencode/package-lock.json root version matches package.json', () => {
 test('user-facing docs do not use overlong legacy marketplace install commands', () => {
   const markdownFiles = [
     path.join(repoRoot, 'README.md'),
-    path.join(repoRoot, 'README.zh-CN.md'),
     path.join(repoRoot, 'skills', 'configure-ecc', 'SKILL.md'),
     ...collectMarkdownFiles(path.join(repoRoot, 'docs'))
   ].filter(filePath => !path.relative(repoRoot, filePath).startsWith(`docs${path.sep}drafts${path.sep}`));
@@ -649,7 +642,7 @@ test('user-facing docs do not use overlong legacy marketplace install commands',
 });
 
 test('user-facing docs do not use the legacy non-URL marketplace add form', () => {
-  const markdownFiles = [path.join(repoRoot, 'README.md'), path.join(repoRoot, 'README.zh-CN.md'), ...collectMarkdownFiles(path.join(repoRoot, 'docs'))];
+  const markdownFiles = [path.join(repoRoot, 'README.md'), ...collectMarkdownFiles(path.join(repoRoot, 'docs'))];
 
   const offenders = [];
   for (const filePath of markdownFiles) {

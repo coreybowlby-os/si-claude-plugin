@@ -7,7 +7,6 @@
   <strong>Language:</strong>
   <a href="README.md">English</a> |
   <a href="docs/pt-BR/README.md">Português (Brasil)</a> |
-  <a href="README.zh-CN.md">简体中文</a> |
   <a href="docs/zh-TW/README.md">繁體中文</a> |
   <a href="docs/ja-JP/README.md">日本語</a> |
   <a href="docs/ko-KR/README.md">한국어</a> |
@@ -739,7 +738,6 @@ e2e-testing skill                             -> e2e-runner: critical user flow 
 ```
 </details>
 
-
 ### Plan Canvas: review plans by pointing, not retyping
 
 Your agent writes a plan and opens it in a browser canvas that only listens on loopback. Click the bit you mean, leave numbered notes, chat from the side rail, then hit **Approve plan** or **Request changes** — that answer feeds straight into `/plan`'s CONFIRM gate. Mermaid diagrams render as you go, and saving the plan file reloads the page.
@@ -749,7 +747,6 @@ Your agent writes a plan and opens it in a browser canvas that only listens on l
 It doesn't care which harness or model you use — it's just a CLI (`ecc-plan-canvas`) speaking JSON, so any agent can drive it. Ask your agent to `/ecc:plan` something and review it on the page instead of in the terminal.
 
 [Open the plan used in this demo →](https://github.com/affaan-m/ECC/blob/main/docs/releases/2.1.0/plan-canvas-demo.plan.md)
-
 
 ## Why Choose SI Claude Plugin?
 
@@ -1983,7 +1980,6 @@ node tests/lib/utils.test.js
 node tests/lib/package-manager.test.js
 node tests/hooks/hooks.test.js
 ```
-
 
 ## License
 
