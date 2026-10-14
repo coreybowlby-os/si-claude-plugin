@@ -14,7 +14,6 @@ const RUNTIME_DOC_PATHS = [
   ...SKILL_PATHS,
   'README.md',
   'docs/HERMES-SETUP.md',
-  'README.zh-CN.md',
   'docs/zh-CN/README.md',
 ];
 

@@ -163,24 +163,22 @@ function main() {
     ['README keeps the primary choices and all three guides inline', () => {
       const readme = read('README.md');
       const primaryLinks = extractNamedTable(readme, 'SI Claude Plugin primary links');
-      const guides = extractNamedTable(readme, 'SI Claude Plugin guides');
+      const guides = extractNamedTable(readme, 'Claude Plugin guides');
       const centeredPrimaryLinks = readme.match(
         /<div align="center">\s*<table[^>]*aria-label="SI Claude Plugin primary links"[^>]*>[\s\S]*?<\/table>\s*<\/div>/
       );
 
       assert.ok(centeredPrimaryLinks, 'The primary-link cards should be centered as one group');
-      assert.strictEqual((primaryLinks.match(/<td\b/g) || []).length, 2);
+      assert.strictEqual((primaryLinks.match(/<td\b/g) || []).length, 1);
       assertExactHref(primaryLinks, 'https://github.com/coreybowlby-os/si-claude-plugin/issues');
       assert.ok(primaryLinks.includes('assets/images/community/discord.svg'));
-      assert.ok(primaryLinks.includes('assets/images/community/heart.svg'));
 
       // We ship no commercial tier and do not route users to upstream's channels.
       assert.doesNotMatch(primaryLinks, /ecc\.tools|apps\/ecc-tools|discord\.gg|\$\d+\/seat/);
       assert.doesNotMatch(readme, /ECC Pro|\$19\/seat/);
 
-      // The sponsor card is attribution to the upstream author, kept deliberately.
-      assertExactHref(primaryLinks, 'https://github.com/sponsors/affaan-m');
-      assert.match(primaryLinks, /Fund the upstream project this builds on/);
+      // Sponsorship cards were removed from the README deliberately.
+      assert.doesNotMatch(primaryLinks, /github\.com\/sponsors\//);
 
       for (const iconPath of [
         'assets/images/community/heart.svg',

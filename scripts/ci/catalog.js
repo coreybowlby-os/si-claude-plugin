@@ -18,7 +18,6 @@ const path = require('path');
 const ROOT = path.join(__dirname, '../..');
 const README_PATH = path.join(ROOT, 'README.md');
 const AGENTS_PATH = path.join(ROOT, 'AGENTS.md');
-const README_ZH_CN_PATH = path.join(ROOT, 'README.zh-CN.md');
 const DOCS_ZH_CN_README_PATH = path.join(ROOT, 'docs', 'zh-CN', 'README.md');
 const DOCS_ZH_CN_AGENTS_PATH = path.join(ROOT, 'docs', 'zh-CN', 'AGENTS.md');
 const PLUGIN_JSON_PATH = path.join(ROOT, '.claude-plugin', 'plugin.json');
@@ -134,19 +133,6 @@ function parseReadmeExpectations(readmeContent) {
   }
 
   return expectations;
-}
-
-function parseZhRootReadmeExpectations(readmeContent) {
-  const match = readmeContent.match(/你现在可以使用\s+(\d+)\s+个代理、\s*(\d+)\s*个技能和\s*(\d+)\s*个命令/i);
-  if (!match) {
-    throw new Error('README.zh-CN.md is missing the quick-start catalog summary');
-  }
-
-  return [
-    { category: 'agents', mode: 'exact', expected: Number(match[1]), source: 'README.zh-CN.md quick-start summary' },
-    { category: 'skills', mode: 'exact', expected: Number(match[2]), source: 'README.zh-CN.md quick-start summary' },
-    { category: 'commands', mode: 'exact', expected: Number(match[3]), source: 'README.zh-CN.md quick-start summary' }
-  ];
 }
 
 function parseZhDocsReadmeExpectations(readmeContent) {
@@ -442,16 +428,6 @@ function syncEnglishAgents(content, catalog) {
   return nextContent;
 }
 
-function syncZhRootReadme(content, catalog) {
-  return replaceOrThrow(
-    content,
-    /(你现在可以使用\s+)(\d+)(\s+个代理、\s*)(\d+)(\s*个技能和\s*)(\d+)(\s*个命令[。.!！]?)/i,
-    (_, prefix, __, agentsSuffix, ___, skillsSuffix, ____, commandsSuffix) =>
-      `${prefix}${catalog.agents.count}${agentsSuffix}${catalog.skills.count}${skillsSuffix}${catalog.commands.count}${commandsSuffix}`,
-    'README.zh-CN.md quick-start summary'
-  );
-}
-
 function syncZhDocsReadme(content, catalog) {
   let nextContent = content;
 
@@ -563,7 +539,6 @@ function createDocumentSpecs(paths = {}) {
   const {
     readmePath = README_PATH,
     agentsPath = AGENTS_PATH,
-    zhRootReadmePath = README_ZH_CN_PATH,
     zhDocsReadmePath = DOCS_ZH_CN_README_PATH,
     zhDocsAgentsPath = DOCS_ZH_CN_AGENTS_PATH,
     pluginJsonPath = PLUGIN_JSON_PATH,
@@ -580,11 +555,6 @@ function createDocumentSpecs(paths = {}) {
       filePath: agentsPath,
       parseExpectations: parseAgentsDocExpectations,
       syncContent: syncEnglishAgents,
-    },
-    {
-      filePath: zhRootReadmePath,
-      parseExpectations: parseZhRootReadmeExpectations,
-      syncContent: syncZhRootReadme,
     },
     {
       filePath: zhDocsReadmePath,
@@ -633,7 +603,6 @@ function createDocumentSpecsForRoot(root) {
   return createDocumentSpecs({
     readmePath: path.join(root, 'README.md'),
     agentsPath: path.join(root, 'AGENTS.md'),
-    zhRootReadmePath: path.join(root, 'README.zh-CN.md'),
     zhDocsReadmePath: path.join(root, 'docs', 'zh-CN', 'README.md'),
     zhDocsAgentsPath: path.join(root, 'docs', 'zh-CN', 'AGENTS.md'),
     pluginJsonPath: path.join(root, '.claude-plugin', 'plugin.json'),
@@ -746,12 +715,10 @@ module.exports = {
   parseReadmeExpectations,
   parseZhAgentsDocExpectations,
   parseZhDocsReadmeExpectations,
-  parseZhRootReadmeExpectations,
   runCatalogCheck,
   syncCatalogDescription,
   syncEnglishAgents,
   syncEnglishReadme,
   syncZhAgents,
   syncZhDocsReadme,
-  syncZhRootReadme,
 };

@@ -131,11 +131,11 @@ function runTests() {
 
   if (test('every localized README with a release heading is bumped by release.sh', () => {
     // docs/zh-CN/README.md regressed once because it got a version-row bump
-    // without a heading bump. Pin all five call sites so a dropped one fails
-    // here instead of during a release.
+    // without a heading bump. Pin the call sites so a dropped one fails here
+    // instead of during a release. The root README no longer carries a
+    // release-history section, so it must NOT be targeted: the update fails
+    // closed when the heading is absent and would abort the release.
     const requiredFileVariables = [
-      'README_FILE',
-      'ROOT_ZH_CN_README_FILE',
       'TR_README_FILE',
       'PT_BR_README_FILE',
       'ZH_CN_README_FILE',
@@ -147,6 +147,20 @@ function runTests() {
         `release.sh should update the latest release heading for $${variable}`
       );
     }
+    assert.ok(
+      !source.includes('update_latest_release_heading "$README_FILE"'),
+      'release.sh must not target the root README, which has no release heading'
+    );
+
+    // Keep the list honest against the files themselves.
+    const version = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')).version;
+    const hasCurrentHeading = relativePath => fs
+      .readFileSync(path.join(repoRoot, relativePath), 'utf8')
+      .includes(`### v${version} `);
+    for (const relativePath of ['docs/tr/README.md', 'docs/pt-BR/README.md', 'docs/zh-CN/README.md']) {
+      assert.ok(hasCurrentHeading(relativePath), `${relativePath} should carry the v${version} release heading`);
+    }
+    assert.ok(!hasCurrentHeading('README.md'), 'root README should not carry a release heading');
   })) passed++; else failed++;
 
   if (test('heading updates run before the release commit is created', () => {
