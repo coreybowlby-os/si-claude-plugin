@@ -173,7 +173,8 @@ function readBoundedStdin(maxBytes, retryOptions = {}) {
       if (!retryable) throw error;
       if (remainingRetryWaitMs < retryDelayMs) {
         throw new Error(
-          `Standard input remained unavailable after ${maxRetryWaitMs}ms.`
+          `Standard input remained unavailable after ${maxRetryWaitMs}ms.`,
+          { cause: error }
         );
       }
       wait(retryDelayMs);

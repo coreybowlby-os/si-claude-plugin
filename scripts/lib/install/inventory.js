@@ -40,7 +40,7 @@ function readJsonObject(filePath, label) {
   try {
     value = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
-    throw new Error(`${label} is invalid at ${filePath}: ${error.message}`);
+    throw new Error(`${label} is invalid at ${filePath}: ${error.message}`, { cause: error });
   }
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error(`${label} is invalid at ${filePath}: expected a JSON object`);

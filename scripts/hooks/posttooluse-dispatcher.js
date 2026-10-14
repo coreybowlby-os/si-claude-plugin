@@ -83,7 +83,7 @@ function extractToolName(raw) {
 }
 
 function buildDryRunPreview(hook, raw) {
-  let target = '';
+  let target;
   try {
     const input = JSON.parse(raw)?.tool_input || {};
     target = String(input.file_path || input.path || input.command || '');

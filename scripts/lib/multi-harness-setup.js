@@ -182,7 +182,7 @@ function readOwnedDestinations(plan, dependencies) {
   try {
     assertSafeInstallOperation(plan, { destinationPath: plan.installStatePath });
   } catch (error) {
-    throw new Error(`Refusing to trust managed install-state path: ${error.message}`);
+    throw new Error(`Refusing to trust managed install-state path: ${error.message}`, { cause: error });
   }
   const initialFingerprint = fingerprintFile(plan.installStatePath);
   if (!initialFingerprint.exists) {
@@ -245,7 +245,7 @@ function assertMergeDestination(destinationPath, existingSnapshot = null) {
   try {
     current = JSON.parse(snapshot.content.toString('utf8'));
   } catch (error) {
-    throw new Error(`Cannot merge ECC configuration into invalid JSON at ${destinationPath}: ${error.message}`);
+    throw new Error(`Cannot merge ECC configuration into invalid JSON at ${destinationPath}: ${error.message}`, { cause: error });
   }
   if (!current || typeof current !== 'object' || Array.isArray(current)) {
     throw new Error(`Cannot merge ECC configuration at ${destinationPath}: expected a JSON object.`);
@@ -334,11 +334,12 @@ function assertManagedDestinationsWritable(plan, dependencies) {
   for (const [candidatePath, mode] of requirements) {
     try {
       accessSync(candidatePath, mode);
-    } catch (_error) {
+    } catch (error) {
       const label = plan.target === 'kimi' ? 'Kimi' : 'Managed install';
       throw new Error(
         `${label} destination is not writable by the current user: ${candidatePath}. `
-        + 'Fix the project ownership or permissions, then retry.'
+        + 'Fix the project ownership or permissions, then retry.',
+        { cause: error }
       );
     }
   }

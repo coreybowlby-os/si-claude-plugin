@@ -200,7 +200,7 @@ function parseJsonOutput(result, label) {
   try {
     return JSON.parse(result.stdout);
   } catch (error) {
-    throw new Error(`${label} did not emit valid JSON: ${error.message}\n${result.stdout}`);
+    throw new Error(`${label} did not emit valid JSON: ${error.message}\n${result.stdout}`, { cause: error });
   }
 }
 

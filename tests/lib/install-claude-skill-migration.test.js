@@ -588,6 +588,46 @@ function runTests() {
     }
   })) passed++; else failed++;
 
+  if (test('keeps both errors when the install and its recovery checkpoint both fail', () => {
+    const fixture = createFixture();
+    try {
+      seedLegacyInstall(fixture);
+      const missingSourcePlan = {
+        ...fixture.plan,
+        operations: fixture.operations.map((operation, index) => (
+          index === 1
+            ? { ...operation, sourcePath: path.join(fixture.sourceRoot, 'missing.md') }
+            : operation
+        )),
+      };
+      // First write is the bridge state (must succeed so the copy starts);
+      // the second is the post-failure checkpoint, which we make fail.
+      const checkpointFailure = new Error('disk full');
+      let stateWrites = 0;
+      const writeInstallStateOnce = (statePath, state) => {
+        stateWrites += 1;
+        if (stateWrites > 1) throw checkpointFailure;
+        return writeInstallState(statePath, state);
+      };
+
+      let thrown;
+      try {
+        applyInstallPlan(missingSourcePlan, { writeInstallState: writeInstallStateOnce });
+      } catch (error) {
+        thrown = error;
+      }
+
+      assert.ok(thrown instanceof AggregateError, `expected AggregateError, got ${thrown && thrown.name}`);
+      assert.strictEqual(thrown.errors.length, 2);
+      assert.strictEqual(thrown.errors[0].code, 'ENOENT', 'errors[0] is the original install failure');
+      assert.strictEqual(thrown.errors[1], checkpointFailure);
+      assert.strictEqual(thrown.cause, checkpointFailure);
+      assert.match(thrown.message, /ENOENT[\s\S]*Install-state checkpoint also failed: disk full/);
+    } finally {
+      cleanup(fixture.tempDir);
+    }
+  })) passed++; else failed++;
+
   if (test('tracks a partial first install so retry does not misclassify it as user-owned', () => {
     const fixture = createFixture();
     try {
