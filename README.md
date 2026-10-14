@@ -172,7 +172,7 @@ Add directly to your `~/.claude/settings.json`:
     "ecc": {
       "source": {
         "source": "github",
-        "repo": "affaan-m/ECC"
+        "repo": "coreybowlby-os/si-claude-plugin"
       }
     }
   },
@@ -739,11 +739,6 @@ e2e-testing skill                             -> e2e-runner: critical user flow 
 ```
 </details>
 
-## What's New: SI Claude Plugin 2.1
-
-> [!IMPORTANT]
-> **NEW IN SI Claude Plugin 2.1: Plan Canvas · Kimi harness · self-hosted compute on Itô GPUs.**
-> [See the full release notes →](https://github.com/affaan-m/ECC/blob/main/docs/releases/2.1.0/release-notes.md)
 
 ### Plan Canvas: review plans by pointing, not retyping
 
@@ -755,130 +750,6 @@ It doesn't care which harness or model you use — it's just a CLI (`ecc-plan-ca
 
 [Open the plan used in this demo →](https://github.com/affaan-m/ECC/blob/main/docs/releases/2.1.0/plan-canvas-demo.plan.md)
 
-### Also in 2.1
-
-- **Kimi Code install target** (`--target kimi`): SI Claude Plugin installs natively into [Moonshot AI](https://www.moonshot.ai)'s Kimi Code CLI
-- **Self-host on GPUs**: a verified path with [Itô](https://compute.itomarkets.com), upstream ECC's preferred compute sponsor, including the opt-in `sicp ito find` RFQ bridge (details and disclosures above in [Self-Hosted Models and Custom Endpoints](#self-hosted-models-and-custom-endpoints))
-- **Moonshot AI (Kimi), Itô, and Atlas Cloud** are now public sponsors
-- **Hermes + OpenClaw install targets**, a Codex navigation guide, consolidated PostToolUse hooks, and supply-chain hardening
-
-### Current development: Unified Memory Vault
-
-`sicp memory` gives Claude, Codex, Hermes, OpenClaw, Kimi and the rest one local Markdown format you can actually read, for context that needs to outlive a session and for handing work between harnesses. There's an optional `ecc-memory-mcp` stdio server with the same save/search/read/doctor surface; it doesn't turn itself on. More in [Share context between harnesses](#share-context-between-harnesses) below.
-
-<details>
-<summary><strong>Previous releases</strong></summary>
-
-| Version | Highlights |
-|---|---|
-| [v2.0.0](https://github.com/affaan-m/ECC/releases/tag/v2.0.0) | The Agent Harness Operating System: cross-harness graduation, control-pane substrate, `orch-*` orchestrators, Discord + ECC bot, single-connector MCP policy |
-| [v1.10.0](https://github.com/affaan-m/ECC/releases/tag/v1.10.0) | Surface refresh, operator workflows, ECC 2.0 alpha |
-| [v1.9.0](https://github.com/affaan-m/ECC/releases/tag/v1.9.0) | Selective install, ECC Tools Pro, 12 language ecosystems |
-| [v1.8.0](https://github.com/affaan-m/ECC/releases/tag/v1.8.0) | Harness performance and cross-platform reliability |
-| [v1.7.0](https://github.com/affaan-m/ECC/releases/tag/v1.7.0) | Cross-platform expansion and presentation builder |
-| [v1.6.0](https://github.com/affaan-m/ECC/releases/tag/v1.6.0) | Codex Edition and the ECC Tools GitHub App |
-| [v1.5.0](https://github.com/affaan-m/ECC/releases/tag/v1.5.0) | Universal Edition |
-| [v1.4.0](https://github.com/affaan-m/ECC/releases/tag/v1.4.0) | Multi-language rules, installation wizard, PM2 orchestration |
-| [v1.3.0](https://github.com/affaan-m/ECC/releases/tag/v1.3.0) | Complete OpenCode plugin support |
-| [v1.2.0](https://github.com/affaan-m/ECC/releases/tag/v1.2.0) | Unified commands and skills |
-| [v1.1.0](https://github.com/affaan-m/ECC/releases/tag/v1.1.0) | Cross-platform support and community fixes |
-| [v1.0.0](https://github.com/affaan-m/ECC/releases/tag/v1.0.0) | Official plugin release |
-
-</details>
-
-<details>
-<summary><strong>Release history in detail</strong></summary>
-
-### v2.3.2 — Guided Multi-Harness Install (Aug 2026)
-
-Reviewable multi-harness setup across Claude Code, Codex, and Kimi Code, with a
-matching command entry point. Full notes:
-[docs/releases/2.2.1/release-notes.md](docs/releases/2.2.1/release-notes.md).
-
-### v2.0.0: The Agent Harness Operating System (Jun 2026)
-
-Stable graduation of the 2.0 line: the control-pane substrate (session adapters + MCP inventory), the worktree-lifecycle service, the `orch-*` orchestrator family, and the launch of the [ECC Discord community](https://discord.gg/36yGMHGFbR). Full notes: [docs/releases/2.0.0/release-notes.md](docs/releases/2.0.0/release-notes.md).
-
-### v2.0.0-rc.1: Surface Refresh, Operator Workflows, and ECC 2.0 Alpha (Apr 2026)
-
-- **Dashboard GUI**: New Tkinter-based desktop application (`ecc_dashboard.py` or `npm run dashboard`) with dark/light theme toggle, font customization, and project logo in header and taskbar.
-- **Public surface synced to the live repo**: metadata, catalog counts, plugin manifests, and install-facing docs now match the actual OSS surface.
-- **Operator and outbound workflow expansion**: `brand-voice`, `social-graph-ranker`, `connections-optimizer`, `customer-billing-ops`, `ecc-tools-cost-audit`, `google-workspace-ops`, `project-flow-ops`, and `workspace-surface-audit` round out the operator lane.
-- **Media and launch tooling**: `manim-video`, `remotion-video-creation`, and upgraded social publishing surfaces make technical explainers and launch content part of the same system.
-- **Framework and product surface growth**: `nestjs-patterns`, richer Codex/OpenCode install surfaces, and expanded cross-harness packaging keep the repo usable beyond a single harness.
-- **Itô prediction-market skill pack**: the consolidated `ito-baskets` skill (read-only basket index, comparison, market briefs, and non-executable planning worksheets — replacing the former `ito-market-intelligence`, `ito-basket-compare`, `ito-trade-planner`, and `ito-data-atlas-agent` skills), plus `prediction-market-oracle-research` and `prediction-market-risk-review`, add public, non-advisory market/basket workflows while keeping live Itô API access gated and separate from ECC Tools billing.
-- **Optimization skill pack**: `parallel-execution-optimizer`, `benchmark-optimization-loop`, `data-throughput-accelerator`, `latency-critical-systems`, and `recursive-decision-ledger` turn repeated speed/recursion prompts into bounded benchmark, throughput, and decision-ledger workflows.
-- **ECC 2.0 alpha in-tree**: the Rust control-plane prototype in `ecc2/` builds locally and exposes `dashboard`, `start`, `sessions`, `status`, `stop`, `resume`, and `daemon` commands.
-- **Operator status snapshots**: `sicp status --markdown --write status.md` turns the local state store into a portable handoff covering readiness, active sessions, skill-run health, install health, pending governance events, and linked work items from Linear/GitHub/handoffs.
-- **Ecosystem hardening**: AgentShield, ECC Tools cost controls, billing portal work, and website refreshes continue to ship around the core plugin instead of drifting into separate silos.
-
-### v1.9.0: Selective Install and Language Expansion (Mar 2026)
-
-- **Selective install architecture**: Manifest-driven install pipeline with `install-plan.js` and `install-apply.js` for targeted component installation. State store tracks what's installed and enables incremental updates.
-- **6 new agents**: `typescript-reviewer`, `pytorch-build-resolver`, `java-build-resolver`, `java-reviewer`, `kotlin-reviewer`, `kotlin-build-resolver` expand language coverage to 10 languages.
-- **New skills**: `pytorch-patterns`, `documentation-lookup`, `bun-runtime`, `nextjs-turbopack`, 8 operational domain skills, and `mcp-server-patterns`.
-- **Session and state infrastructure**: SQLite state store with query CLI, session adapters for structured recording, skill evolution foundation for self-improving skills.
-- **Orchestration overhaul**: Deterministic harness audit scoring, hardened orchestration status and launcher compatibility, observer loop prevention with 5-layer guard.
-- **Observer reliability**: Memory explosion fix with throttling and tail sampling, sandbox access fix, lazy-start logic, and re-entrancy guard.
-- **12 language ecosystems**: New rules for Java, PHP, Perl, Kotlin/Android/KMP, C++, and Rust join existing TypeScript, Python, Go, and common rules.
-- **Community contributions**: Korean and Chinese translations, biome hook optimization, video processing skills, operational skills, PowerShell installer, Antigravity IDE support.
-- **CI hardening**: 19 test failure fixes, catalog count enforcement, install manifest validation, and full test suite green.
-
-### v1.8.0: Harness Performance System (Mar 2026)
-
-- **Harness-first release**: ECC is explicitly framed as an agent harness performance system, not just a config pack.
-- **Hook reliability overhaul**: SessionStart root fallback, Stop-phase session summaries, and script-based hooks replacing fragile inline one-liners.
-- **Hook runtime controls**: `ECC_HOOK_PROFILE=minimal|standard|strict` and `ECC_DISABLED_HOOKS=...` for runtime gating without editing hook files.
-- **New harness commands**: `/harness-audit`, `/loop-start`, `/loop-status`, `/quality-gate`, `/model-route`.
-- **NanoClaw v2**: model routing, skill hot-load, session branch/search/export/compact/metrics.
-- **Cross-harness parity**: behavior tightened across Claude Code, Cursor, OpenCode, and Codex app/CLI.
-- **997 internal tests passing**: full suite green after hook/runtime refactor and compatibility updates.
-
-### v1.7.0: Cross-Platform Expansion and Presentation Builder (Feb 2026)
-
-- **Codex app + CLI support**: Direct `AGENTS.md`-based Codex support, installer targeting, and Codex docs
-- **`frontend-slides` skill**: Zero-dependency HTML presentation builder with PPTX conversion guidance and strict viewport-fit rules
-- **5 new generic business/content skills**: `article-writing`, `content-engine`, `market-research`, `investor-materials`, `investor-outreach`
-- **Broader tool coverage**: Cursor, Codex, and OpenCode support tightened so the same repo ships cleanly across all major harnesses
-- **992 internal tests**: Expanded validation and regression coverage across plugin, hooks, skills, and packaging
-
-### v1.6.0: Codex CLI, AgentShield, and Marketplace (Feb 2026)
-
-- **Codex CLI support**: New `/codex-setup` command generates `codex.md` for OpenAI Codex CLI compatibility
-- **7 new skills**: `search-first`, `swift-actor-persistence`, `swift-protocol-di-testing`, `regex-vs-llm-structured-text`, `content-hash-cache-pattern`, `cost-aware-llm-pipeline`, `skill-stocktake`
-- **AgentShield integration**: `/security-scan` runs AgentShield directly from Claude Code; 1282 tests, 102 rules
-- **GitHub Marketplace**: ECC Tools GitHub App live at [github.com/marketplace/ecc-tools](https://github.com/marketplace/ecc-tools) with free/pro/enterprise tiers
-- **30+ community PRs merged**: Contributions from 30 contributors across 6 languages
-- **978 internal tests**: Expanded validation suite across agents, skills, commands, hooks, and rules
-
-### v1.4.1: Bug Fix (Feb 2026)
-
-- **Fixed instinct import content loss**: `parse_instinct_file()` was silently dropping all content after frontmatter (Action, Evidence, Examples sections) during `/instinct-import`. ([#148](https://github.com/affaan-m/ECC/issues/148), [#161](https://github.com/affaan-m/ECC/pull/161))
-
-### v1.4.0: Multi-Language Rules, Installation Wizard, and PM2 (Feb 2026)
-
-- **Interactive installation wizard**: New `configure-ecc` skill provides guided setup with merge/overwrite detection
-- **PM2 and multi-agent orchestration**: 6 new commands (`/pm2`, `/multi-plan`, `/multi-execute`, `/multi-backend`, `/multi-frontend`, `/multi-workflow`) for managing complex multi-service workflows
-- **Multi-language rules architecture**: Rules restructured from flat files into `common/` + `typescript/` + `python/` + `golang/` directories. Install only the languages you need
-- **Chinese (zh-CN) translations**: Complete translation of all agents, commands, skills, and rules (80+ files)
-- **GitHub Sponsors support**: Sponsor the project via GitHub Sponsors
-- **Enhanced CONTRIBUTING.md**: Detailed PR templates for each contribution type
-
-### v1.3.0: OpenCode Plugin Support (Feb 2026)
-
-- **Full OpenCode integration**: 12 agents, 24 commands, 16 skills with hook support via OpenCode's plugin system (20+ event types)
-- **3 native custom tools**: run-tests, check-coverage, security-audit
-- **LLM documentation**: `llms.txt` for comprehensive OpenCode docs
-
-### v1.2.0: Unified Commands and Skills (Feb 2026)
-
-- **Python/Django support**: Django patterns, security, TDD, and verification skills
-- **Java Spring Boot skills**: Patterns, security, TDD, and verification for Spring Boot
-- **Session management**: `/sessions` command for session history
-- **Continuous learning v2**: Instinct-based learning with confidence scoring, import/export, evolution
-
-See the full changelog in [Releases](https://github.com/affaan-m/ECC/releases).
-</details>
 
 ## Why Choose SI Claude Plugin?
 
@@ -1019,7 +890,7 @@ For opt-in MCP access, add the `ecc-memory-vault` entry from [`mcp-configs/mcp-s
 
 This repo is the raw code. The guides explain everything.
 
-<table aria-label="SI Claude Plugin guides" width="100%">
+<table aria-label="Claude Plugin guides" width="100%">
 <tr>
 <td width="33%" align="center">
 <a href="./the-shortform-guide.md">
@@ -1326,12 +1197,6 @@ Use the `/skill-create` command for local analysis without external services:
 
 This analyzes your git history locally and generates SKILL.md files.
 
-### Option B: ECC Tools GitHub App (Advanced)
-
-For advanced features (10k+ commits, auto-PRs, team sharing), ECC offers a hosted GitHub App. It is **upstream's** service, not part of this fork, and it operates on ECC's terms:
-
-[Install ECC Tools GitHub App](https://github.com/apps/ecc-tools) | [ecc.tools](https://ecc.tools)
-
 ```bash
 # Comment on any issue:
 /ecc-tools analyze
@@ -1370,9 +1235,7 @@ npx ecc-agentshield init
 
 **Output formats:** Terminal (color-graded A-F), JSON (CI pipelines), Markdown, HTML. Exit code 2 on critical findings for build gates.
 
-Use `/security-scan` in Claude Code to run it, or add to CI with the [GitHub Action](https://github.com/affaan-m/agentshield).
-
-[GitHub](https://github.com/affaan-m/agentshield) | [npm](https://www.npmjs.com/package/ecc-agentshield)
+Use `/security-scan` in Claude Code to run it, or add to CI with the [GitHub Action]
 </details>
 
 <details>
@@ -1571,7 +1434,6 @@ Paths resolved under that root include:
 - `$ECC_AGENT_DATA_HOME/session-aliases.json`: session aliases
 - `$ECC_AGENT_DATA_HOME/metrics/`: cost and activity metrics
 
-See [affaan-m/ECC#2065](https://github.com/affaan-m/ECC/issues/2065).
 </details>
 
 ## Platform Support
@@ -2122,54 +1984,6 @@ node tests/lib/package-manager.test.js
 node tests/hooks/hooks.test.js
 ```
 
-## Community and Project
-
-<details>
-<summary><strong>Support and sponsorship</strong></summary>
-
-This is MIT-licensed and free. No paid tier, no hosted service — it's a community fork, maintained independently of ECC.
-
-It's a fork of [ECC](https://github.com/affaan-m/ECC). If it's useful to you, consider [sponsoring ECC's author](https://github.com/sponsors/affaan-m) — this builds on their work.
-
-<table>
-<tr>
-<td width="50%" align="center"><a href="https://github.com/coreybowlby-os/si-claude-plugin/issues"><strong>Issues</strong><br /><sub>Bugs, questions, and ideas</sub></a></td>
-<td width="50%" align="center"><a href="https://github.com/sponsors/affaan-m"><strong>Sponsor ECC</strong><br /><sub>Fund the upstream project</sub></a></td>
-</tr>
-</table>
-</details>
-
-<details>
-<summary><strong>Contributing</strong></summary>
-
-Contributions are welcome — skills, agents, rules, hooks, docs, tests, adapters, security fixes, any of it.
-
-- [Contributing guide](CONTRIBUTING.md)
-- [Skill development guide](docs/SKILL-DEVELOPMENT-GUIDE.md)
-- [Skill placement policy](docs/SKILL-PLACEMENT-POLICY.md)
-- [Command quick reference](COMMANDS-QUICK-REF.md)
-
-The short version:
-1. Fork the repo
-2. Create your skill in `skills/your-skill-name/SKILL.md` (with YAML frontmatter)
-3. Or create an agent in `agents/your-agent.md`
-4. Submit a PR with a clear description of what it does and when to use it
-
-**Ideas for contributions:**
-
-- Language-specific skills (Rust, C#, Kotlin, Java): Go, Python, Perl, Swift, TypeScript, and HarmonyOS/ArkTS already included
-- Framework-specific configs (Rails, FastAPI): Django, NestJS, Spring Boot, and Laravel already included
-- DevOps agents (Kubernetes, Terraform, AWS, Docker)
-- Testing strategies (different frameworks, visual regression)
-- Domain-specific knowledge (ML, data engineering, mobile)
-</details>
-
-## Links
-
-- **Shorthand Guide (Start Here):** [The Shorthand Guide to SI Claude Plugin](https://x.com/affaan/status/2012378465664745795)
-- **Longform Guide (Advanced):** [The Longform Guide to SI Claude Plugin](https://x.com/affaan/status/2014040193557471352)
-- **Security Guide:** [Security Guide](./the-security-guide.md) | [Thread](https://x.com/affaan/status/2033263813387223421)
-- **Follow:** [@affaan](https://x.com/affaan)
 
 ## License
 
