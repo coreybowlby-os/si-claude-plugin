@@ -133,7 +133,7 @@ function buildProximitySnapshot(sessions, options = {}) {
   }
 
   const touched = [...new Set(agents.flatMap(a => a.files.map(f => f.path)))];
-  let graph = { adjacency: {}, files: [] };
+  let graph;
   try {
     graph = options.graph || buildDependencyGraph(repoRoot, touched, options.graphDeps || {});
   } catch {

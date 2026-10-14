@@ -25,7 +25,7 @@ function openRegularFileNoFollow(filePath, writable = false) {
       try {
         const unresolved = fs.lstatSync(filePath);
         if (unresolved.isSymbolicLink() || !unresolved.isFile()) {
-          throw new Error(`Refusing to manage non-regular legacy sync path: ${filePath}`);
+          throw new Error(`Refusing to manage non-regular legacy sync path: ${filePath}`, { cause: error });
         }
       } catch (lstatError) {
         if (lstatError.code === 'ENOENT') return null;
@@ -34,7 +34,7 @@ function openRegularFileNoFollow(filePath, writable = false) {
       throw error;
     }
     if (error.code === 'ELOOP') {
-      throw new Error(`Refusing to manage non-regular legacy sync path: ${filePath}`);
+      throw new Error(`Refusing to manage non-regular legacy sync path: ${filePath}`, { cause: error });
     }
     throw error;
   }
@@ -45,7 +45,7 @@ function openRegularFileNoFollow(filePath, writable = false) {
   } catch (error) {
     fs.closeSync(descriptor);
     if (error.code === 'ENOENT') {
-      throw new Error(`Legacy sync path changed while opening: ${filePath}`);
+      throw new Error(`Legacy sync path changed while opening: ${filePath}`, { cause: error });
     }
     throw error;
   }
@@ -124,9 +124,10 @@ function removeOpenedRegularFile(filePath, opened) {
       fs.linkSync(quarantinePath, filePath);
       fs.unlinkSync(quarantinePath);
       fs.rmdirSync(quarantineDir);
-    } catch (_restoreError) {
+    } catch (restoreError) {
       throw new Error(
-        `Legacy sync path changed before removal; preserved replacement at ${quarantinePath}`
+        `Legacy sync path changed before removal; preserved replacement at ${quarantinePath}`,
+        { cause: restoreError }
       );
     }
     throw new Error(`Legacy sync path changed before removal: ${filePath}`);
@@ -313,7 +314,7 @@ function rollbackLegacyCodexSync(options) {
       retainedPaths.push(filePath);
       continue;
     }
-    let opened = null;
+    let opened;
     try {
       opened = openRegularFileNoFollow(filePath, true);
     } catch (_error) {
@@ -576,7 +577,7 @@ function uninstallLegacyCodexSync(options = {}) {
       retainedPaths.push(filePath);
       continue;
     }
-    let opened = null;
+    let opened;
     try {
       opened = openRegularFileNoFollow(filePath, !dryRun);
     } catch (_error) {

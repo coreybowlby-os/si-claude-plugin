@@ -148,7 +148,7 @@ function validateRepoRoot(repoRoot) {
     throw new Error(`Invalid ECC repo root: missing install script at ${installApplyPath}`);
   }
 
-  let pkgName = null;
+  let pkgName;
   try {
     pkgName = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name;
   } catch {

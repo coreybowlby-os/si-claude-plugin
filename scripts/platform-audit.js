@@ -256,7 +256,7 @@ function runGhJson(args, options = {}) {
   try {
     return JSON.parse(stdout || 'null');
   } catch (error) {
-    throw new Error(`gh ${args.join(' ')} returned invalid JSON: ${error.message}`);
+    throw new Error(`gh ${args.join(' ')} returned invalid JSON: ${error.message}`, { cause: error });
   }
 }
 

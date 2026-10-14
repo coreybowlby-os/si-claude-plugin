@@ -45,7 +45,7 @@ function stableStringify(value, depth = 0) {
  */
 function hashToolCall(toolName, toolInput) {
   const name = String(toolName || '');
-  let key = '';
+  let key;
   if (name === 'Bash') {
     // Hash the FULL command (digest, not a prefix slice): taking the first
     // 160 chars collided distinct long commands that share a common prefix

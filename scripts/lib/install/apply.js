@@ -523,9 +523,12 @@ function applyInstallPlan(plan, dependencies = {}) {
           stateWithContentDigests(migration.bridgeState, appliedPlan)
         );
       } catch (checkpointError) {
-        throw new Error(
+        // Two independent failures: keep both. errors[0] is the install
+        // failure; cause is the checkpoint failure that ended recovery.
+        throw new AggregateError(
+          [error, checkpointError],
           `${error.message} Install-state checkpoint also failed: ${checkpointError.message}`,
-          { cause: error }
+          { cause: checkpointError }
         );
       }
     }

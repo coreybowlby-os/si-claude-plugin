@@ -86,7 +86,7 @@ function buildDependencyGraph(repoRoot, files, deps = {}) {
     const normalized = String(rel).replace(/\\/g, '/');
     if (!isSourceFile(normalized)) continue;
     scanned.push(normalized);
-    let source = '';
+    let source;
     try {
       source = String(read(path.join(repoRoot, normalized), 'utf8'));
     } catch {

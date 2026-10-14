@@ -28,7 +28,7 @@ function parseHeredocDelimiter(line, operatorIndex) {
   if (stripTabs) endIndex += 1;
   while (endIndex < line.length && /[ \t]/.test(line[endIndex])) endIndex += 1;
 
-  let delimiter = '';
+  let delimiter;
   let quoted = false;
   const delimiterQuote = line[endIndex] === '"' || line[endIndex] === "'" ? line[endIndex] : null;
   if (delimiterQuote) {

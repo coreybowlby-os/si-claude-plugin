@@ -63,7 +63,7 @@ function loadPolicy(rootDir = process.cwd(), configPath = null) {
   try {
     parsed = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
   } catch (error) {
-    throw new Error(`Failed to load policy from ${resolvedPath}: ${error.message}`);
+    throw new Error(`Failed to load policy from ${resolvedPath}: ${error.message}`, { cause: error });
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
     throw new Error(`Policy file ${resolvedPath} must contain a JSON object, got ${Array.isArray(parsed) ? 'array' : typeof parsed}`);

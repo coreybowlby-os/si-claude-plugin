@@ -203,7 +203,7 @@ async function main() {
   // canonical field (legacy env var, then 'default', as fallbacks) and
   // transcript_path points at the session transcript JSONL used by the
   // context-size signal.
-  let input = {};
+  let input;
   try {
     input = await readStdinJson({ timeoutMs: 1000 });
   } catch {

@@ -23,7 +23,7 @@ function extractCoordinationState(body, policy = DEFAULT_POLICY) {
     const parsed = JSON.parse(match[1]);
     return parsed && typeof parsed === 'object' ? parsed : null;
   } catch (error) {
-    throw new SyntaxError(`Malformed coordination JSON in body: ${error.message} — raw: ${match[1].slice(0, 120)}`);
+    throw new SyntaxError(`Malformed coordination JSON in body: ${error.message} — raw: ${match[1].slice(0, 120)}`, { cause: error });
   }
 }
 

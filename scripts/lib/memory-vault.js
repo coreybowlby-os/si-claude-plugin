@@ -255,7 +255,8 @@ function ensureProjectScopeIgnored(roots, scope) {
     });
     if (existing !== PROJECT_MEMORY_GITIGNORE) {
       throw new Error(
-        'Project memory .gitignore does not contain the required fail-closed rules.'
+        'Project memory .gitignore does not contain the required fail-closed rules.',
+        { cause: error }
       );
     }
   }
@@ -336,7 +337,7 @@ function saveMemory(input, options = {}) {
     writeCreateOnlyTextFile(destination, serializeMemoryDocument(memory), root);
   } catch (error) {
     if (error && error.code === 'EEXIST') {
-      throw new Error(`Memory ${memory.id} already exists; writes are create-only.`);
+      throw new Error(`Memory ${memory.id} already exists; writes are create-only.`, { cause: error });
     }
     throw error;
   }

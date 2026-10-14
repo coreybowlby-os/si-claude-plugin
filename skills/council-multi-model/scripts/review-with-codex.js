@@ -223,7 +223,7 @@ function runReview(prompt, options, dependencies = {}) {
     try {
       text = readFile(outputFile, 'utf8').trim();
     } catch (error) {
-      throw new Error(`Codex returned no final response: ${error.message}`);
+      throw new Error(`Codex returned no final response: ${error.message}`, { cause: error });
     }
     if (!text) throw new Error('Codex returned an empty final response');
     return `${providerLabel(options.hostProvider)}\n${text}`;

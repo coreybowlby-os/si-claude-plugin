@@ -126,7 +126,7 @@ function parseMetadataJson(value) {
   try {
     return JSON.parse(value);
   } catch (error) {
-    throw new Error(`Invalid --metadata-json: ${error.message}`);
+    throw new Error(`Invalid --metadata-json: ${error.message}`, { cause: error });
   }
 }
 
@@ -163,7 +163,7 @@ function runGhJson(args) {
   try {
     return JSON.parse(result.stdout || '[]');
   } catch (error) {
-    throw new Error(`${displayCommand} returned invalid JSON: ${error.message}`);
+    throw new Error(`${displayCommand} returned invalid JSON: ${error.message}`, { cause: error });
   }
 }
 
