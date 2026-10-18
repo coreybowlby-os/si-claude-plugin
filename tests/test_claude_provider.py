@@ -5,6 +5,7 @@ import pytest
 
 from llm.core.types import LLMInput, Message, Role
 from llm.providers.claude import ClaudeProvider
+from tests.sdk_signatures import ANTHROPIC_MESSAGES_CREATE, assert_sdk_accepts
 
 
 class FakeMessages:
@@ -13,6 +14,7 @@ class FakeMessages:
         self.last_params: dict[str, Any] = {}
 
     def create(self, **params: object) -> SimpleNamespace:
+        assert_sdk_accepts(ANTHROPIC_MESSAGES_CREATE, params)
         self.last_params = dict(params)
         return self.response
 

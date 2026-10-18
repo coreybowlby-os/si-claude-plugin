@@ -6,6 +6,11 @@ from llm.core.types import LLMInput, Message, Role, ToolDefinition
 from llm.providers.claude import ClaudeProvider
 from llm.providers.constants import EMPTY_FILTERED_RESPONSE_ERROR
 from llm.providers.openai import OpenAIProvider
+from tests.sdk_signatures import (
+    ANTHROPIC_MESSAGES_CREATE,
+    OPENAI_CHAT_COMPLETIONS_CREATE,
+    assert_sdk_accepts,
+)
 
 
 def _tool() -> ToolDefinition:
@@ -22,6 +27,7 @@ class _OpenAICompletions:
         self.response = response
 
     def create(self, **params):
+        assert_sdk_accepts(OPENAI_CHAT_COMPLETIONS_CREATE, params)
         self.params = params
         if self.response:
             return self.response
@@ -39,6 +45,7 @@ class _AnthropicMessages:
         self.params = None
 
     def create(self, **params):
+        assert_sdk_accepts(ANTHROPIC_MESSAGES_CREATE, params)
         self.params = params
         return SimpleNamespace(
             content=[SimpleNamespace(text="ok", type="text")],
