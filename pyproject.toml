@@ -19,8 +19,11 @@ classifiers = [
 ]
 
 dependencies = [
-    "anthropic>=0.120.2",
-    "openai>=1.30.0",
+    # Upper bounds: a new major version should arrive as a reviewable PR, not
+    # silently on the next install. tests/test_live_sdk_smoke.py checks a
+    # candidate major against the real APIs before a bound is raised.
+    "anthropic>=1.13.0,<2",
+    "openai>=3.29.0,<4",
 ]
 
 [project.optional-dependencies]
@@ -51,6 +54,9 @@ packages = ["src/llm"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "integration: calls real provider APIs; opt-in, needs API keys, excluded in CI via -m 'not integration'",
+]
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.coverage.run]
