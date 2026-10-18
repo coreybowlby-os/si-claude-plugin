@@ -14,6 +14,7 @@ from llm.providers.astraflow import (
     AstraflowCNProvider,
     AstraflowProvider,
 )
+from tests.sdk_signatures import OPENAI_CHAT_COMPLETIONS_CREATE, assert_sdk_accepts
 
 
 def _tool() -> ToolDefinition:
@@ -30,6 +31,7 @@ class _Completions:
         self.response = response
 
     def create(self, **params):
+        assert_sdk_accepts(OPENAI_CHAT_COMPLETIONS_CREATE, params)
         self.params = params
         return self.response
 

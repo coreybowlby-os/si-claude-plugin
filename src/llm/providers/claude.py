@@ -78,8 +78,8 @@ class ClaudeProvider(LLMProvider):
                 ]
             if input.tools:
                 params["tools"] = [tool.to_anthropic_tool() for tool in input.tools]
-            if not _uses_adaptive_thinking_only(model):
-                params["temperature"] = input.temperature
+            # anthropic>=1 removed temperature/top_p/top_k from Messages.create, so
+            # LLMInput.temperature is not forwarded for Claude.
             if _uses_adaptive_thinking_only(model):
                 params["thinking"] = {"type": "adaptive"}
 
