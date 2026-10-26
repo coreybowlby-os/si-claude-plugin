@@ -495,8 +495,8 @@
   "dependencies": {
     "@iarna/toml": "2.2.5",
     "ajv": "8.20.0",
-    "js-yaml": "5.4.3",
-    "sql.js": "1.14.2"
+    "js-yaml": "5.5.0",
+    "sql.js": "1.15.1"
   },
   "pi": {
     "extensions": [
@@ -511,10 +511,10 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@opencode-ai/plugin": "1.19.0",
+    "@opencode-ai/plugin": "1.19.4",
     "@types/node": "26.6.5",
     "c8": "12.0.0",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "globals": "17.13.0",
     "markdownlint-cli": "0.49.1",
     "typescript": "6.0.3"
@@ -525,7 +525,7 @@
   "overrides": {
     "fast-uri": "^3.1.8",
     "markdown-it": "^14.3.1",
-    "js-yaml": "5.4.3",
+    "js-yaml": "5.5.0",
     "smol-toml": "^1.7.1",
     "toml": "^4.1.2",
     "@humanfs/node": "^0.16.8",
@@ -535,7 +535,7 @@
   "resolutions": {
     "fast-uri": "^3.1.8",
     "markdown-it": "^14.3.1",
-    "js-yaml": "5.4.3",
+    "js-yaml": "5.5.0",
     "smol-toml": "^1.7.1",
     "toml": "^4.1.2",
     "@humanfs/node": "^0.16.8",

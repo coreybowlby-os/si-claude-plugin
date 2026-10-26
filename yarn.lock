@@ -268,12 +268,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opencode-ai/plugin@npm:1.19.0":
-  version: 1.19.0
-  resolution: "@opencode-ai/plugin@npm:1.19.0"
+"@opencode-ai/plugin@npm:1.19.4":
+  version: 1.19.4
+  resolution: "@opencode-ai/plugin@npm:1.19.4"
   dependencies:
     "@ai-sdk/provider": "npm:3.0.8"
-    "@opencode-ai/sdk": "npm:1.19.0"
+    "@opencode-ai/sdk": "npm:1.19.4"
     effect: "npm:4.0.0-beta.83"
     zod: "npm:4.1.8"
   peerDependencies:
@@ -287,16 +287,16 @@ __metadata:
       optional: true
     "@opentui/solid":
       optional: true
-  checksum: 10c0/34f8e05453c0cfc9f1494e5491f5272ddaf5af29954fd4974d9b623ee59ca0a65b6153d6bedf087beaff6c898834d4f7e0abba43b1f9f64a8fd04f865ec2f4ad
+  checksum: 10c0/8ef99b7548e647706d7abf16db61f9b6f68d15ee6d5a2073d29bddd39501a8ced7f68077d281869c81c70783aaf44fd4bedfa29700ae16fa39e10d57a4b1ed63
   languageName: node
   linkType: hard
 
-"@opencode-ai/sdk@npm:1.19.0":
-  version: 1.19.0
-  resolution: "@opencode-ai/sdk@npm:1.19.0"
+"@opencode-ai/sdk@npm:1.19.4":
+  version: 1.19.4
+  resolution: "@opencode-ai/sdk@npm:1.19.4"
   dependencies:
     cross-spawn: "npm:7.0.6"
-  checksum: 10c0/237ce18243ee69216e751e05ba6b27de696eb88a830c050a5e815f374ac514968cb35b06595c9520590b120c888ef8a6032c28cc443f70a11d0c32a7b1b133a8
+  checksum: 10c0/9a866238f42a4031d267f2d9022f40d08790947c8b64d8cd57f86fb42420136e50b48efde6706b8363b9328ef47121c504c3da6e850a4e03d014f5ac19201fe2
   languageName: node
   linkType: hard
 
@@ -448,6 +448,13 @@ __metadata:
   version: 2.0.1
   resolution: "argparse@npm:2.0.1"
   checksum: 10c0/c5640c2d89045371c7cedd6a70212a04e360fd34d6edeae32f6952c63949e3525ea77dbec0289d8213a99bbaeab5abfa860b5c12cf88a2e6cf8106e90dd27a7e
+  languageName: node
+  linkType: hard
+
+"argparse@npm:^3.0.3":
+  version: 3.0.4
+  resolution: "argparse@npm:3.0.4"
+  checksum: 10c0/845346e39e677b46f8558cece7c8dad1f7045f8b86af33356d8565b26a16940bf770a14a51d6da40ce76554a141e0e95b514d055d1da17a2f1b42df7d523fa0f
   languageName: node
   linkType: hard
 
@@ -714,9 +721,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:10.12.0":
-  version: 10.12.0
-  resolution: "eslint@npm:10.12.0"
+"eslint@npm:10.13.0":
+  version: 10.13.0
+  resolution: "eslint@npm:10.13.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -755,7 +762,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/1302ce8a7df2f67fe8f4014b2f9449bd38eb86903ba7b841d9a8ca5a5daf8ee15442861ab870e96c0074d5f333b405d7b2f16388981f807db410cc3a02178af9
+  checksum: 10c0/4a28e85de458f13306d30f07df21b58109056bd8bd691b6158952d95e126cf742db2eb09562e3f1c1cc0154ee44dedc789f8ced8d0d8da48e82a689aa9cb1c0d
   languageName: node
   linkType: hard
 
@@ -1114,14 +1121,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:5.4.3":
-  version: 5.4.3
-  resolution: "js-yaml@npm:5.4.3"
+"js-yaml@npm:5.5.0":
+  version: 5.5.0
+  resolution: "js-yaml@npm:5.5.0"
   dependencies:
-    argparse: "npm:^2.0.1"
+    argparse: "npm:^3.0.3"
   bin:
     js-yaml: bin/js-yaml.mjs
-  checksum: 10c0/7180bf35feef9815a06cb2f8845c1196f1e4264430a04623884d87c3d21475de7d46a86c9c5142dcc1646c788bc0e676eb09ba817810707e0b4e984f7cf93a5f
+  checksum: 10c0/311619f44dd788657e9b81d4b5c60ff367441f364045e3796bc604a41f25819852748fb173ae82f2553d53cb609d7fdb79e0a74148892cb2c085eebe91839b53
   languageName: node
   linkType: hard
 
@@ -1927,15 +1934,15 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:10.0.1"
     "@iarna/toml": "npm:2.2.5"
-    "@opencode-ai/plugin": "npm:1.19.0"
+    "@opencode-ai/plugin": "npm:1.19.4"
     "@types/node": "npm:26.6.5"
     ajv: "npm:8.20.0"
     c8: "npm:12.0.0"
-    eslint: "npm:10.12.0"
+    eslint: "npm:10.13.0"
     globals: "npm:17.13.0"
-    js-yaml: "npm:5.4.3"
+    js-yaml: "npm:5.5.0"
     markdownlint-cli: "npm:0.49.1"
-    sql.js: "npm:1.14.2"
+    sql.js: "npm:1.15.1"
     typescript: "npm:6.0.3"
   bin:
     si-claude-plugin: scripts/ecc.js
@@ -1961,10 +1968,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sql.js@npm:1.14.2":
-  version: 1.14.2
-  resolution: "sql.js@npm:1.14.2"
-  checksum: 10c0/4c217404d85b7396a2c7b6037a9dc96dd05f10c94847bb8c5df70d387ff37702f51551afc97d338ff2c0d504414bb1d3631d48f2a3f33eaa45e862747135d5d5
+"sql.js@npm:1.15.1":
+  version: 1.15.1
+  resolution: "sql.js@npm:1.15.1"
+  checksum: 10c0/f4d84bceebd0d10612c42c73ee2f3180abb1cfbe9a4c22d09a3e4e0cff30a6ef23268abfc05552f1ba544568d6693de0eef8eafc623b0fef6ecb4b4de7d63fee
   languageName: node
   linkType: hard
 
