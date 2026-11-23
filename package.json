@@ -523,7 +523,7 @@
     "node": ">=18"
   },
   "overrides": {
-    "fast-uri": "^3.1.8",
+    "fast-uri": "^3.1.9",
     "markdown-it": "^14.3.1",
     "js-yaml": "5.4.3",
     "smol-toml": "^1.7.1",
@@ -533,7 +533,7 @@
     "undici": "^6.28.1"
   },
   "resolutions": {
-    "fast-uri": "^3.1.8",
+    "fast-uri": "^3.1.9",
     "markdown-it": "^14.3.1",
     "js-yaml": "5.4.3",
     "smol-toml": "^1.7.1",
