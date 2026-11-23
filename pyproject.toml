@@ -22,7 +22,7 @@ dependencies = [
     # Upper bounds: a new major version should arrive as a reviewable PR, not
     # silently on the next install. tests/test_live_sdk_smoke.py checks a
     # candidate major against the real APIs before a bound is raised.
-    "anthropic>=2.3.0,<3",
+    "anthropic>=2.11.0,<3",
     "openai>=3.41.0,<4",
 ]
 
